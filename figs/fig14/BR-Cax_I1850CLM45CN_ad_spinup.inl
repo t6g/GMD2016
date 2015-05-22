@@ -1,0 +1,331 @@
+#Description# 1D pflotran soil BGC reaction 
+
+SIMULATION
+  SIMULATION_TYPE SUBSURFACE
+  PROCESS_MODELS
+    SUBSURFACE_TRANSPORT transport
+      GLOBAL_IMPLICIT
+    /
+  /
+END
+
+SUBSURFACE
+
+#=========================== flow mode ========================================
+# Uniform velocity (see below). No flow mode specified.
+
+#=========================== useful tranport parameters =======================
+UNIFORM_VELOCITY 0.d0 0.d0 0.d0 m/yr
+
+#=========================== chemistry ========================================
+CHEMISTRY
+  PRIMARY_SPECIES
+    N2O(aq)
+    N2(aq)
+    CO2(aq)
+  END
+
+  REDOX_SPECIES
+    CO2(aq)
+    N2O(aq)
+    N2(aq)
+  END
+
+  IMMOBILE_SPECIES
+    Ammonium
+    Nitrate 
+    SOM1
+    SOM2
+    SOM3
+    SOM4
+    LabileC
+    CelluloseC
+    LigninC
+    LabileN
+    CelluloseN
+    LigninN
+    PlantN
+    HRimm
+    Nmin
+    Nimm
+    NGASmin
+    NGASnitr
+    NGASdeni
+    Ain
+    Tin
+  END
+
+  CLM_REACTION
+    DECOMPOSITION
+      RESIDUAL_CPOOL       1.0d-15
+      RESIDUAL_NH4         1.0d-15
+      RESIDUAL_NO3         1.0d-15
+      HALF_SATURATION_NH4  1.0d-6
+      HALF_SATURATION_NO3  1.0d-6
+      NH4_INHIBITION_NO3   1.0d-6
+      N2O_FRAC_MINERALIZATION 0.02d0
+      TEMPERATURE_RESPONSE_FUNCTION
+         Q10 1.5d0
+      /
+      POOLS   ! CN ratio
+        SOM1  12.d0
+        SOM2  12.d0
+        SOM3  10.d0
+        SOM4  10.d0
+        Labile
+        Cellulose
+        Lignin
+      /
+      REACTION
+        UPSTREAM_POOL Labile
+        DOWNSTREAM_POOL SOM1 0.61d0
+        RATE_CONSTANT 1.204 1/d
+      /
+      REACTION
+        UPSTREAM_POOL Cellulose
+        DOWNSTREAM_POOL SOM2 0.45d0
+        RATE_CONSTANT 0.0726 1/d
+      /
+      REACTION
+        UPSTREAM_POOL Lignin
+        DOWNSTREAM_POOL SOM3 0.71d0
+        RATE_CONSTANT 0.0141 1/d
+      /
+      REACTION
+        UPSTREAM_POOL SOM1
+        DOWNSTREAM_POOL SOM2 0.72d0
+        RATE_CONSTANT 0.0726 1/d
+      /
+      REACTION
+        UPSTREAM_POOL SOM2
+        DOWNSTREAM_POOL SOM3 0.54d0
+        RATE_CONSTANT 0.0141 1/d
+      /
+      REACTION
+        UPSTREAM_POOL SOM3
+        DOWNSTREAM_POOL SOM4 0.45d0
+        RATE_CONSTANT 0.007 1/d      #x5
+      /
+      REACTION
+        UPSTREAM_POOL SOM4
+        RATE_CONSTANT 0.007 1/d      #x70
+      END
+    END
+
+    #N cycle
+    PLANTNTAKE
+      RESIDUAL_NH4         1.0d-15
+      RESIDUAL_NO3         1.0d-15
+      HALF_SATURATION_NH4  1.0d-6
+      HALF_SATURATION_NO3  1.0d-6
+      NH4_INHIBITION_NO3   1.0d-6
+    END
+
+    NITRIFICATION
+      RESIDUAL_NH4         1.0d-15
+      HALF_SATURATION_NH4 -1.0d-6
+      RATE_CONSTANT_NO3    1.0d-6      ! Dickinson et al. 2002 
+      RATE_CONSTANT_N2O    3.5d-8
+      DICKINSON
+      PARTON
+    END
+
+    DENITRIFICATION
+      RESIDUAL_NO3         1.0d-15
+      HALF_SATURATION_NO3 -1.0d-6
+      RATE_CONSTANT        2.5d-6      ! Dickinson et al. 2002
+    END
+  END
+
+  LOG_FORMULATION
+  DATABASE ./hanford-clm.dat
+  OUTPUT
+    all
+    total
+  /
+END
+
+#=========================== solver options ===================================
+LINEAR_SOLVER TRANSPORT
+  SOLVER DIRECT
+END
+
+#=========================== discretization ===================================
+GRID
+  TYPE structured
+  ORIGIN 0.d0 0.d0 0.d0
+  NXYZ 1 1 10
+  DXYZ 
+    1.d0
+    1.d0
+    1.506d0 0.913d0 0.554d0 0.336d0 0.204d0 0.124d0 0.075d0 0.0455d0 0.0276d0 0.0175d0
+  /
+END
+
+#=========================== fluid properties =================================
+FLUID_PROPERTY
+  DIFFUSION_COEFFICIENT 0.d-9
+END
+
+#=========================== material properties ==============================
+MATERIAL_PROPERTY soil1
+  ID 1
+  POROSITY 0.55d0
+  TORTUOSITY 0.5d0
+  ROCK_DENSITY 2650.0d0
+END
+
+#=========================== regions ==========================================
+REGION all
+  COORDINATES
+    0.d0 0.d0 0.d0
+    1.d0 1.d0 3.802d0
+  /
+END
+
+#=========================== transport conditions =============================
+TRANSPORT_CONDITION initial_trans
+  TYPE zero_gradient
+  CONSTRAINT_LIST
+    0.d0 initial_constraint
+  /
+END
+
+#=========================== transport constraints ============================
+CONSTRAINT initial_constraint
+  CONCENTRATIONS
+    N2O(aq)    1.d-10 T
+    N2(aq)     1.d-10 T
+    CO2(aq)    1.d-10 T
+  /
+  IMMOBILE
+    Ammonium  1.d-10 
+    Nitrate   1.d-10
+    SOM1  1.d-10 ! moles C/m^3
+    SOM2  1.d-10
+    SOM3  1.d-10
+    SOM4  1.d-10
+    LabileC     0.1852d-3
+    CelluloseC  0.4578d-3
+    LigninC     0.2662d-3
+    LabileN     0.00508954d-3
+    CelluloseN  0.01258096d-3
+    LigninN     0.00731553d-3
+    PlantN      1.d-10
+    HRimm       1.d-10
+    Nmin        1.d-10
+    Nimm        1.d-10
+    NGASmin     1.d-10
+    NGASnitr    1.d-10
+    NGASdeni    1.d-10
+    Ain         1.d-10
+    Tin         1.d-10
+  /
+END
+
+#=========================== datasets =========================================
+
+DATASET GLOBAL LabileC
+  FILENAME mass_transfer_decomp.h5
+  HDF5_DATASET_NAME LabileC
+END
+
+DATASET GLOBAL CelluloseC
+  FILENAME mass_transfer_decomp.h5
+  HDF5_DATASET_NAME CelluloseC
+END
+
+DATASET GLOBAL LigninC
+  FILENAME mass_transfer_decomp.h5
+  HDF5_DATASET_NAME LigninC
+END
+
+DATASET GLOBAL LabileN
+  FILENAME mass_transfer_decomp.h5
+  HDF5_DATASET_NAME LabileN
+END
+
+DATASET GLOBAL CelluloseN
+  FILENAME mass_transfer_decomp.h5
+  HDF5_DATASET_NAME CelluloseN
+END
+
+DATASET GLOBAL LigninN
+  FILENAME mass_transfer_decomp.h5
+  HDF5_DATASET_NAME LigninN
+END
+
+#=========================== mass transfer ====================================
+
+RT_MASS_TRANSFER LabileC
+  IDOF 10
+  DATASET LabileC
+END
+
+RT_MASS_TRANSFER CelluloseC
+  IDOF 11
+  DATASET CelluloseC
+END
+
+RT_MASS_TRANSFER LigninC
+  IDOF 12
+  DATASET LigninC
+END
+
+RT_MASS_TRANSFER LabileN
+  IDOF 13
+  DATASET LabileN
+END
+
+RT_MASS_TRANSFER CelluloseN
+  IDOF 14
+  DATASET CelluloseN
+END
+
+RT_MASS_TRANSFER LigninN
+  IDOF 15
+  DATASET LigninN
+END
+
+#=========================== condition couplers ===============================
+INITIAL_CONDITION initial_coupler
+  TRANSPORT_CONDITION initial_trans
+  REGION all
+END
+
+#=========================== stratigraphy couplers ============================
+STRATA
+  REGION all
+  MATERIAL soil1
+END
+
+#=========================== output options ===================================
+OUTPUT
+  SCREEN PERIODIC 480
+  PERIODIC TIMESTEP 1
+  FORMAT HDF5 MULTIPLE_FILES TIMES_PER_FILE 175200
+#  PERIODIC TIME 1.0d0 d
+#  FORMAT HDF5 MULTIPLE_FILES TIMES_PER_FILE 7300 
+END
+
+#=========================== times ============================================
+TIME
+  FINAL_TIME 1.d0 y
+  INITIAL_TIMESTEP_SIZE 1800.0 s
+  MAXIMUM_TIMESTEP_SIZE 1800.0 s        ! produces CFL ~<= 1.
+END
+
+END_SUBSURFACE
+
+#=========================== mapping files  ============================
+MAPPING_FILES                   
+  CLM2PF_FLUX_FILE sgrid-1x1x10-clm2pf.meshmap
+  CLM2PF_SOIL_FILE sgrid-1x1x10-clm2pf.meshmap
+  PF2CLM_FLUX_FILE sgrid-1x1x10-pf2clm.meshmap
+END
+
+#DEBUG
+#  PRINT_SOLUTION
+#  PRINT_RESIDUAL
+#  PRINT_JACOBIAN
+#END
