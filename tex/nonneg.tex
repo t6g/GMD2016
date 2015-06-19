@@ -68,9 +68,9 @@
 
 \linenumbers
 
-\title{Addressing the Challenge of Nonnegativity in Coupling a Reactive
+\title{Coupling a Reactive
 Transport Code with a Global Land Surface Model for Mechanistic Biogeochemistry
-Representation}
+Representation: 1. Addressing the Challenge of Nonnegativity}
 
 
 % \Author[affil]{given_name}{surname}
@@ -146,9 +146,9 @@ representation of biogeochemical processes in terrestrial ecosystem models
 implicit time stepping, implementation of CLM biogeochemical reactions in
 PFLOTRAN can result in negative concentration, which is not physical and can
 cause numerical instability and errors. The objective of this work is to
-implement CLM subsurface biogeochemical reactions in CLM-PFLOTRAN with a focus
-on addressing the nonnegativity challenge to obtain accurate, efficient, and
-robust solutions. We implement the CLM-CN decomposition, nitrification,
+address the nonnegativity challenge to obtain accurate, efficient, and
+robust solutions. We illustrate the implementation of a reaction network with
+the CLM-CN decomposition, nitrification,
 denitrification, and plant nitrogen uptake reactions and test the
 implementation at arctic, temperate, and tropical sites. We examine use of
 scaling back the update during each iteration (SU), log transformation (LT),
@@ -169,8 +169,9 @@ positive. For zero-order rate or when the reaction rate is not a function of a
 reactant, representing the availability limitation of each reactant with a
 Monod substrate limiting function provides a smooth transition between a
 zero-order rate when the reactant is abundant and first-order rate when the
-reactant becomes limiting. Marching through the transition may require small
-time step sizes when the half saturation is small. Our results from simple
+reactant becomes limiting. When the half saturation is small, marching through
+the transition may require small time step sizes to resolve the sharp change
+within a small range of concentration values. Our results from simple
 tests and CLM-PFLOTRAN simulations caution against use of SU and indicate that
 accurate, stable, and relatively efficient solutions can be achieved with LT
 and downregulation with Monod substrate limiting function and residual
@@ -184,12 +185,56 @@ concentration.
 %\input{intro}
 
 \introduction  %% \introduction[modified heading if necessary]
-Methods developed for the reactive transport models \citep{Fang2013,Tang2013b}
-and geochemical codes \citep{Hartman2007,Steefel2014} are increasingly used to
-improve the representation of biogeochemical processes in terrestrial ecosystem
-models (TEMs, e.g., the Community Land Model, CLM) for better climate
-prediction. An essential aspect of these TEMs is the abilility to simulate
-competition for nutrients (e.g., mineral nitrogen, phosphate, etc.) among
+Land surface models calculate the fluxes of energy, water, and green house
+gases across the land-atmosphere interface for the atmospheric general
+circulation models for climate simulation and weather forecasting. Evolving
+from the first generation ``bucket'', second generation ``biophysical'', and
+third generation ``physiological'' models \citep{Sellers1997,Seneviratne2010},
+current land surface models, e.g., the Community Land Model (CLM), implement
+comprehensive thermal, hydrological, and biogeochemical processes
+\citep{Oleson2013}. The important role of soil biogeochemistry is suggested by
+the confirmation that the increase of \chem{CO_2}, \chem{CH_4}, and \chem{N_2O}
+in the atmosphere since the preindustrial times is the main driving cause of
+climate change, and interdependent water, carbon and nitrogen cycles in
+terrestrial ecosystems are very sensitive to climate changes \citep{IPCC2013}.
+CLM4.5 incorporates CLM-CN and CENTURY, and adds methane models for carbon and
+nitrogen cycles \citep{Oleson2013}. In addition to the over 250 soil biogeochemical
+models developed in the past 80 years \citep{Manzoni2009}, increasingly
+mechanistic models continued to be developed to increase the fidelity of
+process representation with the hope for improved climate prediction
+\citep[e.g.,][]{Wang2012,Riley2014}. 
+
+As land surface models usually hardcode the reaction network (pools/species,
+reactions, rate formulae), substantial effort is often required to revise the
+source code for testing alternative biogeochemical models, and incorporating new
+process understanding. To mitigate this issue, \citet{Fang2013} demonstrated
+the use of a reaction-based approach to facilitate implementation of CLM-CN and
+CENTURY models, and incorporation of phosphorus cycle. While \citet{Fang2013}
+added a reaction solver developed from the reactive transport (geochemical)
+model literature for algebraic and ordinary differential equations,
+\citet{Tang2013b} solves the advection diffusion equation in CLM using operator
+splitting with the Crank-Nicolson scheme for diffusion and a forward-in-time
+upstream discretization for advection. In contrast, a reactive transport code,
+TOUGH-REACT, was used to develop multi-phase (gas, aqueous, solid) mechanistic
+carbon and nitrogen cycle models with many speciation and microbial reactions
+\citep{Maggi2008,Gu2010,Riley2014}. Coupling a well-developed reactive
+transport code \citep[e.g.,][]{Steefel2014} with CLM will facilitate testing
+and implementation of increasingly mechanistic biogeochemical models in
+terrestrial ecosystem models.
+
+%PHREEQC was coupled with DayCent to describe the dynamics of plant production,
+%soil organic matter, cation exchange, mineral weathering, elution, stream
+%discharge, and solute concentrations in soil water and stream flow
+%\citep{Hartman2007}. 
+
+%Methods developed for the reactive transport models \citep{Fang2013,Tang2013b}
+%and geochemical codes \citep{Hartman2007,Steefel2014} are increasingly used to
+%improve the representation of biogeochemical processes in terrestrial ecosystem
+%models (TEMs, e.g., the Community Land Model, CLM) for better climate
+%prediction. 
+The nonnegative challenge arises in the coupling of a reactive transport code
+with CLM as an essential aspect of these surface land models is the ability to simulate
+competition for nutrients (e.g., mineral nitrogen, phosphorus, etc.) among
 plants and microbes. For example, the CLM-CN decomposition cascade
 downregulates the demand based on the available nitrogen (\chem{N})
 \citep{Oleson2013,Thornton2005}. Specifically, marching from time step $k$ to
@@ -212,7 +257,12 @@ $p$ to $p+1$,
 \end{equation}
 Depending on $[\chem{N}]^k$, $\Delta t$, $S^{k+1,p}$, $D^{k+1,p}$, and the
 derivatives, $[\chem{N}]^{k+1,p+1}$ can be negative, which is not physical, and
-can cause numerical instability and errors \citep{Shampine2005}.
+can cause numerical instability and errors \citep{Shampine2005}. With
+instability (divergence), the simulation may abort before reaching target
+simulation duration. With numerical error, the mass balance may be violated.
+Avoiding numerical instability and error may result in extreme small time step
+sizes or high computational cost. Therefore, it is necessary to address the
+nonnegative challenge for accurate, robust, and efficient numerical simulation.  
 
 Enforcing nonnegativity is a common challenge in science, engineering, and
 business, including, for example, image processing, optimization, and ecosystem
@@ -279,9 +329,8 @@ will be relevant for a wide range of applications.
 
 %\input{bgc}
 
-\section{Biogeochemistry}
-\subsection{CLM biogeochemistry}
-\label{section:bgc}
+\section{Background}
+%\subsection{CLM biogeochemistry}
 The terrestrial ecosystem models generally include biogeochemical reactions for
 carbon and nitrogen cycles, in particular, the organic matter decomposition,
 nitrification, dentrification and methane production and oxidation. The
@@ -290,178 +339,9 @@ functions for environmental variables (temperature, moisture, pH, etc.)
 \citep{Bonan2012,Boyer2006,Schmidt2011}.  In this work, we use the CLM-CN
 decomposition \citep{Bonan2012,Oleson2013,Thornton2005}, nitrification,
 denitrification \citep{Dickinson2002,Parton2001,Parton1996}, and plant nitrogen
-uptake reactions (Fig. \ref{fig:conceptualmodel}) as an example.
+uptake reactions (Fig. \ref{fig:conceptualmodel}) as an example. The reactions and rate formulae are detailed in Appendix .
 
-\subsubsection{CLM-CN decomposition}
-
-The CLM-CN decomposition cascade consists of three litter pools with variable
-CN ratios, four soil organic matter (SOM) pools with constant CN ratios, and
-seven reactions (Fig. \ref{fig:conceptualmodel}A). The reaction can be
-described by
-\begin{reaction}
-\chem{CN_u} \rightarrow (1 - f) \chem{CN_d} + f \chem{CO_2} + n \chem{N},
-\label{rxn:decomp}
-\end{reaction}
-with \chem{CN_u} and \chem{CN_d} as the upstream and downstream pool (molecular
-formula), \chem{N} as either \chem{NH_4^+} or \chem{NO_3^-}, \textit{f} as the
-respiration fraction, and \textit{n} = u $-$ (1 $-$ \textit{f})d. The rate is
-\begin{equation}
-\frac{\partial [\chem{CN_u}]}{\partial t} = - k_\text{d} f_\text{T} f_\text{w} [\chem{CN_u}],
-\label{eq:decomprate}
-\end{equation}
-with $\textit{k}_\text{d}$ as the rate coefficient and $\textit{f}_\text{T}$
-and $\textit{f}_\text{w}$ as the temperature and moisture response functions.
-
-With a constant CN ratio, the decomposition reactions for the four SOM pools are 
-\begin{reaction}
-\chem{SOM1} \rightarrow 0.72 \chem{SOM2} + 0.28 \chem{CO_2} + 0.020000 \chem{N},
-\label{rxn:som1}
-\end{reaction}
-\begin{reaction}
-\chem{SOM2} \rightarrow 0.54 \chem{SOM3} + 0.46 \chem{CO_2} + 0.025143 \chem{N},
-\label{rxn:som2}
-\end{reaction}
-\begin{reaction}
-\chem{SOM3} \rightarrow 0.45 \chem{SOM4} + 0.55 \chem{CO_2} + 0.047143 \chem{N},
-\label{rxn:som3}
-\end{reaction}
-and
-\begin{reaction}
-\chem{SOM4} \rightarrow \chem{CO_2} + 0.085714 \chem{N}.
-\label{rxn:som4}
-\end{reaction}
-
-CLM4.5 has an option to separate \chem{N} into \chem{NH_4^+} and \chem{NO_3^-}.
-The \chem{N} mineralization product is \chem{NH_4^+}.
-% see CNNStateUpdate1Mod.F90 line 359-391. 
-
-As the CN ratio is variable for the three litter pools, litter N pools need to
-be tracked such that reaction (\ref{rxn:decomp}) becomes
-\begin{reaction}
-\chem{LitC} + u \chem{LitN} \rightarrow (1 - f) \chem{CN_d} + f \chem{CO_2} + n \chem{N}, 
-\label{rxn:lit}
-\end{reaction}
-with $\textit{u}$ = [LitN]/[LitC]. The three litter decomposition reactions are
-\begin{reaction}
-\chem{Lit1C} + u_1 \chem{Lit1N} \rightarrow 0.41 \chem{SOM1} + 0.39 \chem{CO_2} + (u_1 - 0.029286) \chem{N},
-\label{rxn:lit1}
-\end{reaction}
-\begin{reaction}
-\chem{Lit2C} + u_2 \chem{Lit2N} \rightarrow 0.45 \chem{SOM2} + 0.55 \chem{CO_2} + (u_2 - 0.032143) \chem{N},
-\label{rxn:lit2}
-\end{reaction}
-and
-\begin{reaction}
-\chem{Lit3C} + u_3 \chem{Lit3N} \rightarrow 0.71 \chem{SOM3} + 0.29 \chem{CO_2} + (u_3 - 0.060857) \chem{N}.
-\label{rxn:lit3}
-\end{reaction}
-
-As the CN ratio of the litter pools is generally  high, $u_1$, $u_2$, and $u_3$
-are usually small, and $n$ in these reactions (e.g., $n_1 = u_1 - 0.029286$ for
-\chem{Lit1}) is normally negative. Namely, these reactions consume (immobilize)
-\chem{N}, which can be \chem{NH_4^+}, \chem{NO_3^-}, or both. 
-
-\subsubsection{Nitrification}
-The nitrification reaction to produce \chem{NO_3^-} is
-\begin{reaction}
-\chem{NH_4^+} \rightarrow \chem{NO_3^-}
-\label{rxn:nitr2no3}
-\end{reaction}
-with rate (Dickinson et al., 2002) 
-\begin{equation}
-\frac{\partial [\chem{NH_4^+}]}{\partial t} = -\frac{\partial
-[\chem{NO_3^-]}}{\partial t} = -k_\text{n} f_\text{T} f_\text{w}
-[\chem{NH_4^+}].
-\label{eq:nitr2no3}
-\end{equation}
-The nitrification reaction to produce $\chem{N_2O}$ is
-\begin{reaction}
-\chem{NH_4^+} \rightarrow 0.5 \chem{N_2O},
-\label{rxn:nitr2n2o}
-\end{reaction}
-with one component related to decomposition as %when
-%$\chem{NH_4^+}$ is low ( < 3 $\mu \text{gN g}^{-1}$) as 
-\begin{equation}
-\frac{\partial [\chem{NH_4^+}]}{\partial t} = -2\frac{\partial
-[\chem{N_2O}]}{\partial t} = -f_\text{nm} f_\text{T} f_\text{w}
-f_\text{pH}\max(R_\text{nm},0)
-\label{eq:nitr2n2odecomp}
-\end{equation}
-with $f_\text{nm}$ as a fraction \citep{Parton1996} and $R_\text{nm}$ as the
-net \chem{N} mineralization rate,  
-\begin{equation}
-R_\text{nm}=\sum_{i} n_iR_i,
-\label{eq:netnmin}
-\end{equation}
-where $R_i$ denotes the rate of reaction (\ref{rxn:som1}, \ref{rxn:som2},
-\ref{rxn:som3}, \ref{rxn:som4}, \ref{rxn:lit1}, \ref{rxn:lit2},
-\ref{rxn:lit3}).
-The second component is \citep{Parton1996} %relates to excessive \chem{NH_4^+}
-%(> 3 $\mu$gN g$^{-1}$) 
-\begin{equation} 
-\frac{\partial [\chem{NH_4^+}]}{\partial t} = -2\frac{\partial
-[\chem{N_2O}]}{\partial t} = -k_\text{n2o} f_\text{T} f_\text{w}
-f_\text{pH}(1-e^{-0.0105[\chem{NH_4^+}]}).
-\label{eq:nitr2n2oexess}
-\end{equation}
-Ignoring the high-order terms and moving the unit conversion factor into
-$k_\text{n2o}$, it can be simplified as a first-order
-rate as
-\begin{equation} 
-\frac{\partial [\chem{NH_4^+}]}{\partial t} = -2\frac{\partial
-[\chem{N_2O}]}{\partial t} = -k_\text{n2o} f_\text{T} f_\text{w}
-f_\text{pH}[\chem{NH_4^+}].
-\label{eq:nitr2n2oexesssimple}
-\end{equation}
-
-\subsubsection{Denitrification} 
-The denitrification reaction is
-\begin{reaction}
-\chem{NO_3^-} \rightarrow 0.5 \chem{N_2}
-\label{rxn:deni}
-\end{reaction}
-with rate \citep{Dickinson2002} 
-\begin{equation} 
-\frac{\partial [\chem{NO_3^-}]}{\partial t} = -2\frac{\partial
-[\chem{N_2}]}{\partial t} = -k_\text{deni} f_\text{T} f_\text{w}
-f_\text{pH}[\chem{NO_3^-}].
-\label{eq:deni}
-\end{equation}
-
-\subsubsection{Plant nitrogen uptake}
-The plant nitrogen uptake reaction can be written as
-\begin{reaction}
-\chem{NH_4^+} \rightarrow \chem{PlantA}
-\label{rxn:plantatake}
-\end{reaction}
-and
-\begin{reaction}
-\chem{NO_3^-} \rightarrow \chem{PlantN}.
-\label{rxn:plantntake}
-\end{reaction}
-The rate is specified by CLM (plant nitrogen demand) and assumed to be
-constant in each half-hour time step. 
-
-\subsubsection{Demand-based competition and distributing nitrogen demand between \chem{NH_4^+} and \chem{NO_3^-}}
-\label{sec:demandbasedcompetition}
-Denote $R_{d,p}$, $R_{d,i}$, $R_{d,nitr}$, $R_{d,deni}$ as the potential plant,
-immobilization, nitrification, and denitrification demand (rate);
-$R_{a,tot}=R_{d,p}+R_{d,i}+R_{d,nitr}$ as the total \chem{NH_4^+} demand; and
-$R_{n,tot}$ as the total \chem{NO_3^-} demand. CLM uses a demand-based
-competition approach to split the available sources in proportion to the demand
-rates to meet the demands \citep{Oleson2013,Thornton2005}. Specifically, for
-each time step, if $R_{a,tot}\Delta t \leq [\chem{NH_4^+}]$, the uptakes are
-equal to potential demands, and $R_{n,tot}$ = 0; otherwise, the uptakes for
-\chem{NH_4^+} are [\chem{NH_4^+}]$R_{d,p}/R_{a,tot}\Delta t$,
-[\chem{NH_4^+}]$R_{d,i}/R_{a,tot}\Delta t$, and
-[\chem{NH_4^+}]$R_{d,nitr}/R_{a,tot}\Delta t$ for plants, immobilization, and
-nitrification, respectively; $R_{n,tot}=R_{a,tot}-[\chem{NH_4^+}]/\Delta t +
-R_{d,deni}$. If $R_{n,tot}\Delta t < [\chem{NO_3^-}]$, all of the remaining
-demand $R_{n,tot}$ is met with available \chem{NO_3^-}. Otherwise, available
-\chem{NO_3^-} is split to meet the remaining plant, immobilization, and
-denitrification demands in proportion to their rates. 
-
-\subsection{CLM-PFLOTRAN biogeochemistry}
+%\subsection{CLM-PFLOTRAN biogeochemistry}
 
 In CLM-PFLOTRAN, CLM instructs PFLOTRAN to solve the partial differential
 equations for energy (including freezing and thawing), water flow, and reaction
@@ -2375,6 +2255,179 @@ BR-Cax & 10$^{-9}$ & 0.59 & PlantN  & 10$^{-18}$ & $4.92\times10^{-8}$ & 2 \\
 %\input{appendix}
 
 \appendix
+
+\section{CLM biogeochemical reactions and rates}
+
+\subsection{CLM-CN decomposition}
+\label{section:bgc}
+
+The CLM-CN decomposition cascade consists of three litter pools with variable
+CN ratios, four soil organic matter (SOM) pools with constant CN ratios, and
+seven reactions (Fig. \ref{fig:conceptualmodel}A). The reaction can be
+described by
+\begin{reaction}
+\chem{CN_u} \rightarrow (1 - f) \chem{CN_d} + f \chem{CO_2} + n \chem{N},
+\label{rxn:decomp}
+\end{reaction}
+with \chem{CN_u} and \chem{CN_d} as the upstream and downstream pool (molecular
+formula), \chem{N} as either \chem{NH_4^+} or \chem{NO_3^-}, \textit{f} as the
+respiration fraction, and \textit{n} = u $-$ (1 $-$ \textit{f})d. The rate is
+\begin{equation}
+\frac{\partial [\chem{CN_u}]}{\partial t} = - k_\text{d} f_\text{T} f_\text{w} [\chem{CN_u}],
+\label{eq:decomprate}
+\end{equation}
+with $\textit{k}_\text{d}$ as the rate coefficient and $\textit{f}_\text{T}$
+and $\textit{f}_\text{w}$ as the temperature and moisture response functions.
+
+With a constant CN ratio, the decomposition reactions for the four SOM pools are 
+\begin{reaction}
+\chem{SOM1} \rightarrow 0.72 \chem{SOM2} + 0.28 \chem{CO_2} + 0.020000 \chem{N},
+\label{rxn:som1}
+\end{reaction}
+\begin{reaction}
+\chem{SOM2} \rightarrow 0.54 \chem{SOM3} + 0.46 \chem{CO_2} + 0.025143 \chem{N},
+\label{rxn:som2}
+\end{reaction}
+\begin{reaction}
+\chem{SOM3} \rightarrow 0.45 \chem{SOM4} + 0.55 \chem{CO_2} + 0.047143 \chem{N},
+\label{rxn:som3}
+\end{reaction}
+and
+\begin{reaction}
+\chem{SOM4} \rightarrow \chem{CO_2} + 0.085714 \chem{N}.
+\label{rxn:som4}
+\end{reaction}
+
+CLM4.5 has an option to separate \chem{N} into \chem{NH_4^+} and \chem{NO_3^-}.
+The \chem{N} mineralization product is \chem{NH_4^+}.
+% see CNNStateUpdate1Mod.F90 line 359-391. 
+
+As the CN ratio is variable for the three litter pools, litter N pools need to
+be tracked such that reaction (\ref{rxn:decomp}) becomes
+\begin{reaction}
+\chem{LitC} + u \chem{LitN} \rightarrow (1 - f) \chem{CN_d} + f \chem{CO_2} + n \chem{N}, 
+\label{rxn:lit}
+\end{reaction}
+with $\textit{u}$ = [LitN]/[LitC]. The three litter decomposition reactions are
+\begin{reaction}
+\chem{Lit1C} + u_1 \chem{Lit1N} \rightarrow 0.41 \chem{SOM1} + 0.39 \chem{CO_2} + (u_1 - 0.029286) \chem{N},
+\label{rxn:lit1}
+\end{reaction}
+\begin{reaction}
+\chem{Lit2C} + u_2 \chem{Lit2N} \rightarrow 0.45 \chem{SOM2} + 0.55 \chem{CO_2} + (u_2 - 0.032143) \chem{N},
+\label{rxn:lit2}
+\end{reaction}
+and
+\begin{reaction}
+\chem{Lit3C} + u_3 \chem{Lit3N} \rightarrow 0.71 \chem{SOM3} + 0.29 \chem{CO_2} + (u_3 - 0.060857) \chem{N}.
+\label{rxn:lit3}
+\end{reaction}
+
+As the CN ratio of the litter pools is generally  high, $u_1$, $u_2$, and $u_3$
+are usually small, and $n$ in these reactions (e.g., $n_1 = u_1 - 0.029286$ for
+\chem{Lit1}) is normally negative. Namely, these reactions consume (immobilize)
+\chem{N}, which can be \chem{NH_4^+}, \chem{NO_3^-}, or both. 
+
+\subsection{Nitrification}
+The nitrification reaction to produce \chem{NO_3^-} is
+\begin{reaction}
+\chem{NH_4^+} \rightarrow \chem{NO_3^-}
+\label{rxn:nitr2no3}
+\end{reaction}
+with rate (Dickinson et al., 2002) 
+\begin{equation}
+\frac{\partial [\chem{NH_4^+}]}{\partial t} = -\frac{\partial
+[\chem{NO_3^-]}}{\partial t} = -k_\text{n} f_\text{T} f_\text{w}
+[\chem{NH_4^+}].
+\label{eq:nitr2no3}
+\end{equation}
+The nitrification reaction to produce $\chem{N_2O}$ is
+\begin{reaction}
+\chem{NH_4^+} \rightarrow 0.5 \chem{N_2O},
+\label{rxn:nitr2n2o}
+\end{reaction}
+with one component related to decomposition as %when
+%$\chem{NH_4^+}$ is low ( < 3 $\mu \text{gN g}^{-1}$) as 
+\begin{equation}
+\frac{\partial [\chem{NH_4^+}]}{\partial t} = -2\frac{\partial
+[\chem{N_2O}]}{\partial t} = -f_\text{nm} f_\text{T} f_\text{w}
+f_\text{pH}\max(R_\text{nm},0)
+\label{eq:nitr2n2odecomp}
+\end{equation}
+with $f_\text{nm}$ as a fraction \citep{Parton1996} and $R_\text{nm}$ as the
+net \chem{N} mineralization rate,  
+\begin{equation}
+R_\text{nm}=\sum_{i} n_iR_i,
+\label{eq:netnmin}
+\end{equation}
+where $R_i$ denotes the rate of reaction (\ref{rxn:som1}, \ref{rxn:som2},
+\ref{rxn:som3}, \ref{rxn:som4}, \ref{rxn:lit1}, \ref{rxn:lit2},
+\ref{rxn:lit3}).
+The second component is \citep{Parton1996} %relates to excessive \chem{NH_4^+}
+%(> 3 $\mu$gN g$^{-1}$) 
+\begin{equation} 
+\frac{\partial [\chem{NH_4^+}]}{\partial t} = -2\frac{\partial
+[\chem{N_2O}]}{\partial t} = -k_\text{n2o} f_\text{T} f_\text{w}
+f_\text{pH}(1-e^{-0.0105[\chem{NH_4^+}]}).
+\label{eq:nitr2n2oexess}
+\end{equation}
+Ignoring the high-order terms and moving the unit conversion factor into
+$k_\text{n2o}$, it can be simplified as a first-order
+rate as
+\begin{equation} 
+\frac{\partial [\chem{NH_4^+}]}{\partial t} = -2\frac{\partial
+[\chem{N_2O}]}{\partial t} = -k_\text{n2o} f_\text{T} f_\text{w}
+f_\text{pH}[\chem{NH_4^+}].
+\label{eq:nitr2n2oexesssimple}
+\end{equation}
+
+\subsection{Denitrification} 
+The denitrification reaction is
+\begin{reaction}
+\chem{NO_3^-} \rightarrow 0.5 \chem{N_2}
+\label{rxn:deni}
+\end{reaction}
+with rate \citep{Dickinson2002} 
+\begin{equation} 
+\frac{\partial [\chem{NO_3^-}]}{\partial t} = -2\frac{\partial
+[\chem{N_2}]}{\partial t} = -k_\text{deni} f_\text{T} f_\text{w}
+f_\text{pH}[\chem{NO_3^-}].
+\label{eq:deni}
+\end{equation}
+
+\subsection{Plant nitrogen uptake}
+The plant nitrogen uptake reaction can be written as
+\begin{reaction}
+\chem{NH_4^+} \rightarrow \chem{PlantA}
+\label{rxn:plantatake}
+\end{reaction}
+and
+\begin{reaction}
+\chem{NO_3^-} \rightarrow \chem{PlantN}.
+\label{rxn:plantntake}
+\end{reaction}
+The rate is specified by CLM (plant nitrogen demand) and assumed to be
+constant in each half-hour time step. 
+
+\subsection{Demand-based competition and distributing nitrogen demand between \chem{NH_4^+} and \chem{NO_3^-}}
+\label{sec:demandbasedcompetition}
+Denote $R_{d,p}$, $R_{d,i}$, $R_{d,nitr}$, $R_{d,deni}$ as the potential plant,
+immobilization, nitrification, and denitrification demand (rate);
+$R_{a,tot}=R_{d,p}+R_{d,i}+R_{d,nitr}$ as the total \chem{NH_4^+} demand; and
+$R_{n,tot}$ as the total \chem{NO_3^-} demand. CLM uses a demand-based
+competition approach to split the available sources in proportion to the demand
+rates to meet the demands \citep{Oleson2013,Thornton2005}. Specifically, for
+each time step, if $R_{a,tot}\Delta t \leq [\chem{NH_4^+}]$, the uptakes are
+equal to potential demands, and $R_{n,tot}$ = 0; otherwise, the uptakes for
+\chem{NH_4^+} are [\chem{NH_4^+}]$R_{d,p}/R_{a,tot}\Delta t$,
+[\chem{NH_4^+}]$R_{d,i}/R_{a,tot}\Delta t$, and
+[\chem{NH_4^+}]$R_{d,nitr}/R_{a,tot}\Delta t$ for plants, immobilization, and
+nitrification, respectively; $R_{n,tot}=R_{a,tot}-[\chem{NH_4^+}]/\Delta t +
+R_{d,deni}$. If $R_{n,tot}\Delta t < [\chem{NO_3^-}]$, all of the remaining
+demand $R_{n,tot}$ is met with available \chem{NO_3^-}. Otherwise, available
+\chem{NO_3^-} is split to meet the remaining plant, immobilization, and
+denitrification demands in proportion to their rates. 
+
 \section{Downregulation of consumption as a function of rates}    %% Appendix A
 The contribution of $n$ reactions to the rate component in the residual and
 Jacobian for species $i$ are
