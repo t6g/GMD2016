@@ -1,0 +1,15 @@
+syntax: glob
+*.o
+*.mod
+*.aux
+*.lof
+*.log
+*.lot
+*.out
+*.tec
+*.xyp
+*.toc
+*.bst
+*.synctex.gz
+*.tex.orig
+tex/nonneg.pdf
