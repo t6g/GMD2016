@@ -67,7 +67,7 @@ plt.xlim([0, ny1])
 plt.ylabel('NO${_3}^-$ (gN m$^{-2}$)')
 plt.xlabel('Elapsed time (d)')
 plt.text(lx, ly, '(b)', transform=ax6.transAxes)
-lgd = plt.legend(('scaling update ($STOL=10^{-8}, \lambda_{min}=10^{-10}$,default)', 'scaling update ($STOL=10^{-50}, \lambda_{min}=10^{-50}$)', 'scaling update (skip derivative)', 'Log transformation'),loc=2)
+lgd = plt.legend(('scaling update (STOL=10$^{-8}$, $\lambda_{min}=10^{-10}$)', 'scaling update (STOL=10$^{-50}$, $\lambda_{min}=10^{-50}$)', 'scaling update (skip derivative)', 'Log transformation'),loc=2)
 lgd.draw_frame(False)
 txt = lgd.get_texts();
 plt.setp(txt, fontsize='small');

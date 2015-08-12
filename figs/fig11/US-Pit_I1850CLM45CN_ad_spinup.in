@@ -43,6 +43,8 @@ CHEMISTRY
     LigninC
     LabileN
     CelluloseN
+    CWDC
+    CWDN
     LigninN
     PlantN
     HRimm
@@ -110,6 +112,9 @@ CHEMISTRY
         UPSTREAM_POOL SOM4
         RATE_CONSTANT 0.007 1/d      #x70
       END
+    END
+
+    CWDFRAGMENTATION
     END
 
     #N cycle
@@ -205,12 +210,14 @@ CONSTRAINT initial_constraint
     SOM2  1.d-10
     SOM3  1.d-10
     SOM4  1.d-10
-    LabileC     0.1852d-3
-    CelluloseC  0.4578d-3
-    LigninC     0.2662d-3
-    LabileN     0.00508954d-3
-    CelluloseN  0.01258096d-3
-    LigninN     0.00731553d-3
+    LabileC     1.d-10
+    CelluloseC  1.d-10
+    LigninC     1.d-10
+    LabileN     1.d-10
+    CelluloseN  1.d-10
+    LigninN     1.d-10
+    CWDC        1.d-10
+    CWDN        1.d-10
     PlantN      1.d-10
     HRimm       1.d-10
     Nmin        1.d-10
@@ -255,6 +262,16 @@ DATASET GLOBAL LigninN
   HDF5_DATASET_NAME LigninN
 END
 
+DATASET GLOBAL CWDC
+  FILENAME mass_transfer_decomp.h5
+  HDF5_DATASET_NAME CWDC
+END
+
+DATASET GLOBAL CWDN
+  FILENAME mass_transfer_decomp.h5
+  HDF5_DATASET_NAME CWDN
+END
+
 #=========================== mass transfer ====================================
 
 RT_MASS_TRANSFER LabileC
@@ -285,6 +302,16 @@ END
 RT_MASS_TRANSFER LigninN
   IDOF 15
   DATASET LigninN
+END
+
+RT_MASS_TRANSFER CWDC
+  IDOF 16
+  DATASET CWDC
+END
+
+RT_MASS_TRANSFER CWDN
+  IDOF 17
+  DATASET CWDN
 END
 
 #=========================== condition couplers ===============================

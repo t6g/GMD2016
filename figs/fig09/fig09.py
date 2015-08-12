@@ -37,7 +37,7 @@ plt.text(lx, ly, '(b)', transform=ax2.transAxes)
 
 ax3=plt.subplot(2, 2, 3)
 plt.plot(r0[:, 0], r0[:,4], 'b+-', r1[:, 0], r1[:,4], 'rx:', r2[:, 0], r2[:, 4], 'g-*') 
-lgd = plt.legend(('$k_m = 10^{-6}$', '$k_m = 10^{-9}$', '$k_m = 10^{-12}$'), numpoints=1, loc=4);
+lgd = plt.legend(('$k_\mathrm{m} = 10^{-6}$', '$k_\mathrm{m} = 10^{-9}$', '$k_\mathrm{m} = 10^{-12}$'), numpoints=1, loc=4);
 lgd.draw_frame(False);
 plt.ylabel('SOM2 (mol m$^{-3}$)')
 plt.xlabel('Time (d)')

@@ -40,7 +40,7 @@ if (len(sys.argv) > 1):
 
 #ofname = nm + '-nl.pdf'
 #nm = nm + '.h5'
-res = openh5data('../run6_step/BR-Cax_I1850CLM45CN_ad_spinup-000.h5')
+res = openh5data('../run6_1y/BR-Cax_I1850CLM45CN_ad_spinup-000.h5')
 
 t    = res['TIME']
 ngasmin  = res['NGASmin']

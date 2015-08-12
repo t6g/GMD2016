@@ -67,7 +67,7 @@ plt.text(lx, ly, '(c)', transform=ax3.transAxes)
 
 plt.loglog(xx, f3, 'b-', xx, f1, 'r-', xx, f2, 'g-')
 plt.grid()
-lgd = plt.legend(('$R_a\Delta t$', '$[\mathrm{NH_4^+}]$', '$k_m$'), loc=4)
+lgd = plt.legend(('$R_a\Delta t$', '$[\mathrm{NH_4^+}]$', '$k_\mathrm{m}$'), loc=4)
 lgd.draw_frame(False)
 plt.xlabel('$R_a\Delta t$, $[\mathrm{NH_4^+}]$, or $k_m$')
 plt.ylabel('$\delta[\mathrm{NH_4^+}]/[\mathrm{NH_4^+}]$')

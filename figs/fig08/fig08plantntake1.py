@@ -64,7 +64,7 @@ plt.yticks([1e-20, 1e-15, 1e-10, 1e-5])
 #    tick.label.set_fontsize(10) 
 #ax3.yaxis.label.set_size(10)
 plt.xlim([0,10])
-lgd = plt.legend(('$k_m = 10^{-9}$', '$k_m = 10^{-12}$', '$k_m = 10^{-12}$ (SA)'), numpoints=1, loc=1);
+lgd = plt.legend(('$k_\mathrm{m} = 10^{-9}$', '$k_\mathrm{m} = 10^{-12}$', '$k_\mathrm{m} = 10^{-12}$ (SA)'), numpoints=1, loc=1);
 lgd.draw_frame(False);
 #plt.text(lx, ly, '(b)', transform=ax3.transAxes)
 

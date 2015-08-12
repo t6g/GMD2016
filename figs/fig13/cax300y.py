@@ -36,10 +36,11 @@ def openncyear(nm,ny0,ny1):
 ny0 = 0
 ny1 = 300
 
-data1 = openncyear('../run0/BR-Cax_I1850CLM45CN_ad_spinup.clm2.h0.', ny0, ny1)
+data1 = openncyear('../run-clm/BR-Cax_I1850CLM45CN_ad_spinup.clm2.h0.', ny0, ny1)
 data2 = openncyear('../run3/BR-Cax_I1850CLM45CN_ad_spinup.clm2.h0.', ny0, ny1)
-data3 = openncyear('../run6/BR-Cax_I1850CLM45CN_ad_spinup.clm2.h0.', ny0, ny1)
-data4 = openncyear('../run9/BR-Cax_I1850CLM45CN_ad_spinup.clm2.h0.', ny0, ny1)
+data3 = openncyear('../run4/BR-Cax_I1850CLM45CN_ad_spinup.clm2.h0.', ny0, ny1)
+data4 = openncyear('../run5/BR-Cax_I1850CLM45CN_ad_spinup.clm2.h0.', ny0, ny1)
+data5 = openncyear('../run6/BR-Cax_I1850CLM45CN_ad_spinup.clm2.h0.', ny0, ny1)
 
 t = ny0 + np.arange((ny1-ny0)*365)/365.0
 
@@ -49,19 +50,19 @@ xmax = 80
 plt.subplots_adjust(hspace=0.001)
 
 ax1=plt.subplot(6, 1, 1)
-plt.plot(t, data1['tlai'], 'b-', t, data2['tlai'], 'r-', t, data3['tlai'], 'g-', t, data4['tlai'], 'm-')
+plt.plot(t, data1['tlai'], 'b-', t, data2['tlai'], 'r-', t, data3['tlai'], 'g-', t, data4['tlai'], 'm-', t, data5['tlai'], 'c-')
 plt.xlim([0, xmax])
 #plt.ylim([0, 4])
 plt.yticks([0, 2, 4])
 plt.ylabel('LAI')
 plt.text(lx, ly, '(a)', transform=ax1.transAxes)
-lgd = plt.legend(('CLM4.5', 'CLM-PF ($k_m = 10^{-3}$)', 'CLM-PF ($k_m = 10^{-6}$)', 'CLM-PF ($k_m = 10^{-9}$)'),loc=2)
+lgd = plt.legend(('CLM4.5', 'CLM-PF ($k_\mathrm{m} = 10^{-3}$)', 'CLM-PF ($k_\mathrm{m} = 10^{-4}$)', 'CLM-PF ($k_\mathrm{m} = 10^{-5}$)', 'CLM-PF ($k_\mathrm{m} = 10^{-6}$)'),loc=2)
 lgd.draw_frame(False)
 txt = lgd.get_texts();
 plt.setp(txt, fontsize='small');
 
 ax2=plt.subplot(6, 1, 2)
-plt.plot(t, data1['vegc'], 'b-', t, data2['vegc'], 'r-', t, data3['vegc'], 'g-', t, data4['vegc'], 'm-')
+plt.plot(t, data1['vegc'], 'b-', t, data2['vegc'], 'r-', t, data3['vegc'], 'g-', t, data4['vegc'], 'm-', t, data5['vegc'], 'c-')
 plt.xlim([0, xmax])
 #plt.ylim([0, 30])
 plt.yticks([0, 30, 60])
@@ -69,13 +70,13 @@ plt.ylabel('VEGN (gN m$^{-2}$)')
 plt.text(lx, ly, '(b)', transform=ax2.transAxes)
 
 ax2a = plt.axes([0.19, 0.67, 0.27, 0.09]) 
-plt.plot(t, data1['vegc'], 'b-', t, data2['vegc'], 'r-', t, data3['vegc'], 'g-', t, data4['vegc'], 'm-')
+plt.plot(t, data1['vegc'], 'b-', t, data2['vegc'], 'r-', t, data3['vegc'], 'g-', t, data4['vegc'], 'm-', t, data5['vegc'], 'c-')
 plt.xlim([0, ny1])
 plt.yticks([0, 30, 60])
 plt.xticks([0, 100, 200, 300])
 
 ax3=plt.subplot(6, 1, 3)
-plt.plot(t, data1['litc'], 'b-', t, data2['litc'], 'r-', t, data3['litc'], 'g-', t, data4['litc'], 'm-')
+plt.plot(t, data1['litc'], 'b-', t, data2['litc'], 'r-', t, data3['litc'], 'g-', t, data4['litc'], 'm-', t, data5['litc'], 'c-')
 plt.xlim([0, xmax])
 #plt.ylim([0, 1.3])
 plt.yticks([0, .5, 1])
@@ -83,7 +84,7 @@ plt.ylabel('LITN (gN m$^{-2}$)')
 plt.text(lx, ly, '(c)', transform=ax3.transAxes)
 
 ax4=plt.subplot(6, 1, 4)
-plt.plot(t, data1['somc'], 'b-', t, data2['somc'], 'r-', t, data3['somc'], 'g-', t, data4['somc'], 'm-')
+plt.plot(t, data1['somc'], 'b-', t, data2['somc'], 'r-', t, data3['somc'], 'g-', t, data4['somc'], 'm-', t, data5['somc'], 'c-')
 plt.xlim([0, xmax])
 #plt.ylim([0, 13])
 plt.yticks([0, 10, 20 ,30])
@@ -91,17 +92,17 @@ plt.ylabel('SOMN (gN m$^{-2}$)')
 plt.text(lx, ly, '(d)', transform=ax4.transAxes)
 
 ax5=plt.subplot(6, 1, 5)
-plt.semilogy(t, data1['nh4a'], 'b-', t, data2['nh4a'], 'r-', t, data3['nh4a'], 'g-', t, data4['nh4a'], 'm-')
+plt.semilogy(t, data1['nh4a'], 'b-', t, data2['nh4a'], 'r-', t, data3['nh4a'], 'g-', t, data4['nh4a'], 'm-', t, data5['nh4a'], 'c-')
 plt.xlim([0, xmax])
-plt.ylim([1e-5, 1])
-plt.yticks([1e-5, 1e-3, 1e-1])
+plt.ylim([1e-6, 10])
+plt.yticks([1e-6, 1e-3, 1e-0])
 plt.ylabel('NH${_4}^+$ (gN m$^{-2}$)')
 plt.text(lx, ly, '(e)', transform=ax5.transAxes)
 
 ax6=plt.subplot(6, 1, 6)
-plt.semilogy(t, data1['no3a'], 'b-', t, data2['no3a'], 'r-', t, data3['no3a'], 'g-', t, data4['no3a'], 'm-')
-plt.ylim([1e-7, 1])
-plt.yticks([1e-7, 1e-5, 1e-3, 1e-1])
+plt.semilogy(t, data1['no3a'], 'b-', t, data2['no3a'], 'r-', t, data3['no3a'], 'g-', t, data4['no3a'], 'm-', t, data5['no3a'], 'c-')
+plt.ylim([1e-6, 10])
+plt.yticks([1e-6, 1e-3, 1e-0])
 plt.xlim([0, xmax])
 plt.ylabel('NO${_3}^-$ (gN m$^{-2}$)')
 plt.xlabel('Elapsed time (y)')
@@ -111,48 +112,14 @@ xticklabels = ax1.get_xticklabels() + ax2.get_xticklabels() + ax3.get_xticklabel
 plt.setp(xticklabels, visible=False)
 
 ax4a = plt.axes([0.19, 0.40, 0.27, 0.09]) 
-plt.plot(t, data1['somc'], 'b-', t, data2['somc'], 'r-', t, data3['somc'], 'g-', t, data4['somc'], 'm-')
+plt.plot(t, data1['somc'], 'b-', t, data2['somc'], 'r-', t, data3['somc'], 'g-', t, data4['somc'], 'm-', t, data5['somc'], 'c-')
 plt.xlim([0, ny1])
 plt.yticks([0, 10, 20 ,30])
 plt.xticks([0, 100, 200])
 
-"""
-xmina = 9
-xmaxa = 10
-
-ax5a = plt.axes([0.18, 0.24, 0.20, 0.09]) 
-plt.semilogy(t, data1['nh4a'], 'b-', t, data2['nh4a'], 'r-', t, data3['nh4a'], 'g-', t, data4['nh4a'], 'm-')
-plt.xlim([xmina, xmaxa])
-plt.ylim([1e-9, 10])
-plt.yticks([1e-9, 1e-6, 1e-3, 1])
-plt.setp(ax5a.get_xticklabels(), visible=False)
-
-ax6a = plt.axes([0.18, 0.11, 0.20, 0.09]) 
-plt.semilogy(t, data1['no3a'], 'b-', t, data2['no3a'], 'r-', t, data3['no3a'], 'g-', t, data4['no3a'], 'm-')
-plt.xlim([xmina, xmaxa])
-plt.ylim([1e-10, 10])
-plt.yticks([1e-9, 1e-6, 1e-3, 1])
-plt.setp(ax6a.get_xticklabels(), visible=False)
-
-xminb = 79
-xmaxb = 80
-
-ax5b = plt.axes([0.68, 0.24, 0.20, 0.09]) 
-plt.semilogy(t, data1['nh4a'], 'b-', t, data2['nh4a'], 'r-', t, data3['nh4a'], 'g-', t, data4['nh4a'], 'm-')
-plt.xlim([xminb, xmaxb])
-plt.ylim([1e-9, 10])
-plt.yticks([1e-9, 1e-6, 1e-3, 1])
-plt.setp(ax5b.get_xticklabels(), visible=False)
-
-ax6b = plt.axes([0.68, 0.11, 0.20, 0.09]) 
-plt.semilogy(t, data1['no3a'], 'b-', t, data2['no3a'], 'r-', t, data3['no3a'], 'g-', t, data4['no3a'], 'm-')
-plt.xlim([xminb, xmaxb])
-plt.ylim([1e-9, 10])
-plt.yticks([1e-9, 1e-6, 1e-3, 1])
-plt.setp(ax6b.get_xticklabels(), visible=False)
-"""
 
 fig = plt.gcf()
-fig.set_size_inches(12, 12)
+fig.set_size_inches(16, 12)
 plt.savefig('cax300y.pdf')
+plt.savefig('cax300y.png')
 #plt.show()
