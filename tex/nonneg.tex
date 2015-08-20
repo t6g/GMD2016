@@ -876,7 +876,7 @@ all of the reactions are accumulated. It involves not only the rate terms for
 the residual but also the derivative terms for the Jacobian. The complexity
 explodes when more species needs to be downregulated (e.g., \chem{NH_4^+},
 \chem{NO_3^-}, and organic \chem{N}) and there are transformation processes
-among these species. This is shown in Appendix \ref{sec:demandbasedcompetition}, which describes the
+among these species. This is shown in Appendix \ref{sec:drimpl}, which describes the
 implementation of downregulation of \chem{NH_4^+} and \chem{NO_3^-} with a
 nitrification reaction from \chem{NH_4^+} to \chem{NO_3^-}. Basically, it
 becomes challenging to separate, track, and downregulate consumption and
@@ -2452,6 +2452,7 @@ demand $R_{n,tot}$ is met with available \chem{NO_3^-}. Otherwise, available
 denitrification demands in proportion to their rates. 
 
 \section{Downregulation of consumption as a function of rates}    %% Appendix A
+\label{sec:drimpl}
 The contribution of $n$ reactions to the rate component in the residual and
 Jacobian for species $i$ are
 \begin{equation}
