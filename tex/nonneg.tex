@@ -143,7 +143,7 @@ Plan(http://energy.gov/downloads/doe-public-access-plan).
 Reactive transport codes (e.g., PFLOTRAN) are increasingly used to improve the
 representation of biogeochemical processes in terrestrial ecosystem models
 (e.g., the Community Land Model, CLM). We have developed coupled
-CLM-PFLOTRAN modeling framework to utilize the reacive transport code
+CLM-PFLOTRAN modeling framework to utilize the reactive transport code
 PFLOTRAN for flexible and improved representation of biogeochemical
 processes in CLM.  
 However, as CLM and PFLOTRAN use explicit and
@@ -224,7 +224,7 @@ carbon and nitrogen cycle models with many speciation and microbial reactions
 \citep{Maggi2008,Gu2010,Riley2014}. Coupling a well-developed reactive
 transport code \citep[e.g.,][]{Steefel2014} with CLM facilitates testing
 and implementation of increasingly mechanistic biogeochemical models in
-terrestrial ecosystem models by taking advantages of the developements in
+terrestrial ecosystem models by taking advantages of the developments in
 reactive transport modeling.
 
 %PHREEQC was coupled with DayCent to describe the dynamics of plant production,
@@ -242,7 +242,7 @@ with CLM as an essential aspect of these land surface models is the ability to s
 competition for nutrients (e.g., mineral nitrogen, phosphorus, etc.) among
 plants and microbes. For example, the CLM-CN decomposition cascade
 downregulates the demand based on the available nitrogen (\chem{N})
-\citep{Oleson2013,Thornton2005}. Specifically, marching from time step $k$ to
+\citep{Oleson2013,Thornton2005,Tang2015}. Specifically, marching from time step $k$ to
 $k+1$ with a supply rate $S^k$ and consumption rate $D^k$ using the forward
 difference, $[\chem{N}]^{k+1} = [\chem{N}]^k + (S^k - D^k) \Delta t$. ([] is
 used to denote concentration.) CLM replaces $D^k$ with $\min(D^k,
@@ -341,7 +341,7 @@ will be relevant for a wide range of applications.
 %\subsection{CLM biogeochemistry}
 The terrestrial ecosystem models generally include biogeochemical reactions for
 carbon and nitrogen cycles, in particular, the organic matter decomposition,
-nitrification, dentrification and methane production and oxidation. The
+nitrification, denitrification and methane production and oxidation. The
 kinetics are usually described by a first-order rate modified by response
 functions for environmental variables (temperature, moisture, pH, etc.)
 \citep{Bonan2012,Boyer2006,Schmidt2011}.  In this work, we use the CLM-CN
@@ -599,6 +599,7 @@ PFLOTRAN limits the update to
 \delta \ln(\mathbf{c}^{k+1,p}))=\text{sign}[\delta
 \ln(\mathbf{c}^{k+1,p})]\min[\text{abs}(\delta \ln
 \mathbf{c}^{k+1,p}),\delta_\text{ln,max}]
+\label{eq:lnlimit}
 \end{equation}
 with a default $\delta_\text{ln,max}$ = 5. While SU limits the positive update
 to avoid negative concentration, LT constrains both positive and negative
@@ -849,11 +850,17 @@ downregulated to
 R_d=\text{min}\left[R_{dp}, R_s + \frac{[\chem{N}]}{\Delta t}\right].	
 \label{eq:dr}
 \end{equation}
-CLM4.5 ignores the supply term $R_s$  \citep{Oleson2013}.  
+As CLM4.5 ignores the supply term $R_s$ \citep{Oleson2013}, \citet{Tang2015}
+suggest to include it. For a reaction that is limited by multiple substrates
+(e.g., nitrogen and phosphorus), they use the minimum of the downregulated
+rates. Like the demand based competition in CLM, this is simple to implement,
+and prevents negative concentration when the explicit forward difference method
+is used.  
 %\begin{equation}
 %R_d=\text{min}\left[R_{dp}, \frac{[\chem{N}]}{\Delta t}\right]	
 %\label{eq:drnop}
 %\end{equation}
+It is different for the backward Euler method. 
 Applying to $dc/dt=-1$, $c^{k+1}=c^k-\Delta t$ for $c^k \geq \Delta t$; for
 $c^k < \Delta t$, $c^{k+1} = c^k/2$: the concentration decreases by half in a
 time step. This is similar to SU with $\alpha=0.5$, which is suggested by
@@ -874,7 +881,9 @@ implementation of downregulation of \chem{NH_4^+} and \chem{NO_3^-} with a
 nitrification reaction from \chem{NH_4^+} to \chem{NO_3^-}. Basically, it
 becomes challenging to separate, track, and downregulate consumption and
 production rates for an indefinite number of species, and calculation of the
-Jacobian becomes convoluted.
+Jacobian becomes convoluted. Clearly, this work diffs from \citet{Tang2015} in
+that we use implicit time stepping while they use explicit
+time stepping.
 
 %\input{test}
 
@@ -982,7 +991,7 @@ plant \chem{NH_4^+} uptake by Eq. (\ref{eq:ex1}) ensures $[\chem{NH_4^+}]^{k+1}
 %10$^{-7}$ M s$^{-1}$, without down regulation, the solution would be 0), and
 %9.98006 $\times$10$^{-6}$ and -1.002 $\times$ 10$^{-3}$ for $\Delta$ T=0.002
 %(without down regulation, the solution would be -0.001). 
-Solving Eq. (\ref{eq:ex1}) using the Newton-Rapshon method from time step $k$
+Solving Eq. (\ref{eq:ex1}) using the Newton-Raphson method from time step $k$
 to $k+1$, the update is 
 
 \begin{equation}
@@ -1464,7 +1473,7 @@ suggest that SU takes about 30$\sim$80\% more time than CLM, and LT costs about
 two to four times that of CLM (Table \ref{tab:computingtime}). For LT with DC, the
 computing time increases with decreasing $k_\text{m}$. This is expected because
 a smaller $k_\text{m}$ may require smaller time step size to march through
-steeper transition. The computing time appears not to be infeasibly high. The
+steeper transition. The computing time appears not to be infeasible. The
 comparison between DC and DR is mixed. This is because DC has more complicated
 substrate limiting representation that requires smaller time step sizes to march
 through steep transitions, while DR has simpler substrate limiting
@@ -1506,7 +1515,7 @@ calculations. From day 295 to 300, accumulation during both night and day are
 decreased. Overall, \chem{NH_4^+} and \chem{NO_3^-} accumulation appear to be
 numerically ``inhibited'' when the system becomes increasingly nitrogen limiting
 and when SU is used. As a result, the mass balance error shots up during the
-nitrigen limiting periods (Fig. \ref{fig:mbe}). 
+nitrogen limiting periods (Fig. \ref{fig:mbe}). 
 
 Finally checking nitrogen dynamics between day 250 and 254, these ``inhibited''
 intervals in Fig. (\ref{fig:cax1y}) coincide with the concentration valleys
@@ -1537,7 +1546,7 @@ Resetting the concentrations of these diagnostic species to low values in each
 time step does magnify the issue. When these optional species are optioned out
 by excluding them from the species list in the input file, the chance for the
 issue to occur is very much decreased. Nevertheless, as long as low concentrations
-are produced, which is expected as competition for substrates or nutrientsthere
+are produced, which is expected as competition for substrates or nutrients there
 is common, there is a possibility for the issue to emerge even with
 realistic half saturation values.  
 %With smaller STOL and $\lambda_\text{min}$, the low concentration is driven
@@ -1585,6 +1594,7 @@ helps reducing the nonphysical solution negativity for SU.
 %run1s12 stol = 1e-12 fail at 7.80828 y 236 NGASmin
 %run2s12 stol = 1e-12 fail at 2.38362 y 240 TIN
 %run3s12 stol = 1e-12 fail at 2.43836 y 240 TIN
+SU limits the update to prevent negative concentration (Eq. \ref{eq:lambda}), and LT  
    
 \subsubsection{Stability and robustness}
 PFLOTRAN may stop CLM-PFLOTRAN run due to  1) too small a scaling factor for SU
@@ -1634,7 +1644,7 @@ convergence or cause numerical errors. Increasing the reset value from
 $10^{-10}$ can mitigate the issue. However, as long as there is a very low
 concentration for any species, there is a possibility for this issue to occur.  
 
-Instead of aborting the run when the scaling factor is less than the mininum
+Instead of aborting the run when the scaling factor is less than the minimum
 allowable value $\lambda_{min}$, an alternative is to consider the iteration
 diverges and return to the time stepping subroutine to cut time step size to
 increase accuracy. This mitigates the stability and accuracy challenge at the
@@ -1762,7 +1772,7 @@ interface. F. Y. proposed the nitrification and denitrification reactions and
 rate formulae. G. T., F. Y., and X. X. implemented the CLM
 biogeochemistry in PFLOTRAN under guidance of G. H., P. L., S. P., and P.T.
 G.T. prepared the manuscript with contributions from all co-authors. 
-G. T., F. Y., G. B., and G.H. contribued equally to the work.  
+G. T., F. Y., G. B., and G.H. contributed equally to the work.  
 
 \begin{acknowledgements}
 Thanks to Nathaniel O. Collier at ORNL for many discussion that contributed significantly to this work.
@@ -1967,7 +1977,7 @@ update in each iteration is used to enforce nonnegativity.}
 
 \begin{table}[t]
 \caption{Iterations in solving $dc/dt=-R_ac/(c+k_m)$ using backward Euler method
-and Newton Raphson method for one time step $R_a\Delta$t = 0.001 with
+and Newton-Raphson method for one time step $R_a\Delta$t = 0.001 with
 initial $c=10^{-3}$ and $k_m=10^{-6}$}
 \label{table1}
 \begin{tabular}{rrrrrrr}
@@ -1991,7 +2001,7 @@ Iteration& c &	c/($k_m$+c)& s/(c+$k_m$)$^2$ & Residual	& Jacobian & $\delta$ \\
 
 \begin{table}[t]
 \caption{Iterations in solving $dc/dt=-R_ac/(c+k_m)$ using backward Euler method
-and Newton Raphson method for one time step $R_a\Delta$t = 0.002 with
+and Newton-Raphson method for one time step $R_a\Delta$t = 0.002 with
 initial $c=10^{-3}$ and $k_m=10^{-6}$ (without scaling back $\delta$)}
 \label{table2}
 \begin{tabular}{rrrrrrr}
@@ -2009,7 +2019,7 @@ Iteration& c &	c/($k_m$+c)& s/(c+$k_m$)$^2$ & Residual	& Jacobian & $\delta$ \\
 
 \begin{table}[t]
 \caption{Iterations in solving $dc/dt=-R_ac/(c+k_m)$ using backward Euler method
-and Newton Raphson method for one time step $R_a\Delta$t = 0.002 with
+and Newton-Raphson method for one time step $R_a\Delta$t = 0.002 with
 initial $c=10^{-3}$, $k_m=10^{-6}$, and $\alpha$ = 0.9999 for scaling back $\delta$}
 \label{table3}
 \begin{tabular}{rrrrrrrr}
@@ -2031,7 +2041,7 @@ Iteration& c &	c/($k_m$+c)& s/(c+$k_m$)$^2$ & Residual	& Jacobian & $\delta$ & $
 
 \begin{table}[t]
 \caption{Iterations in solving $dc/dt=-R_ac/(c+k_m)$ using backward Euler method
-and Newton Raphson method for one time step $R_a\Delta$t = 0.002 with
+and Newton-Raphson method for one time step $R_a\Delta$t = 0.002 with
 initial $c=10^{-3}$ and $k_m=10^{-6}$ and with log transformation}
 \label{table4}
 \begin{tabular}{rrrrrrrr}
