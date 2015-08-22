@@ -109,7 +109,7 @@ Representation}
 
 \runningtitle{Addressing Nonphysical Solution Negativity in CLM-PFLOTRAN Biogeochemistry}
 
-\runningauthor{TEXT}
+\runningauthor{Tang et al. 2015}
 
 \correspondence{Peter E. Thornton (thorntonpe@ornl.gov)}
 
@@ -142,11 +142,8 @@ Plan(http://energy.gov/downloads/doe-public-access-plan).
 %\input{abstract}
 Reactive transport codes (e.g., PFLOTRAN) are increasingly used to improve the
 representation of biogeochemical processes in terrestrial ecosystem models
-(e.g., the Community Land Model, CLM). We have developed coupled
-CLM-PFLOTRAN modeling framework to utilize the reactive transport code
-PFLOTRAN for flexible and improved representation of biogeochemical
-processes in CLM.  
-However, as CLM and PFLOTRAN use explicit and
+(e.g., the Community Land Model, CLM). 
+As CLM and PFLOTRAN use explicit and
 implicit time stepping, implementation of CLM biogeochemical reactions in
 PFLOTRAN can result in negative primary species concentrations, which is not
 physically meaningful. The objective of this work is to
@@ -164,13 +161,13 @@ because of too small an update, SU can introduce excessive numerical error. LT
 involves multiplication of the Jacobian matrix by the concentration vector,
 which increases the condition number, decreases the time step size, and
 increases the computational cost. Neither SU nor LT prevents zero concentration.
-When the concentration is close to machine precision or 0, a small positive
+When the concentration is close to machine precision or zero, a small positive
 update stops all reactions for SU, and LT can fail due to a singular Jacobian
 matrix. The consumption rate has to be downregulated such that the solution to
 the mathematical representation is positive. A first-order rate downregulates
 consumption and is nonnegative, and adding a residual concentration makes it
-positive. For zero-order rate or when the reaction rate is not a function of a
-reactant, representing the availability limitation of each reactant with a
+positive. For zero-order rate (the reaction rate is not a function of a
+reactant), representing the availability limitation of each reactant with a
 Monod substrate limiting function provides a smooth transition between a
 zero-order rate when the reactant is abundant and first-order rate when the
 reactant becomes limiting. When the half saturation is small, marching through
@@ -203,7 +200,7 @@ climate change, and interdependent water, carbon and nitrogen cycles in
 terrestrial ecosystems are very sensitive to climate changes \citep{IPCC2013}.
 CLM4.5 incorporates CLM-CN and CENTURY, and adds methane models for carbon and
 nitrogen cycles \citep{Oleson2013}. In addition to $\sim$ 250 soil biogeochemical
-models developed in the past 80 years \citep{Manzoni2009}, increasingly
+models developed in the past $\sim$ 80 years \citep{Manzoni2009}, increasingly
 mechanistic models continue to be developed to increase the fidelity of
 process representation for improving climate prediction
 \citep[e.g.,][]{Wang2012,Riley2014}. 
@@ -221,7 +218,7 @@ splitting with the Crank-Nicolson scheme for diffusion and a forward-in-time
 upstream discretization for advection. In contrast, a reactive transport code,
 TOUGH-REACT, is used to develop multi-phase (gas, aqueous, solid) mechanistic
 carbon and nitrogen cycle models with many speciation and microbial reactions
-\citep{Maggi2008,Gu2010,Riley2014}. Coupling a well-developed reactive
+\citep{Maggi2008,Gu2010,Riley2014}. Coupling a reactive
 transport code \citep[e.g.,][]{Steefel2014} with CLM facilitates testing
 and implementation of increasingly mechanistic biogeochemical models in
 terrestrial ecosystem models by taking advantages of the developments in
@@ -242,28 +239,25 @@ with CLM as an essential aspect of these land surface models is the ability to s
 competition for nutrients (e.g., mineral nitrogen, phosphorus, etc.) among
 plants and microbes. For example, the CLM-CN decomposition cascade
 downregulates the demand based on the available nitrogen (\chem{N})
-\citep{Oleson2013,Thornton2005,Tang2015}. Specifically, marching from time step $k$ to
+\citep{Oleson2013,Thornton2005}. Specifically, marching from time step $k$ to
 $k+1$ with a supply rate $S^k$ and consumption rate $D^k$ using the forward
 difference, $[\chem{N}]^{k+1} = [\chem{N}]^k + (S^k - D^k) \Delta t$. ([] is
 used to denote concentration.) CLM replaces $D^k$ with $\min(D^k,
 [\chem{N}]^k/\Delta t)$ so that $[\chem{N}]^{k+1} \geq S^k \Delta t \geq 0$. As
-a result, [\chem{N}] is nonnegative in CLM.
+a result, [\chem{N}] is nonnegative in CLM \citep{Tang2015}.
  
 Geochemical codes generally use implicit time stepping such as the backward
 Euler method, $([\chem{N}]^{k+1} - [\chem{N}]^k)/\Delta t = S^{k+1} - D^{k+1}$.
 Solving this nonlinear equation with the Newton-Raphson method to iterate from
-$p$ to $p+1$,   
-\begin{equation}
-[\chem{N}]^{k+1,p+1} = [\chem{N}]^{k+1,p} -
-\frac{\frac{[\chem{N}]^{k+1,p}-[\chem{N}]^k}{\Delta t} - S^{k+1,p} + D^{k+1,p}}
-{\frac{1}{\Delta t}  - \frac{\partial S^{k+1,p}}{\partial [\chem{N}]^{k+1,p}} +
-\frac{\partial D^{k+1,p}}{\partial [\chem{N}]^{k+1,p}}}.
-\label{eq:demo}
-\end{equation}
+$p$ to $p+1$, the residual $f = ([\chem{N}]^{k+1,p}-[\chem{N}]^k)/{\Delta t} -
+S^{k+1,p} + D^{k+1,p}$, the derivative $f'={1}/{\Delta t}  - {\partial
+S^{k+1,p}}/{\partial [\chem{N}]^{k+1,p}} + {\partial D^{k+1,p}}/{\partial
+[\chem{N}]^{k+1,p}}$, the update $\delta = f/f'$, and $[\chem{N}]^{k+1,p+1} =
+[\chem{N}]^{k+1,p} - \delta$.  
 Depending on $[\chem{N}]^k$, $\Delta t$, $S^{k+1,p}$, $D^{k+1,p}$, and the
 derivatives, $[\chem{N}]^{k+1,p+1}$ can be negative, which is not physical, and
 can cause numerical instability and errors \citep{Shampine2005}. With
-instability (divergence), the simulation may abort before reaching target
+instability, the simulation may abort before reaching target
 simulation duration. Excess numerical error may jeopardize the improvements in
 process representation. Avoiding numerical instability and error may result in
 small time step sizes or high computational cost. Therefore, it is necessary to
@@ -293,7 +287,7 @@ equations into linear equations. However, LT converts linear advection and
 diffusion equations into nonlinear equations, which may increase the
 computational cost \citep{Hammond2003}. The other approach scales back the
 update in each of the Newton-Raphson iteration (SU) to enforce nonnegativity
-\citep{Bethke2007,Hammond2003}. Both methods are available in PFLOTRAN \citep{Lichtner2015} and
+\citep{Bethke2007,Hammond2003}. Both methods are available in PFLOTRAN \citep{Lichtner2015} (with SU as the default) and
 some other geochemical codes (e.g., Geochemist's Workbench,
 \citeauthor{Bethke2007}, \citeyear{Bethke2007}). However, to our knowledge, the
 implications of these approaches have not been thoroughly examined,
@@ -315,10 +309,11 @@ plant nitrogen uptake reactions in CLM-PFLOTRAN and test the implementation at
 arctic, temperate, and tropical sites. In addition to SU and LT, %that are
 %available in PFLOTRAN, 
 we examine ways to downregulate consumption rate to account
-for the limitation of reactant availability on reaction rate. While this work
-focuses on addressing the nonphysical solution negativity for biogeochemistry, detailed
-comparison of the results of CLM and CLM-PFLOTRAN biogeochemistry
-representation and comprehensive CLM-PFLOTRAN coupling in heat transfer
+for the limitation of reactant availability on reaction rate. This work
+focuses on addressing the nonphysical solution negativity for biogeochemistry, %detailed
+%comparison of the results of CLM and CLM-PFLOTRAN biogeochemistry
+%representation and
+ comprehensive CLM-PFLOTRAN coupling in heat transfer
 (including freeze and thaw), hydrology,  and biogeochemistry will be presented
 in future publications.  While we use CLM-PFLOTRAN to implement and test simple
 carbon and nitrogen reactions at a few sites, we hope that what we develop here
@@ -355,8 +350,9 @@ and rate formulae are detailed in Appendix \ref{sec:clmbgc}.
 In CLM-PFLOTRAN, CLM instructs PFLOTRAN to solve the partial differential
 equations for energy (including freezing and thawing), water flow, and reaction
 and transport in the surface and subsurface. This work focuses on the
-biogeochemistry (energy, hydrology and overall coupling will be described in
-future publications). Specifically, we focus on addressing the nonphysical
+biogeochemistry. %(energy, hydrology and overall coupling will be described in
+%future publications). 
+Specifically, we focus on addressing the nonphysical
 solution negativity for the geochemical reactions, with CLM solving the energy and water
 flow equations and handling the solute transport (mixing, advection, diffusion,
 and leaching).
@@ -373,8 +369,8 @@ to CLM.
 
 PFLOTRAN does not track individual reaction rates such as total nitrogen
 mineralization rate. We add optional hypothetical species (diagnostic variables), e.g.,
-\chem{PlantN}, \chem{N_2Od}, and \chem{DeniN}, to track  \chem{NO_3^-} uptake by
-plants as in reaction (\ref{rxn:plantntake}); \chem{N_2O} production from
+\chem{PlantA}, \chem{PlantN}, \chem{N_2Od}, and \chem{DeniN}, to track  \chem{NO_3^-} uptake by
+plants as in reactions (\ref{rxn:plantatake},\ref{rxn:plantntake}); \chem{N_2O} production from
 nitrification reaction (\ref{rxn:nitr2n2o}) due to net mineralization (Eq.
 \ref{eq:nitr2n2odecomp}); and denitrification (\ref{rxn:deni}).
 At the end of each time step, CLM uses the change of these
@@ -382,7 +378,7 @@ concentrations to calculate the specific rates. To simplify the calculations, we
 reset these concentrations to 10$^{-10}$ at the beginning of each time step
 instead of storing the values of the previous time step. 
 
-The reactions and rates such as those described in Appendix \ref{sec:clmbgc}
+The reactions and rates in Appendix \ref{sec:clmbgc}
 are implemented using the ``reaction sandbox'' concept in PFLOTRAN
 \citep{Lichtner2015}. For each reaction, we specify a rate and a derivative of
 the rate with respect to any components in the rate formula, given
@@ -396,28 +392,30 @@ Ignoring equilibrium reactions and transport for simplicity of discussion in
 this work, PFLOTRAN solves the ordinary differential equation,
 \begin{equation}
 \label{eq:cde}
-\frac{d \mathbf{c}}{d t} = \mathbf{R}(\mathbf{c}),
+{d \mathbf{c}}/{d t} = \mathbf{R}(\mathbf{c}),
 \end{equation}
 with $\mathbf{c}$ as the concentration vector and $\mathbf{R}$ as the kinetic reaction rate. 
 Discretizing Eq. (\ref{eq:cde}) in time using the backward Euler method, 
 \begin{equation}
-\frac{\mathbf{c}^{k+1} - \mathbf{c}^k}{\Delta t} = \mathbf{R}(\mathbf{c}^{k+1}).
+{(\mathbf{c}^{k+1} - \mathbf{c}^k)}/{\Delta t} = \mathbf{R}(\mathbf{c}^{k+1}).
 \label{eq:cdedis}
 \end{equation}
-Solving the equation  using the Newton-Raphson method,
+Solving the equation  using the Newton-Raphson method, we denote the residual as
 \begin{equation}
 \mathbf{f}(\mathbf{c}^{k+1,p} )=(\mathbf{c}^{k+1,p}-\mathbf{c}^k)/\Delta t-\mathbf{R}(\mathbf{c}^{k+1,p}),
 \label{eq:residual}
 \end{equation}
+and Jacobian as
 \begin{equation}
 \mathbf{J} = \frac{\partial \mathbf{f}(\mathbf{c}^{k+1,p})}{\partial \mathbf{c}^{k+1,p}},
 \label{eq:jacobian}
 \end{equation}
+the update is
 \begin{equation}
 \delta \mathbf{c}^{k+1,p}= \mathbf{J}^{-1} \mathbf{f} (\mathbf{c}^{k+1,p}),
 \label{eq:axb}
 \end{equation}
-and
+and the iteration equation is
 \begin{equation}
 \mathbf{c}^{k+1,p+1}=\mathbf{c}^{k+1,p}-\delta \mathbf{c}^{k+1,p}.
 \label{eq:update}
@@ -433,28 +431,31 @@ $\mathbf{f}(\mathbf{c}^{k+1,p} )$ or the update $\delta
 \frac{\|\mathbf{f}(\mathbf{c}^{k+1,p} )\|_2}{\|\mathbf{f}(\mathbf{c}^{k+1,0} )\|_2} < \text{RTOL},
 \label{eq:rtol}
 \end{equation}
-\begin{equation}
-\frac{\|\delta \mathbf{c}^{k+1,p} \|_2}{\|\mathbf{c}^{k+1,p} \|_2} < \text{STOL},
-\label{eq:stol}
-\end{equation}
-\begin{equation}
-\|\mathbf{f}(\mathbf{c}^{k+1,p} )\|_\infty < \text{ITOL\_RES},
-\label{eq:itol}
-\end{equation}
 or
 \begin{equation}
-\|\delta \mathbf{c}^{k+1,p} \|_\infty  <  \text{ITOL\_UPDATE}.
+\frac{\|\delta \mathbf{c}^{k+1,p} \|_2}{\|\mathbf{c}^{k+1,p} \|_2} < \text{STOL}.
+\label{eq:stol}
 \end{equation}
+%\begin{equation}
+%\|\mathbf{f}(\mathbf{c}^{k+1,p} )\|_\infty < \text{ITOL\_RES},
+%\label{eq:itol}
+%\end{equation}
+%or
+%\begin{equation}
+%\|\delta \mathbf{c}^{k+1,p} \|_\infty  <  \text{ITOL\_UPDATE}.
+%\end{equation}
 
 If none of these tolerances are met in MAXIT iterations or MAXF function
 evaluations, the iteration is considered to diverge, and PFLOTRAN decreases the
 time step size for MAX\_CUT times. The default values in PFLOTRAN are ATOL =
-10$^{-50}$, RTOL = 10$^{-8}$, STOL = 10$^{-8}$,  ITOL\_RES = 10$^{-50}$,
-ITOL\_UPDATE = 10$^{-50}$, MAXIT = 50, MAXF = 10$^4$, and MAX\_CUT = 16.
+10$^{-50}$, RTOL = 10$^{-8}$, STOL = 10$^{-8}$,  %ITOL\_RES = 10$^{-50}$,
+%ITOL\_UPDATE = 10$^{-50}$, 
+MAXIT = 50, MAXF = 10$^4$, and MAX\_CUT = 16.
 
 Unlike the explicit time stepping in CLM for biogeochemistry where only the
-reaction rates need to be calculated, the implicit time stepping used in
-PFLOTRAN and other geochemical codes requires the derivatives.  While PFLOTRAN
+reaction rates need to be calculated, the implicit time stepping %used in
+%PFLOTRAN and other geochemical codes 
+requires the derivatives.  While PFLOTRAN
 provides the option to calculate the derivatives numerically, 
 analytical derivative calculation is generally preferred \citep[e.g.,][]{Xu2006}
 because numerical calculation for accurate Jacobian approximation is a
@@ -473,26 +474,14 @@ modification is necessary only when different rate formulae, or response
 functions are introduced.
 In contrast, the number of pools and reactions
 are traditionally hard-coded in CLM. Consequently, any change of the pools,
-reactions, or rage formula requires source code modification. Therefore, this
+reactions, or rate formula may require source code modification. Therefore, this
 new approach facilitates implementation of increasingly mechanistic reactions
-and tests of various representations with reduced code modifications.
-
-%Like Eq. (\ref{eq:demo}), one of the basic challenges is that Eq. (\ref{eq:update}) is not
-%garanteed to be positive, which can be worsen by complicate rate formula
-%(e.g., Eq. \ref{eq:nitr2n2odecomp}). %The derivative involves not only all of
-%the seven carbon
-%pools (Lit1C, Lit2C, Lit3C, SOM1, SOM2, SOM3, and SOM4), but also the
-%three litter \chem{N} pools (Lit1N, Lit2N, and Lit3N) through the
-%variable CN ratios. \chem{NH_4} and \chem{NO_3^-} are also involved in the
-%limitation of litter decomposition, and overall nitrification reaction,
-%therefore, need to be represented. In addition, there is a discontinuity. ,
-%which has potential to cause
-%numerical challenges during iterations. 
+and tests of various representations with less code modifications.
 
 %\input{approach}
 
 \section{Approaches for addressing the nonphysical solution negativity}
-Like Eq. (\ref{eq:demo}), one of the basic challenges for using a numerical geochemical formulation
+One of the basic challenges for using a numerical geochemical formulation
 for CLM is that the updated solution in Eq. (\ref{eq:update}) is not guaranteed to be nonnegative. 
 Both SU (scaling back the update during each iteration) and LT (log
 transformation) are available in PFLOTRAN  to enforce nonnegativity. 
@@ -509,7 +498,7 @@ $\lambda$ \citep{Bethke2007,Hammond2003} such that
 \end{equation}
 where
 \begin{equation}
-\lambda = \alpha \min\left[1, \frac{\mathbf{c}^{k+1,p}(i)}{\delta \mathbf{c}^{k+1,p} (i)}\right]
+\lambda = \alpha \min\left[1, {\mathbf{c}^{k+1,p}(i)}/{\delta \mathbf{c}^{k+1,p} (i)}\right]
 \label{eq:alpha}
 \end{equation}
 for positive $\delta \mathbf{c}^{k+1,p} (i)$ and $i=1$ to $m$, with $m$ as the
@@ -518,15 +507,15 @@ concentration of the species that is going negative decreases by ($1-\alpha$)
 times in each iteration instead. This can be shown by solving the zero-order
 uptake problem $dc/dt=-1$: $c^{k+1}=c^k-\Delta t$ when $\Delta t \geq c^k$;
 otherwise, $\lambda=\alpha c^k/\Delta t$, and $c^{k+1}=(1-\alpha)c^k$. With a
-default $\alpha$ = 0.99 in PFLOTRAN, each iteration reduces the concentration
+default $\alpha$ = 0.99 in PFLOTRAN, each iteration decreases the concentration
 by 100 times. With multiple iterations, the concentration can approach machine
-precision or 0.
+precision or zero (we use zero for concentration below machine precision in this work).
 
 %The choice of $\alpha$ and the value of $\lambda$ are expected to influence the
 %convergence process and may introduce numerical error under certain
 %conditions. For example, 
-If $\mathbf{c}^{k+1,p}(i)$ is 0 (or below the machine
-precision), and $\delta \mathbf{c}^{k+1,p} (i) > 0$, then $\lambda = 0$, and the
+If $\mathbf{c}^{k+1,p}(i)$ is 0,
+and $\delta \mathbf{c}^{k+1,p} (i) > 0$, then $\lambda = 0$, and the
 update is limited to 0. Even if $\lambda = 0$ occurs in only one grid cell for only one
 species, the update for all of the species and all of the grid cells are
 constrained to 0, and the residual will not be decreased to
@@ -550,11 +539,10 @@ uptake problem $dc/dt=-1$ an independent zero order production $de/dt=1$: when
 $\Delta t \geq c^k$, $\lambda =\alpha c^k/\Delta t$, $c^{k+1}=(1-\alpha)c^k$,
 $e^{k+1}=e^k+\alpha c^k$ rather than $e^{k+1}=e^k+\Delta t$. If $c^k=0$, SU
 numerically stops the independent production reaction. 
-
 To avoid excessive numerical error, PFLOTRAN reports an error and exits when
-$\lambda < \lambda _\text{min}$, with a default $\lambda _\text{min}=10^{-10}$.
-This translates the accuracy issue into a stability issue. It is necessary to
-investigate SU to resolve both the accuracy and the stability issue. 
+$\lambda < \lambda _\text{min}$, with default $\lambda _\text{min}=10^{-10}$,
+translating the accuracy issue into a stability issue. It is necessary to
+investigate SU to resolve accuracy and stability issues. 
 
 % consider revision after Glenn changes this to continuation with time step cut
 
@@ -566,7 +554,7 @@ need to use variable switching. It is also used to enforce positivity
 \citep{Bethke2007,Hammond2003,Parkhurst1999}. Instead of solving Eq.
 (\ref{eq:residual}) for $\mathbf{c}^{k+1}$ using Eqs.
 (\ref{eq:jacobian},\ref{eq:axb},\ref{eq:update}), LT solves for
-($\ln\mathbf{c}^{k+1}$) from
+($\ln\mathbf{c}^{k+1}$) with
 \begin{equation}
 \mathbf{J}_{\ln}(i,j)=\frac{\partial \mathbf{f}(i)}{\partial
 \ln(\mathbf{c}(j))} = \mathbf{c}(j) \frac{\partial
@@ -590,55 +578,55 @@ the condition number of the Jacobian matrix may increase by orders of
 magnitude, which may constrain the time step size to be substantially reduced,
 compared to the case without LT.  Secondly, the small
 eigenvalues may result in large $\delta \text{ln} \mathbf{c}^{k+1,p}$, which
-may cause overshooting to an unrealistically large concentration (positive update), or
-essentially 0 concentration (negative update), or even overflow in the
+may cause overshooting to an unrealistically large concentration (negative update), or
+essentially 0 concentration (positive update), or even overflow in the
 exponential function in Eq. (\ref{eq:updatelt}).  To prevent these problems,
 PFLOTRAN limits the update to 
-
 \begin{equation}
 \delta \ln(\mathbf{c}^{k+1,p}))=\text{sign}[\delta
 \ln(\mathbf{c}^{k+1,p})]\min[\text{abs}(\delta \ln
 \mathbf{c}^{k+1,p}),\delta_\text{ln,max}]
 \label{eq:lnlimit}
 \end{equation}
-with a default $\delta_\text{ln,max}$ = 5. While SU limits the positive update
-to avoid negative concentration, LT constrains both positive and negative
-update to prevent unrealistically low and high concentration. Thirdly, LT does
-not prevent 0
+with a default $\delta_\text{ln,max}$ = 5. %While SU limits the positive update
+%to avoid negative concentration, LT constrains both positive and negative
+%update to prevent unrealistically low and high concentration. 
+Thirdly, LT does
+not prevent zero
 concentration per se: a number of iterations with positive $\delta \ln
-\mathbf{c}^{k+1,p} (j)$ update is likely to bring $\mathbf{c}^{k+1,p+1} (j)$ to
-be below machine precision or 0. With zero concentration,
+\mathbf{c}^{k+1,p} (j)$ update can bring $\mathbf{c}^{k+1,p+1} (j)$ to
+zero. With zero concentration,
 $\mathbf{J}_\text{ln}$ becomes singular, and the numerical solution fails.
 These can be shown by solving $dc/dt=-1$ in the log transformed form $d\ln
 c/dt=-1/c$: $c^{k+1}=c^k e^{-\Delta t/c^{k+1}}$. LT
 converts the linear problem that does not require iteration to a nonlinear
 problem that needs to be solved iteratively.
 As $c^{k+1}$ becomes small, $\Delta$t has to be decreased accordingly, or the
-concentration goes to below machine precision and $c^{k+1}=0$ causes division
+concentration goes to zero and causes division
 by 0 overflow. 
 
 \subsection{Downregulation of reaction rate}
-Even though ensuring nonnegativity, the concentrations can become very small or
-essentially 0 using either SU or LT. With 0 or near 0 concentrations, the
-scaling factor for SU is small or 0, or the time step sizes for LT are too
-small if LT does not fail due to a singular Jacobian matrix. Both approaches
+Even though ensuring nonnegativity, neither SU nor LT can prevent zero concentrations, which can cause numerical problems for both.
+They
 require the solution to the mathematical representation itself be
-positive. To obtain such a mathematical representation, it is necessary to
+positive. To obtain such a representation, it is necessary to
 downregulate reaction rates to represent the limitation of the availability of
 each reactant on the reaction rate.  In the geochemical modeling literature,
 this is mostly represented by a rate limiting function as a function of
 concentration in each reaction for each reactant. CLM downregulates demand
-(consumption) as a function of rate (demand-based competition). We examine
-downregulation of consumption as a function of concentration (DC) and rate (DR)
+(consumption) as a function of rate (demand-based competition) \citep{Tang2015}. We further examine
+downregulation of consumption rate as a function of concentration (DC) and rate (DR)
 for use with SU or LT to address the nonphysical solution negativity.
 
-\subsubsection{Downregulation of consumption as a function of concentration}
+\subsubsection{Downregulation of consumption rate as a function of concentration}
 %\subsubsection{First order rate}
 The first-order decay problem (Eqs. \ref{eq:decomprate}, \ref{eq:nitr2no3},
 \ref{eq:nitr2n2oexess}, \ref{eq:deni}) is nonnegative. This can be shown by
-solving the first-order problem $dc/dt=-c$ using the backward Euler method:
-$c^{k+1}=c^k/(1+\Delta t)$; the concentration decreases but remains
-nonnegative. However, it can go to 0 (or below machine precision). To avoid 0 concentration, a residual term
+solving the first-order problem $dc/dt=-c$ using either the analytical solution
+$c^{k+1} = c^k e^{-\Delta t}$ or the backward Euler method
+$c^{k+1}=c^k/(1+\Delta t)$; %the concentration decreases but remains
+%nonnegative. 
+However, it can go to zero. To avoid zero concentration, a residual term
 is often used to limit the decay to a residual concentration \citep{Tang2013a}.
 For example, Eq. (\ref{eq:decomprate}) becomes
 \begin{equation}
@@ -646,65 +634,34 @@ For example, Eq. (\ref{eq:decomprate}) becomes
 ([\chem{CN_u}] - [\chem{CN_u}]_\text{r}).
 \label{eq:decomprateresidual}
 \end{equation}
-When the concentration goes below $[\chem{CN_u}]_\text{r}$ (overshoots) in an
+When the concentration goes below $[\chem{CN_u}]_\text{r}$ in an
 iteration, Eq. (\ref{eq:decomprateresidual}) implies a hypothetical reverse
 reaction to bring it back to [\chem{CN_u}]$_\text{r}$. An alternative is to
-introduce a cutoff, e.g., Eq. (\ref{eq:decomprate}) becomes
-\begin{equation}
-\frac{d [\chem{CN_u}]}{d t} = -k_\text{d} f_\text{T} f_\text{w}
-[\chem{CN_u}] f([\chem{CN_u}]),
-\end{equation}
-with $f([\chem{CN_u}]) = 1$ when [\chem{CN_u}]$\geq$[\chem{CN_u}]$_\text{r}$,
-and 0 otherwise. It is simple but does not prevent [\chem{CN_u}] from getting
-below [\chem{CN_u}]$_\text{r}$ or 0 in theory. In addition, it introduces a
-discontinuity. A polynomial function can be used to smooth the cutoff 
-\begin{equation}
-f([\chem{CN_u} ])=1-\left[1-\left(\frac{[\chem{CN_u}]-[\chem{CN_u}
-]_\text{r}}{\chem{CN_u} ]_1-[\chem{CN_u} ]_\text{r}}\right)^2 \right]^2.
-\label{eq:polycutoff}
-\end{equation}
-This function varies from 0 at [\chem{CN_u}]$_\text{r}$ to 1 at
-[\chem{CN_u}]$_1$, with zero derivatives at both points. While not implying a
-nonphysical reverse reaction as Eq. (\ref{eq:decomprateresidual}), 
-
-\begin{equation}
-\frac{d f([\chem{CN_u} ])}{d[\chem{CN_u}]}=4 \frac{[\chem{CN_u}] -
-[\chem{CN_u}]_\text{r}}{\left([\chem{CN_u}]_1 - [\chem{CN_u}]_\text{r} \right)^2}
-\left[1-\left(\frac{[\chem{CN_u}]-[\chem{CN_u} ]_\text{r}}{\chem{CN_u}
-]_1-[\chem{CN_u} ]_\text{r}}\right)^2 \right].
-\label{eq:polycutoffderiv}
-\end{equation}
-Depending on $[\chem{CN_u}]_1-[\chem{CN_u}]_\text{r}$, this cutoff does
-introduce a large derivative change during the transition:
-$df([\chem{CN_u}])/d[\chem{CN_u}]$ varies from 0 to ~10$^8$ for
-[\chem{CN_u}]$_\text{r}$=10$^{-10}$  and [\chem{CN_u}]$_1$=10$^{-8}$ (Fig.
-\ref{fig:cutoff}). The maximum increases at about the same order of magnitude
-as the decrease of [\chem{CN_u}]$_r$ and [\chem{CN_u}]$_1$. Even though
-smoothed, the cutoff is still a sharp change. The smaller the cutoff
-concentrations, the sharper the transitions. Marching through a steep
-transition in time usually involves small time steps. In contrast, the residual
-concentration introduced in Eq. (\ref{eq:decomprateresidual}) does not adjust
-the derivative, which appears less nonlinear.
-Obviously, enforcing positivity even for a linear problem (here the first-order
-rate) introduces nonlinearity into the numerical problem. A smaller threshold
-may lead to higher nonlinearity. For example, even though a \chem{NO_3^-}
-concentration of  $10^{-10}$ \unit{M} may not be detectable, and is not any
-different from $10^{-15}$ \unit{M}, introducing the cutoff of
-Eq. (\ref{eq:polycutoff}) with a cutoff $10^{-15}$ produces five orders of
-magnitude more increase in the derivative than a cutoff of $10^{-10}$. In the case when
-extremely low concentration matters (e.g., \chem{O_2}), enforcing positivity
-with the implicit time stepping and Newton-Raphson method is numerically
-challenging.
+use a cutoff (Appendix \ref{sec:cutoff}). Even though it
+can be smoothed, a cutoff is still a sharp change as shown in the derivative (Fig. \ref{fig:cutoff}). In contrast, the residual
+concentration introduced in Eq. (\ref{eq:decomprateresidual}) does not change
+the derivative. %, which appears less nonlinear.
+%Obviously, enforcing positivity even for a linear problem (here the first-order
+%rate) introduces nonlinearity into the numerical problem. A smaller threshold
+%may lead to higher nonlinearity. For example, even though a \chem{NO_3^-}
+%concentration of  $10^{-10}$ \unit{M} may not be detectable, and is not any
+%different from $10^{-15}$ \unit{M}, introducing the cutoff of
+%Eq. (\ref{eq:polycutoff}) with a cutoff $10^{-15}$ produces five orders of
+%magnitude more increase in the derivative than a cutoff of $10^{-10}$. In the case when
+%extremely low concentration matters (e.g., \chem{O_2}), enforcing positivity
+%with the implicit time stepping and Newton-Raphson method is numerically
+%challenging.
 
 %\subsubsection{Zero order rate}
 For the litter decomposition reactions (\ref{rxn:lit1}, \ref{rxn:lit2},
-\ref{rxn:lit3}) that immobilize nitrogen, the rate formulae (Eqs.
+\ref{rxn:lit3}) that immobilize nitrogen, and nitrification reaction (\ref{rxn:nitr2n2o})
+associated with decomposition
+to produce \chem{N_2O}, the rate formulae (e.g., Eq.
 \ref{eq:decomprate}, \ref{eq:decomprateresidual},) do not account for the
 limitation of the reaction rate by the availability of nitrogen. They are zero
 order with respect to nitrogen. Mechanistically, a nitrogen-limiting function
 needs to be added to those formulae to represent the limitation of decreasing
 nitrogen concentration on decomposition rate (downregulation), for example, 
-
 \begin{equation}
 \frac{d [\chem{CN_u}]}{d t} = -k_\text{d} f_\text{T} f_\text{w} ([\chem{CN_u}] -
 [\chem{CN_u}]_\text{r}) f([\chem{N}]).
@@ -712,7 +669,6 @@ nitrogen concentration on decomposition rate (downregulation), for example,
 \end{equation}
 A widely used downregulation function is the Monod substrate limitation
 function \citep{Hammond2003,Tang2013a}:
-
 \begin{equation}
 f([\chem{N}])=\frac{[\chem{N}]}{[\chem{N}]+k_\text{m}},
 \label{eq:monod}
@@ -722,64 +678,50 @@ $f([\chem{N}])=0.5$. For [\chem{N}] $\gg k_\text{m}$, Eq. (\ref{eq:monod}) is ze
 respect to [\chem{N}] or has little impact on the decomposition reactions that
 immobilize \chem{N}. For [\chem{N}]$\ll k_\text{m}$, Eq. (\ref{eq:monod})
 approximates first order with respect to [\chem{N}] (Figure \ref{fig:monod}d).
-Nevertheless, since
-
-\begin{equation}
-\frac{df([\chem{N}])}{d [\chem{N}]}=\frac{k_N}{([\chem{N}]+k_\text{m})^2},
-\label{eq:monodderiv}
-\end{equation}
+Nevertheless, since $\frac{df([\chem{N}])}{d
+[\chem{N}]}=\frac{k_N}{([\chem{N}]+k_\text{m})^2}$,
 the derivative increases to about $k_\text{m}^{-1}$ as the concentration
 decreases to below $k_\text{m}$ (Fig. \ref{fig:monod}). This is similar to the
 smoothed cutoff in Eq. (\ref{eq:polycutoff}) (Fig. \ref{fig:cutoff}): even
 though smoothed, it is still a steep transition.
 
 To represent the threshold concentration beyond which certain microorganisms
-can not use certain electron donors \citep{Fennell1998}, a residual
-concentration was added to Eq. (\ref{eq:monod}): 
-\begin{equation}
-f([\chem{N}])=\frac{[\chem{N}]-[\chem{N}]_\text{r}}{[\chem{N}] -
-[\chem{N}]_\text{r}+k_\text{m}}.
-\label{eq:monodresidual}
-\end{equation}
+can not use certain electron donors \citep{Fennell1998}, and prevent zero concentration, a residual
+concentration can be added to Eq. (\ref{eq:monod}) as
+$f([\chem{N}])=\frac{[\chem{N}]-[\chem{N}]_\text{r}}{[\chem{N}] -
+[\chem{N}]_\text{r}+k_\text{m}}.$
 Similar to Eq. (\ref{eq:decomprateresidual}), this implies a nonphysical
 backward reaction when [\chem{N}]<[\chem{N}]$_\text{r}$. If we use the cutoff
 instead of a residual concentration, a combination of Eqs. (\ref{eq:monod}) and
 (\ref{eq:polycutoff}) produces more nonlinearity, as evidenced in Fig.
-(\ref{fig:monodcutoff}), which is likely to result in small time step sizes to
-march through these highly nonlinear regions when the concentration gets there.
+(\ref{fig:monodcutoff}), which may result in small time step sizes to
+march through these transition regions when the concentration gets there.
 
 The plant nitrogen uptake reactions (\ref{rxn:plantatake},
-\ref{rxn:plantntake}) are of zero order, and substrate limiting functions need
-to be added as well. For both plant uptake and immobilization, we also have to
+\ref{rxn:plantntake}) are zero
+order, and substrate limiting functions need
+to be added as well. For plant uptake and immobilization, we have to
 distribute the demands between \chem{NH_4^+} and \chem{NO_3^-}. If we simulate
-the \chem{NH_4^+} limitation on plant uptake or immobilization with
+the \chem{NH_4^+} limitation on plant uptake, e.g., with
 \begin{equation}
 R_a = R_\text{p} \frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}, 
 \label{eq:plantarate}
 \end{equation}
-the \chem{NO_3^-} plant uptake or immobilization can be represented by 
+the \chem{NO_3^-} plant uptake can be represented by 
 \begin{equation}
 R_n = (R_\text{p} - R_a)\frac{[\chem{NO_3^-}]}{[\chem{NO_3^-}]+k_\text{m}} =
 R_\text{p} \frac{k_\text{m}}{[\chem{NH_4^+}]+k_\text{m}}
 \frac{[\chem{NO_3^-}]}{[\chem{NO_3^-}]+k_\text{m}}.  
 \label{eq:plantnrate}
 \end{equation}
-This essentially assumes an inhibition of \chem{NH_4^+} on \chem{NO_3^-} uptake
-or immobilization, and $k_\text{m}$ becomes an inhibition coefficient. This
-simulates the observation that plant \chem{NO_3^-} uptake rate remained low
+This essentially assumes an inhibition of \chem{NH_4^+} on \chem{NO_3^-} uptake, which is consistent with
+the observation that plant \chem{NO_3^-} uptake rate remained low
 until \chem{NH_4^+} concentrations dropped below a threshold
 \citep{eltrop1996}.  
 
 For comparison with CLM, we examine the uptake rate as a function of demands
-and available concentrations:
-\begin{equation}
-f_{pi} = \frac{R_a + R_n}{R_p} =
-\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}} +
-\left(1 - \frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}\right)
-\frac{[\chem{NO_3^-}]}{[\chem{NO_3^-}]+k_\text{m}}.
-\label{eq:fpi}
-\end{equation}
-
+and available concentrations 
+$f_{pi} = {R_a + R_n}/{R_p}$.
 As an example, we consider uptake $R_p$ = 10$^{-9}$ \unit{M\,s{^{-1}}} from a
 solution with various [\chem{NH_4^+}] and [\chem{NO_3^-}] for a 0.5 h time
 step. With CLM, f$_{pi}$ = 1 when $[\chem{NH_4^+}]+[\chem{NO_3^-}]\geq
@@ -800,9 +742,9 @@ implies a strong preference for \chem{NH_4^+} over \chem{NO_3^-}. For example, i
 \chem{NH_4^+} is abundant, \chem{NO_3^-} will not be taken. The new scheme
 allows the level of preference to be adjusted by varying $k_\text{m}$.
 
-The nitrification reaction (\ref{rxn:nitr2n2o}) associated with decomposition
-to produce \chem{N_2O} with the rate (Eq. \ref{eq:nitr2n2odecomp}) appears as
-zero order as well and needs to be further downregulated as %Specifically,
+%The nitrification reaction (\ref{rxn:nitr2n2o}) associated with decomposition
+%to produce \chem{N_2O} with the rate (Eq. \ref{eq:nitr2n2odecomp}) is 
+%zero order with [\chem{NH_4^+}] and the $R_{nm}$ needs to be further downregulated. % as well .%Specifically,
 %suppose that the litter decomposition reactions
 %(\ref{rxn:lit1},\ref{rxn:lit2},\ref{rxn:lit3}) are down regulated to account
 %for \chem{N} limitation, the terms corresponding to soil organic matter
@@ -810,18 +752,19 @@ zero order as well and needs to be further downregulated as %Specifically,
 %(\ref{eq:nitr2n2odecomp}) still needs to be further down regulated to account
 %for \chem{NH_4^+} availability on nitrification. Namely, Eq.
 %(\ref{eq:nitr2n2odecomp}) becomes
-\begin{equation}
-\frac{d [\chem{NH_4^+}]}{d t} = -2\frac{d
-[\chem{N_2O}]}{d t} = -f_\text{nm} f_\text{T} f_\text{w}
-f_\text{pH}\max(R_\text{nm}\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}},0).
-\label{eq:nitr2n2odecompdownregulated}
-\end{equation}
+%\begin{equation}
+%\frac{d [\chem{NH_4^+}]}{d t} = -2\frac{d
+%[\chem{N_2O}]}{d t} = -f_\text{nm} f_\text{T} f_\text{w}
+%f_\text{pH}\max(R_\text{nm}\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}},0).
+%\label{eq:nitr2n2odecompdownregulated}
+%\end{equation}
 %As a result, the concentration update for \chem{N_2O} (Eq. \ref{eq:update}) is
 %dependent on the concentration of all litter and SOM pools, and \chem{NH_4^+},
 %and the rates of all of the decomposition and nitrification through the
 %Jacobian matrix, the rate of all of the decomposition, \chem{NH_4^+}, and
 %nitrification through the residual.
 
+\subsubsection{Downregulation of consumption as a function of rate}
 DC involves adding residual concentration and half saturations, which has the
 potential to provide mechanistic treatment of the processes. It also introduces
 a number of parameters that need to be determined. These parameters may not be
@@ -836,22 +779,20 @@ various conditions across the globe.
 An alternative is to downregulate consumption as a function of rate (DR) like
 CLM demand-based competition. 
 
-\subsubsection{Downregulation of consumption as a function of rate}
-As described in Appendix \ref{sec:demandbasedcompetition}, CLM splits the
-available nitrogen to meet the demands by microbes (immobilization) and plants in
-proportion to the potential rates \citep{Thornton2005}. Suppose that the
+CLM splits the
+available nitrogen to meet the demands by microbes and plants in
+proportion to the potential rates \citep{Thornton2005} (Appendix \ref{sec:demandbasedcompetition}). Suppose that the
 demand (consumption, sink, including immobilization, plant uptake,
 nitrification, etc.) rate is $R_{dp}$; the supply (source, production,
-including deposition, mineralization, etc.) is rate $R_s$, and the
+including deposition, mineralization, etc.) rate is $R_s$, and the
 concentration is [\chem{N}] at the beginning of the time step, the demand is
 downregulated to
-
 \begin{equation}
-R_d=\text{min}\left[R_{dp}, R_s + \frac{[\chem{N}]}{\Delta t}\right].	
+R_d=\text{min}\left[R_{dp}, R_s + {[\chem{N}]}/{\Delta t}\right].	
 \label{eq:dr}
 \end{equation}
-As CLM4.5 ignores the supply term $R_s$ \citep{Oleson2013}, \citet{Tang2015}
-suggest to include it. For a reaction that is limited by multiple substrates
+\citet{Tang2015}
+suggest to include $R_s$. For a reaction that is limited by multiple substrates
 (e.g., nitrogen and phosphorus), they use the minimum of the downregulated
 rates. Like the demand based competition in CLM, this is simple to implement,
 and prevents negative concentration when the explicit forward difference method
@@ -881,30 +822,31 @@ implementation of downregulation of \chem{NH_4^+} and \chem{NO_3^-} with a
 nitrification reaction from \chem{NH_4^+} to \chem{NO_3^-}. Basically, it
 becomes challenging to separate, track, and downregulate consumption and
 production rates for an indefinite number of species, and calculation of the
-Jacobian becomes convoluted. Clearly, this work diffs from \citet{Tang2015} in
+Jacobian becomes convoluted. This work diffs from \citet{Tang2015} in
 that we use implicit time stepping while they use explicit
 time stepping.
 
 %\input{test}
 
 \section{Test problems, results, and discussions}
-We can use SU or LT with either DC or DR, or a combination of both, to enforce
-nonnegativity. SU has the potential to introduce numerical error due to false
-convergence when STOL is satisfied and the scaling factor $\lambda$ is too
-small. Stopping the simulation when $\lambda$ is smaller than
-$\lambda_\text{min}$ changes the accuracy issue into a stability or robustness
-issue. For both SU and LT, allowing for tiny time step sizes and an excessive
-number of time step cuts may transfer a stability issue into an efficiency
-issue. We examine the causes of negative concentration; the advantages and
+%We can use SU or LT with either DC or DR, or a combination of both, to enforce
+%nonnegativity. SU has the potential to introduce numerical error due to false
+%convergence when STOL is satisfied and the scaling factor $\lambda$ is too
+%small. Stopping the simulation when $\lambda$ is smaller than
+%$\lambda_\text{min}$ changes the accuracy issue into a stability or robustness
+%issue. For both SU and LT, allowing for tiny time step sizes and an excessive
+%number of time step cuts may transfer a stability issue into an efficiency
+%issue. 
+We examine the causes of negative concentration; the advantages and
 disadvantages of SU, LT, DC, and DR; and the accuracy, stability, and
 efficiency issue using both simple test problems and coupled CLM-PFLOTRAN site
 simulations. For simple test problems, we assess the conditions under which large
 updates occur. With coupled CLM-PFLOTRAN spin-up simulations for arctic,
 temperate, and tropical sites, we assess the conditions when the nonphysical solution negativity 
 arises by relaxing the downregulation on nitrogen consumption (decreasing half
-saturation). Spreadsheet, python scripts, and PFLOTRAN input files for these
-simple test problems and for producing figures are provided as supplemental
-information.
+saturation). Spreadsheet and PFLOTRAN input files 
+are provided as supplemental
+information (SI).
 
 Our implementation of CLM biogeochemistry introduces mainly two parameters:
 half saturation $k_\text{m}$ and residual concentration. A wide range of
@@ -917,10 +859,11 @@ detection limits of the analytical methods. The detection limits are usually at 
 $\mu$M level, while up to the \chem{nM} level was reported \citep{Nollet2013}. In Ecosys,
 the $k_\text{m}$ is 0.40 and 0.35 gN m$^{-3}$, and the residual concentration
 is 0.0125 and 0.03 gN m$^{-3}$ \citep{Grant2013} for \chem{NH_4^+} and
-\chem{NO_3^-} for microbes.  Depending on the moisture content, say 10, 100,
-and 1000 \unit{L\, m^{-3}} for a dry, wet, and saturated case, these
-\chem{k_\text{m}} values roughly translate to 10$^{-3}$, 10$^{-4}$, and
-10$^{-5}$ \unit{M}. We start with $k_m=10^{-6}$ \unit{M} or \unit{mol\,m^{-3}},
+\chem{NO_3^-} for microbes.  %Depending on the moisture content, say 10, 100,
+%and 1000 \unit{L\, m^{-3}} for a dry, wet, and saturated case, these
+%\chem{k_\text{m}} values roughly translate to 10$^{-3}$, 10$^{-4}$, and
+%10$^{-5}$ \unit{M}. 
+We start with $k_m=10^{-6}$ \unit{M} or \unit{mol\,m^{-3}},
 and residual concentration $10^{-15}$ \unit{M} or \unit{mol\, m^{-3}} for
 plants and microbes. To further investigate the nonphysical solution negativity for the
 current study and for future application for other nutrients (e.g., \chem{H_2}
@@ -952,36 +895,22 @@ add first order reactions (e.g., nitrification, denitrification, and plant
 
 \subsubsection{Plant \chem{NH_4^+} uptake (Test 1)}
 We consider the plant \chem{NH_4^+} uptake reaction (\ref{rxn:plantatake}) with the
-rate $R_a$ downregulated by the Monod substrate limiting function:
-
+rate $R_a$ %downregulated by the Monod substrate limiting function:
 \begin{equation}
 \frac{d[\chem{NH_4^+}]}{dt} =- R_a \frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}} = -R_{at}.
 \label{eq:ex1}
 \end{equation}
-As an analytical solution is not available, discretizing Eq. (\ref{eq:ex1})
-using the backward Euler method, it becomes
-
-\begin{equation}
-{[\chem{NH_4^+}]^{k+1}}^2+(k_\text{m} + R_a \Delta t - [\chem{NH_4^+}]^k)
-[\chem{NH_4^+}]^{k+1} - k_\text{m} [\chem{NH_4^+}]^k = 0.
-\end{equation}
-The two roots are
-
-\begin{equation}
-[\chem{NH_4^+}]^{k+1}=0.5 \left[[\chem{NH_4^+}]^k - k_\text{m} - R_a \Delta t
-\pm \sqrt{([\chem{NH_4^+}]^k - k_\text{m} - R_a\Delta t)^2 + 4
-k_\text{m}[\chem{NH_4^+}]^k}\right].
-\label{eq:monodsemi}
-\end{equation}
-One root is positive, and the other is negative (not physical). With the
+A semi-analytical solution (Eq. \ref{eq:monodsemi}) has one positive and one negative roots. With the
 positive root, [\chem{NH_4^+}]$^{k+1}\rightarrow$ 0 when [\chem{NH_4^+}]$^k
 \rightarrow$ 0, or $R_a\Delta t \rightarrow \infty$. As $k_\text{m}\rightarrow$
 0, [\chem{NH_4^+}]$^{k+1}\rightarrow$ 0 when $[\chem{NH_4^+}]^k \leq R_a \Delta
 t$. If we replace [\chem{NH_4^+}] with $[\chem{NH_4^+}]-[\chem{NH_4^+}]_r$ in
 Eqs. (\ref{eq:ex1}) and (\ref{eq:monodsemi}), [\chem{NH_4^+}]$^{k+1} \rightarrow
-[\chem{NH_4^+}]_\text{r}$ rather than 0. We do not include the
-residual concentration in the simple test problems for simplicity in this
-subsection. Ignoring the negative root, the representation of
+[\chem{NH_4^+}]_\text{r}$. % rather than 0. %We do not include the
+%residual concentration in the simple test problems for simplicity in this
+%subsection. 
+%Ignoring the negative root, 
+The representation of
 plant \chem{NH_4^+} uptake by Eq. (\ref{eq:ex1}) ensures $[\chem{NH_4^+}]^{k+1}
 \geq [\chem{NH_4^+}]_\text{r}$. 
 
@@ -991,17 +920,10 @@ plant \chem{NH_4^+} uptake by Eq. (\ref{eq:ex1}) ensures $[\chem{NH_4^+}]^{k+1}
 %10$^{-7}$ M s$^{-1}$, without down regulation, the solution would be 0), and
 %9.98006 $\times$10$^{-6}$ and -1.002 $\times$ 10$^{-3}$ for $\Delta$ T=0.002
 %(without down regulation, the solution would be -0.001). 
-Solving Eq. (\ref{eq:ex1}) using the Newton-Raphson method from time step $k$
-to $k+1$, the update is 
-
-\begin{equation}
-\delta [\chem{NH_4^+}]^{k+1,p} =
-\frac{\frac{[\chem{NH_4^+}]^{k+1,p}-[\chem{NH_4^+}]_k} {\Delta t}+R_a
-\frac{[\chem{NH_4^+}]^{k+1,p}}{[\chem{NH_4^+}]^{k+1,p}+k_\text{m}}}{\frac{1}{\Delta
-t} + R_a \frac{k_\text{m}}{([\chem{NH_4^+}]^{k+1,p}+k_\text{m})^2}}.
-\end{equation}
-For the first iteration, [\chem{NH_4^+}]$^{k+1,0}$ = [\chem{NH_4^+}]$^k$, 
-
+Solving Eq. (\ref{eq:ex1}) using the backward Euler method and Newton-Raphson
+method from time step $k$
+to $k+1$, and [\chem{NH_4^+}]$^{k+1,0}$ = [\chem{NH_4^+}]$^k$, the update for
+the first iteration is 
 \begin{equation}
 \xi = \frac{\delta [\chem{NH_4^+}]^{k+1,1}}{[\chem{NH_4^+}]^{k+1,0}} =
 \frac{\frac{1}{[\chem{NH_4^+}]^{k}+k_\text{m}}}{\frac{1}{R_a
@@ -1038,14 +960,14 @@ can exceed the available concentration by orders of magnitude.
 Now we look into the iteration processes: the solution starts with an overshoot
 to 1.995 $\times$10$^{-6}$ and converges to the positive semi-analytical solution
 3.1127 $\times$10$^{-5}$ (Eq. \ref{eq:monodsemi}) in eight iterations when
-$R_a\Delta$t = 0.001 (Table \ref{table1}). dR/dC changes from $\sim$1 to 10$^5$
+$R_a\Delta$t = 0.001 (SI spreadsheet). dR/dC changes from $\sim$1 to 10$^5$
 in the first iteration, although the change in the Jacobian is reduced due to a
 small $R_a\Delta$t. With $R_a\Delta$t = 0.002, the update $\delta$ is greater
 than [\chem{NH_4^+}]$_k$; without scaling back the update, the solution
-converges to the negative solution $-1.002\times$10$^{-3}$ (Table \ref{table2},
+converges to the negative solution $-1.002\times$10$^{-3}$ (SI,
 negative root from Eq. \ref{eq:monodsemi}). Scaling back the update with
 $\alpha$ = 0.9999, the concentration decreases by $1 - \alpha = 10^{-4}$ times in
-the first iteration rather than to negative root (Table \ref{table3}). The
+the first iteration rather than to negative root (SI). The
 solution converges to the positive root in seven iterations. 
 %This example
 %demonstrates that it is possible for the solution to an uptake problem
@@ -1056,15 +978,15 @@ solution converges to the positive root in seven iterations.
 
 If LT is used with $R_a\Delta$t = 0.002, the solution oscillates and results in
 a $\delta$ of $-1041.5$ in the fifth iteration, which essentially makes the solution
-0 (Table \ref{table4}).   Limiting $\delta \leq \delta_\text{ln,max}$, the
+0 (SI).   Limiting $\delta \leq \delta_\text{ln,max}$, the
 solution converges to the semi-analytical solution (Eq.\ref{eq:monodsemi}) in
 7, 7, 6, 5, 6, and 8 iterations with $\delta_\text{ln,max}$ = 2, 3, 4, 5, 6, and
 7, respectively.  For $\delta_\text{ln,max}\geq$ 8, the iteration oscillates and
 converges slowly.  If we split $R_a\Delta$t = 0.002 into two steps, the first
 step takes seven iterations to converge, while the second step takes nine iterations,
-with $\delta_\text{ln,max}$ = 5. These simulations show that limiting the update
-to be less than $\delta_\text{ln,max}$ is helpful for LT to use large time step
-sizes for efficiency.
+with $\delta_\text{ln,max}$ = 5. %These simulations show that limiting the update
+%to be less than $\delta_\text{ln,max}$ is helpful for LT to use large time step
+%sizes for efficiency.
 
 Finally, we consider a PFLOTRAN simulation: a 1 m $\times$ 1 m $\times$ 1 m
 grid cell, with 0.25 water content, initial 4 \unit{\mu M} \chem{NH_4^+}, and a
@@ -1078,10 +1000,10 @@ duration of 10 \unit{h}. Without downregulating the uptake rate, SU decreases
 accurate solution until it fails when the concentration goes to 0, and the
 Jacobian becomes singular. 
 
-Using SU with DC with [\chem{NH_4^+}]$_\text{r}$ of 10$^{-20}$ \unit{M} (Eq.
-\ref{eq:monodresidual}) and a half saturation $k_\text{m}$ of 10$^{-6}$,
+Using SU with DC with a residual concentration [\chem{NH_4^+}]$_\text{r}$ of 10$^{-20}$ \unit{M}
+and a half saturation $k_\text{m}$ of 10$^{-6}$,
 10$^{-9}$, or 10$^{-12}$, the calculated concentration [\chem{NH_4^+}] is kept
-to be greater than or equal to 10$^{-20}$ (Figure. \ref{fig:plantntake}). With
+to be greater than or equal to 10$^{-20}$ (Fig. \ref{fig:plantntake}). With
 a $k_\text{m}$ of 10$^{-6}$, the calculated [\chem{NH_4^+}] is above 10$^{-20}$,
 and the update does not exceed the concentration in any iteration during the 10
 \unit{h} simulation duration. With a $k_\text{m}$ of 10$^{-9}$ and 10$^{-12}$,
@@ -1106,93 +1028,66 @@ risk of inaccuracy. LT is accurate but requires more iterations.
 
 Adding a nitrification reaction (\ref{rxn:nitr2no3}) with a first-order rate,
 Eq. (\ref{eq:ex1}) becomes
-
 \begin{equation}
 \frac{d[\chem{NH_4^+}]}{dt} =- R_a
 \frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}
 - k_{nitr} [\chem{NH_4^+}] = -R_{at} - R_{nitr}.
 \label{eq:ex2}
 \end{equation}
-Discretizing the equation in time using the backward Euler method, 
-
-\begin{equation}
-(1 + k_{nitr} \Delta t){[\chem{NH_4^+}]^{k+1}}^2+(k_\text{m}+R_a\Delta T +
-k_{nitr} k_\text{m} \Delta t - [\chem{NH_4^+}]^k ) \chem{NH_4^+}^{k+1} -
-k_\text{m} [\chem{NH_4^+}]^k = 0.
-\end{equation}
-
-Denote $b=[\chem{NH_4^+}]^k - (k_\text{m}+R_a\Delta T + k_{nitr} k_\text{m} \Delta t)$, the roots are
-
-\begin{equation}
-[\chem{NH_4^+}]^{k+1}=\frac{\left[b \pm \sqrt{b^2+4(1+k_{nitr} \Delta
-t)[\chem{NH_4^+}]^k k_m}\right]}{2(1 + k_{nitr} \Delta t)}.
-\end{equation}
-Similar to Eq. (\ref{eq:ex1}), one root is nonnegative. To solve the problem
-with the Newton-Raphson method, the equation is
-
-\begin{equation}
-\left[
-\begin{matrix}
-\frac{1}{\Delta t} + J_{at} + J_{nitr} & 0 & 0 \\
--J_{at} & \frac{1}{\Delta t} & 0 \\
--J_{nitr} & 0 & \frac{1}{\Delta t} \\
-\end{matrix}
-\right]
-\left(
-\begin{matrix}
-\delta [\chem{NH_4^+}]^{k+1,1} \\
-\delta [\chem{PlantA}]^{k+1,1} \\
-\delta [\chem{NO_3^-}]^{k+1,1} 
-\end{matrix}
-\right)
-=
-\left(
-\begin{matrix}
-R_{at} + R_{nitr} \\
--R_{at} \\
--R_{nitr} 
-\end{matrix}
-\right),
-\end{equation}
-with $J_{at} = \frac{dR_{at}}{d[\chem{NH_4^+}]} =
+%Discretizing the equation in time using the backward Euler method, 
+%
+%\begin{equation}
+%(1 + k_{nitr} \Delta t){[\chem{NH_4^+}]^{k+1}}^2+(k_\text{m}+R_a\Delta T +
+%k_{nitr} k_\text{m} \Delta t - [\chem{NH_4^+}]^k ) \chem{NH_4^+}^{k+1} -
+%k_\text{m} [\chem{NH_4^+}]^k = 0.
+%\end{equation}
+%
+%Denote $b=[\chem{NH_4^+}]^k - (k_\text{m}+R_a\Delta T + k_{nitr} k_\text{m} \Delta t)$, the roots are
+%
+%\begin{equation}
+%[\chem{NH_4^+}]^{k+1}=\frac{\left[b \pm \sqrt{b^2+4(1+k_{nitr} \Delta
+%t)[\chem{NH_4^+}]^k k_m}\right]}{2(1 + k_{nitr} \Delta t)}.
+%\end{equation}
+%Similar to Eq. (\ref{eq:ex1}), one root is nonnegative. 
+With $J_{at} = \frac{dR_{at}}{d[\chem{NH_4^+}]} =
 R_a\frac{k_\text{m}}{([\chem{NH_4^+}] + k_\text{m})^2}$, and $J_{nitr} =
-\frac{dR_{nitr}}{d[\chem{NH_4^+}]}=k_{nitr}$. The solutions are
-
-\begin{equation}
-\delta [\chem{NH_4^+}]^{k+1,1} = \frac{R_{at} + R_{nitr}}{\frac{1}{\Delta t} +
-J_{at} + J_{nitr}},
-\end{equation}
-
+\frac{dR_{nitr}}{d[\chem{NH_4^+}]}=k_{nitr}$ and using 
+the backward Euler method and Newton-Raphson method, Eq. (\ref{eq:axb}) becomes Eq. (\ref{eq:test2}). For plant ammonium uptake, 
+%\begin{equation}
+%\delta [\chem{NH_4^+}]^{k+1,1} = \frac{R_{at} + R_{nitr}}{\frac{1}{\Delta t} +
+%J_{at} + J_{nitr}},
+%\end{equation}
 \begin{equation}
 \delta [\chem{PlantA}]^{k+1,1} = J_{at} \delta [\chem{NH_4^+}]^{k+1,1} - R_{at}
 = -\frac{\frac{1}{\Delta t} + J_{nitr}}{\frac{1}{\Delta t} + J_{at} + J_{nitr}}
 R_{at} + \frac{J_{at} }{\frac{1}{\Delta t} + J_{at} + J_{nitr}} R_{nitr},
 \end{equation}
-and
-\begin{equation}
-\delta [\chem{NO_3^-}]^{k+1,1} = J_{nitr} \delta [\chem{NH_4^+}]^{k+1,1} -
-R_{nitr} = \frac{J_{nitr}}{\frac{1}{\Delta t} + J_{at} + J_{nitr}} R_{at} -
-\frac{\frac{1}{\Delta t} + J_{at} }{\frac{1}{\Delta t} + J_{at} + J_{nitr}}
-R_{nitr}.
-\end{equation}
-
+%and
+%\begin{equation}
+%\delta [\chem{NO_3^-}]^{k+1,1} = J_{nitr} \delta [\chem{NH_4^+}]^{k+1,1} -
+%R_{nitr} = \frac{J_{nitr}}{\frac{1}{\Delta t} + J_{at} + J_{nitr}} R_{at} -
+%\frac{\frac{1}{\Delta t} + J_{at} }{\frac{1}{\Delta t} + J_{at} + J_{nitr}}
+%R_{nitr}.
+%\end{equation}
 %If $R_{nitr}=0$, $\delta$[\chem{PlantA}]$^{k+1,1}=-\frac{1/\Delta t}{1/\Delta
 %t + J_{at}} R_{at} \leq 0$, indicating that [\chem{PlantA}] increases as
 %plants take \chem{NH_4^+}. With $R_{nitr}>0$,  
-It is not a surprise for $\delta [\chem{NH_4^+}]^{k+1,1}$ to be positive as
-plant \chem{NH_4^+} uptake and nitrification consume \chem{NH_4^+}. It is a
-little surprising
-that a positive component, $\frac{J_at}{1/\Delta t + J_{at} + J_{nitr}}
-R_{nitr}$, is introduced to $\delta [\chem{PlantA}]^{k+1,1}$ even though there
+%It is not a surprise for $\delta [\chem{NH_4^+}]^{k+1,1}$ to be positive as
+%plant \chem{NH_4^+} uptake and nitrification consume \chem{NH_4^+}. 
+%It is a
+%little surprising
+%that 
+A positive component, $\frac{J_at}{1/\Delta t + J_{at} + J_{nitr}}
+R_{nitr}$, is introduced even though there
 is no reaction that consumes \chem{PlantA}.  Depending on the relative magnitude of
 the rates (R$_{at}$ and R$_{nitr}$) and the derivatives ($J_{at}$ and
 $J_{nitr}$), as well as time step size $\Delta$t and [\chem{NH_4^+}]$^k$, the
 update can be positive, which can result in too small a scaling factor that
 causes a nonphysical solution negativity if [\chem{PlantA}] is very small. This demonstrates
 that products as well as reactants can be driven negative
-during the Newton-Raphson iterations (overshoot).
+during the Newton-Raphson iterations.
 
-This can also be shown with another simple first-order reaction \chem{A}
+This can also be shown with a simple first-order reaction \chem{A}
 $\rightarrow$ \chem{B} with rate $k$[\chem{A}]: taking out the equation for
 \chem{B}, $-k\delta[\chem{A}] + \delta[\chem{B}]/\Delta t = -k [\chem{A}]$,
 $\delta[\chem{B}] = k\Delta t (\delta[\chem{A}] - [\chem{A}])$. Suppose 
@@ -1203,23 +1098,23 @@ results in a $\lambda=0.99\times 10^{-11}$. This has an implication for DR:
 downregulating only some reactants may not be sufficient to guarantee
 positivity, while downregulating both reactants and products is complicated.  
 
-The update $\delta$\chem{NO_3^-} can be positive, and cause negative
-consequence for the calculation as well. 
+%The update $\delta$\chem{NO_3^-} can be positive, and cause negative
+%consequence for the calculation as well. 
 %Although small, it increases with decreasing half saturation $k_\text{m}$,
 %increasing nitrification rate constant $k_{nitr}$, and plant \chem{NH_4^+}
 %uptake rates $R_a$ (Figure \ref{fig:positive update}).  
 %To mimic CLM demand based competition, the same Monod substrate limiting
 %function can be added for nitrification rate. 
-It can become worse when the same Monod substrate limiting function is used to
-further downregulate the nitrification rate like CLM demand based competition,
-namely,
-$R_{nitr} = k_{nitr}[\chem{NH_4^+}]\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}$,
-$J_{nitr} = k_{nitr}\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}
-+k_{nitr}[\chem{NH_4^+}]\frac{k_\text{m}}{[\left(\chem{NH_4^+}]+k_\text{m}\right)^2}$
-=$k_{nitr}\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}\left(1 +
-\frac{k_\text{m}}{[\chem{NH_4^+}]+k_\text{m}}\right)$.  For $[\chem{NH_4^+}]
-\ll k_\text{m}$, this increases $J_{nitr}$ approximately by the order of
-$k_\text{m}^{-1}$, which can result in an increase of the update.
+%It can become worse when the same Monod substrate limiting function is used to
+%further downregulate the nitrification rate like CLM demand based competition,
+%namely,
+%$R_{nitr} = k_{nitr}[\chem{NH_4^+}]\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}$,
+%$J_{nitr} = k_{nitr}\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}
+%+k_{nitr}[\chem{NH_4^+}]\frac{k_\text{m}}{[\left(\chem{NH_4^+}]+k_\text{m}\right)^2}$
+%=$k_{nitr}\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}]+k_\text{m}}\left(1 +
+%\frac{k_\text{m}}{[\chem{NH_4^+}]+k_\text{m}}\right)$.  For $[\chem{NH_4^+}]
+%\ll k_\text{m}$, this increases $J_{nitr}$ approximately by the order of
+%$k_\text{m}^{-1}$, which can result in an increase of the update.
 
 \subsubsection{Plant uptake, nitrification, and denitrification (Test 3)}
 Adding plant \chem{NO_3^-} uptake reaction (\ref{rxn:plantntake}) with rate
@@ -1231,51 +1126,19 @@ k_m}\frac{k_m}{([\chem{NO_3^-}] + k_m)^2}$, and $J_{nt,a} =
 \frac{k_m}{([\chem{NH_4^+}] + k_m)^2}\frac{[\chem{NO_3^-}]}{[\chem{NO_3^-}] +
 k_m}$, and denitrification reaction
 (\ref{rxn:deni}) with rate $R_{deni}=k_{deni} [\chem{NO_3^-}]$, and $J_{deni} =
-\frac{dR_{deni}}{d[\chem{NO_3^-}]}=k_{deni}$, the equation becomes 
-
-\begin{equation}
-\label{eq:complexjacobian}
-\left[
-\begin{matrix}
-\frac{1}{\Delta t} + J_{at} + J_{nitr} & 0                  & 0                                   &0 & 0\\
--J_{at}                              & \frac{1}{\Delta t} & 0 &0 &0\\
--J_{nitr} + J_{nt,a}                 & 0                  & \frac{1}{\Delta t} + J_{nt} + J_{deni}&0 &0 \\
--J_{nt,a}                            & 0                  & -J_{nt,n}                             &1/\Delta t & 0 \\
- 0                                   & 0                  & -0.5J_{deni}                             & 0 &1/\Delta t
-\end{matrix}
-\right]
-\left(
-\begin{matrix}
-\delta [\chem{NH_4^+}]^{k+1,1} \\
-\delta [\chem{PlantA}]^{k+1,1} \\
-\delta [\chem{NO_3^-}]^{k+1,1} \\ 
-\delta [\chem{PlantN}]^{k+1,1} \\
-\delta [\chem{N_2}]^{k+1,1} 
-\end{matrix}
-\right)
-=
-\left(
-\begin{matrix}
-R_{at} + R_{nitr} \\
--R_{at} \\
--R_{nitr} + R_{nt} + R_{deni} \\
--R_{nt} \\
--0.5R_{deni}
-\end{matrix}
-\right).
-\end{equation}
-As a result, 
-
+\frac{dR_{deni}}{d[\chem{NO_3^-}]}=k_{deni}$, Eq. (\ref{eq:axb}) becomes  
+Eq. (\ref{eq:complexjacobian}).
+For \chem{NO_3^-}, 
 \begin{equation}
 \delta [\chem{NO_3^-}]^{k+1,1} (\frac{1}{\Delta t} + J_{nt} + J_{deni}) =
 (J_{nitr} - J_{nt,a})(R_{at} + R_{nitr}) \delta [\chem{NH_4^+}]^{k+1,1} -
-R_{nitr} + R_{nt} + R_{deni},
+R_{nitr} + R_{nt} + R_{deni}.
 \end{equation}
-and
-\begin{equation}
-\delta [\chem{PlantN}]^{k+1,1}/\Delta t  = J_{nt,a} \delta
-[\chem{NH_4^+}]^{k+1,1} + J_{nt,n} \delta [\chem{NO_3^-}]^{k+1,1} - R_{nt}. 
-\end{equation}
+%and
+%\begin{equation}
+%\delta [\chem{PlantN}]^{k+1,1}/\Delta t  = J_{nt,a} \delta
+%[\chem{NH_4^+}]^{k+1,1} + J_{nt,n} \delta [\chem{NO_3^-}]^{k+1,1} - R_{nt}. 
+%\end{equation}
 In addition to plant \chem{NH_4^+} uptake and nitrification, $\delta
 [\chem{NO_3^-}]^{k+1,1}$ becomes a function of plant \chem{NO_3^-} uptake and
 denitrification, and all of the rate coefficients and derivatives may
@@ -1283,8 +1146,8 @@ contribute to a positive update that can result in too small a scaling factor.
 Even though the problem itself is nonnegative, coupling these reactions
 together in the Newton-Raphson iteration does introduce the potential to
 produce relatively significant positive update for \chem{NO_3^-} and
-\chem{PlantN}. It worsens when the preference-based uptake of \chem{NH_4^-}
-over \chem{NO_3^-} (Eqs. \ref{eq:plantarate} and \ref{eq:plantnrate}) brings
+\chem{PlantN}. It worsens when the interdependent uptake of \chem{NH_4^-}
+and \chem{NO_3^-} (Eqs. \ref{eq:plantarate} and \ref{eq:plantnrate}) representation brings
 in the impact of any rates related to \chem{NH_4^+}
 (including deposition, uptake, immobilization, etc.), with potentially large
 derivative terms for the off-diagonal entries in the Jacobian matrix. It is the
@@ -1302,7 +1165,7 @@ solutions with a decomposition test problem. We consider a case of decomposing
 using the reactions (\ref{rxn:lit1} and \ref{rxn:som1}) in the CLM-CN
 reaction network (Fig. \ref{fig:conceptualmodel}) at first. Then we add the
 nitrification reaction (\ref{rxn:nitr2n2o}) with rate
-(Eq. \ref{eq:nitr2n2odecompdownregulated}) to examine the implications of a complex
+(Eq. \ref{eq:nitr2n2odecomp}) to examine the implications of a complex
 rate formula. We use PFLOTRAN with a fully saturated grid cell of 1 m and
 porosity of 0.25. 
 
@@ -1319,22 +1182,22 @@ iterations.
 
 The implication of $k_m=10^{-12}$ becomes obvious when the nitrification
 reaction (\ref{rxn:nitr2n2o}) with rate (Eq.
-\ref{eq:nitr2n2odecompdownregulated}) is included. In the time step when the
+\ref{eq:nitr2n2odecomp} with downregulation) is included. In the time step when the
 mineralization rate surpasses the immobilization, $\delta$[\chem{N_2O}] >
 [\chem{N_2O}], and \chem{N_2O} is lowered to 10$^{-23}$ \unit{M} in three
 iterations as STOL is met. In the next time step, $\delta$[\chem{N_2O}] =
 $\sim$ 10$^{-13}$, resulting in a scaling factor $\lambda$ of 10$^{-10}$ that
 stops the simulation. Checking the calculations in the last iteration, the
-lower \chem{NH_4^+} concentration (2$\times$10$^{-13}$ \unit{M}) introduces a
+lower [\chem{NH_4^+}] (2$\times$10$^{-13}$ \unit{M}) introduces a
 derivative (6.94$\times 10^{11}$) into the column of the Jacobian with respect
-to \chem{NH_4^+}. Because \chem{N_2O} production is a function of both
+to [\chem{NH_4^+}]. Because \chem{N_2O} production is a function of both
 immobilization and mineralization, a Monod substrate limiting function is added
 to downregulate the mineralization component (Eq.
-\ref{eq:nitr2n2odecompdownregulated}). In the row corresponding to
-\chem{N_2O}, the off-diagonal terms are nonzero in the entries with respect to
-\chem{NH_4^+}, \chem{Lit1C},
-\chem{Lit1N}, and \chem{SOM1}. Even though these values are relatively small
-because the fraction of net mineralization rate to \chem{N_2O} is small (0.02),
+\ref{eq:nitr2n2odecomp}). In the row corresponding to
+[\chem{N_2O}], the off-diagonal terms are nonzero in the entries with respect to
+[\chem{NH_4^+}], [\chem{Lit1C}],
+[\chem{Lit1N}], and [\chem{SOM1}]. Even though these values are relatively small
+because the fraction of net mineralization rate to produce [\chem{N_2O}] is small (0.02),
 inversion of the Jacobian matrix results in substantial values in the row, and
 the 10$^{-13}$ \unit{M} update comes mainly from the entries with respect to
 Lit1C and Lit1N. This further illustrates that
@@ -1352,12 +1215,13 @@ The CLM-PFLOTRAN simulations are run in the mode that PFLOTRAN only handles
 subsurface chemistry (decomposition, nitrification, denitrification, \chem{N}
 plant uptake). For comparison, 1) depth and \chem{O_2}
 availability impact on decomposition, 2) cryoturbation, 3) SOM transport,
-and 3) nitrogen leaching 
+and 4) nitrogen leaching 
 are ignored by setting 1) decomp\_depth\_efolding to 10$^6$ m, o\_scalar to 1,
-2) cryoturb\_diffusion, 3) som\_diffusion, and 4) sf\_no3 and sf\_sminn to 0. For CLM-PFLOTRAN
-simulations, $k_\text{m}=10^{-6}$ and residual concentration 10$^{-15}$ are
-used for the base case. The nonphysical solution negativity is assessed in particular
-by relaxing the downregulation (decreasing $k_\text{m}$). Nitrogen is the focus
+2) cryoturb\_diffusion, 3) som\_diffusion, and 4) sf\_no3 and sf\_sminn to 0. In the base case, 
+$k_\text{m}=10^{-6}$ and residual concentration 10$^{-15}$.
+%The nonphysical solution negativity is assessed in particular
+%by relaxing the downregulation (decreasing $k_\text{m}$). 
+Nitrogen is the focus
 as it is the rate limiting nutrient in CLM4.5 biogeochemistry. Spin-up
 simulations are used because they are generally more likely to face a nonphysical solution negativity 
 because the simulations start far away from equilibrium. In these site
@@ -1413,7 +1277,7 @@ at 3 $\sim$ 4 m depth \citep{daCosta2010}. The vegetation is evergreen
 broadleaf forest. The LAI is 4 $\sim$ 6 \citep{Powell2013}. 
 
 \subsubsection{Base case simulation results}
-For CLM-PFLOTRAN base case simulations, we use DC  and LT because DC is the
+For base case simulations, we use DC  and LT because DC is the
 general geochemical modeling approach and is rigorous, and LT is less likely to
 cause numerical error than SU. The site climate data from 1998 to 2006, 2002 to
 2010, and 2001 to 2006  are used to drive the spin-up simulation for the arctic,
@@ -1462,18 +1326,18 @@ $k_\text{m}$ values (e.g., inset in Figs. \ref{fig:brw500yl}e,f,
 \ref{fig:pit300yl}e), which is similar to Fig. (\ref{fig:decomp}). The lack of
 sensitivity is because these very low concentrations do not make up a mass of
 nitrogen that is significant enough to influence the carbon and nitrogen cycle.
-However, as a small $k_\text{m}$ value means weak downregulation and steep transition
-between zero order and first order, it has implications on the accuracy,
+However, as a small $k_\text{m}$ means weak downregulation and steep transition
+between zero order and first order, it has implications on accuracy,
 stability, and efficiency of the numerical solutions.
 
 \subsubsection{Efficiency}
-We use OIC (ORNL Institutional Cluster phase5 esd13q) for the comparison of
+We use OIC (ORNL Institutional Cluster phase5 queue esd13q) for the comparison of
 computing time for the three sites using DC or DR with SU or LT. The results
 suggest that SU takes about 30$\sim$80\% more time than CLM, and LT costs about
 two to four times that of CLM (Table \ref{tab:computingtime}). For LT with DC, the
 computing time increases with decreasing $k_\text{m}$. This is expected because
 a smaller $k_\text{m}$ may require smaller time step size to march through
-steeper transition. The computing time appears not to be infeasible. The
+steeper transition. The
 comparison between DC and DR is mixed. This is because DC has more complicated
 substrate limiting representation that requires smaller time step sizes to march
 through steep transitions, while DR has simpler substrate limiting
@@ -1482,73 +1346,86 @@ that CLM-PFLOTRAN will require more computational cost as more complex
 biogeochemical processes are represented, transport is added, and thermal
 hydrology (including freeze and thaw) are incorporated. Future code
 optimization for performance on next-generation supercomputers is expected to
-mitigate the computational cost. 
+mitigate the computational cost issue. 
 
 \subsubsection{Accuracy}
-We use the tropical site to demonstrate the accuracy issue by SU (scaling
-update); i.e., the small scaling factor ($\lambda$) may not only limit \chem{N}
-consumption (immobilization and uptake) to account for availability limitation
-but also ``inhibit'' accumulation from mineralization, deposition, and fixation.
-The latter is unintended consequence and can introduce numerical error when the
-solution is considered converged because STOL is met. With $k_\text{m} =
+CLM checks carbon and nitrogen mass balance for every time step, and report
+ $\geq 10^{-8}$ \unit{gm^{-2}} errors. Among our CLM-PFLOTRAN
+simulations, no mass balance error is recorded when LT is used. In contrast,
+when SU is used, mass balance errors are recorded for all of the simulations. 
+We use the tropical site to demonstrate the accuracy issue by SU.
+%i.e., the small scaling factor ($\lambda$) may not only limit \chem{N}
+%consumption (immobilization and uptake) to account for availability limitation
+%but also ``inhibit'' accumulation from mineralization, deposition, and fixation.
+%The latter is unintended consequence and can introduce numerical error when the
+%solution is considered converged because STOL is met. 
+With $k_\text{m} =
 10^{-3}$ \unit{mol\,m^{-3}}, the LAI, VEGN, LITN, SOMN, \chem{NH_4^+}, and
 \chem{NO_3^-} are similar to that calculated using LT (Fig.
 \ref{fig:cax300yl} vs. \ref{fig:cax300y}). With decreasing $k_\text{m}$, the
 results diverge by SU but not by LT. With $k_\text{m}$ of 10$^{-6}$
 \unit{mol\,m^{-3}}, much less nitrogen is predicted to accumulate with SU than
-with LT. 
+with LT. Obviously, numerical error is introduced, and the
+error increases with decreasing $k_\text{m}$ 
   
-Checking \chem{NH_4^+} and \chem{NO_3^-} concentration in the first year, SU
+Looking into \chem{NH_4^+} and \chem{NO_3^-} concentration in the first year, SU
 calculation is similar to LT when \chem{NH_4^+} and \chem{NO_3^-} are abundant
-due to nitrogen mineralization from SOM4 decomposition at early times (Fig.
-\ref{fig:cax1y}). As nitrogen becomes limiting at late times due to increased
-plant nitrogen demand, \chem{NH_4^+} and \chem{NO_3^-} accumulate lower by SU
-than by LT. Further checking into the daily cycles (Fig. \ref{fig:cax1y}
-inset) reveals that \chem{NH_4^+} and \chem{NO_3^-} accumulate during the night when
-photosynthesis and plant nitrogen uptake pause. As the sun rises,
-photosynthesis and plant nitrogen uptake resume, decreasing nitrogen
-concentrations to very low level, limiting further uptake. As a result,
-nitrogen rebounds and then decreases again until sunset. From day 226 to 230,
+%due to nitrogen mineralization from SOM4 decomposition at early times 
+at early times (Fig.
+\ref{fig:cax1y}). As nitrogen becomes limiting at late times, 
+\chem{NH_4^+} and \chem{NO_3^-} accumulate lower by SU
+than by LT. Further looking into the daily cycles (Fig. \ref{fig:cax1y}
+inset), plant uptake decreases \chem{NH_4^+} and \chem{NO_3^-} concentrations
+to very low level in the morning when photosynthesis starts; then the low
+concentration limits plant uptake, and nitrogen accumulates and rebounds until
+the next day. From day 226 to 230,
 SU calculations are only slightly lower than LT calculations during the
-rebound. From day 250 to 254, the SU calculated rebounds are much lower than LT
-calculations. From day 295 to 300, accumulation during both night and day are
-decreased. Overall, \chem{NH_4^+} and \chem{NO_3^-} accumulation appear to be
+rebound. From day 250 to 254, the SU calculated rebounds are about two orders
+of magnitude lower than LT calculations. From day 295 to 300, it worsens both in frequency and magnitude.
+Overall, \chem{NH_4^+} and \chem{NO_3^-} accumulation appear to be
 numerically ``inhibited'' when the system becomes increasingly nitrogen limiting
 and when SU is used. As a result, the mass balance error shots up during the
 nitrogen limiting periods (Fig. \ref{fig:mbe}). 
 
-Finally checking nitrogen dynamics between day 250 and 254, these ``inhibited''
+Further checking nitrogen dynamics between day 250 and 254, these ``inhibited''
 intervals in Fig. (\ref{fig:cax1y}) coincide with the concentration valleys
 in the diagnostic species \chem{N_2Od}, which is used to track \chem{N_2O}
 production (reaction \ref{rxn:nitr2n2o}) due to decomposition (Eq.
-\ref{eq:nitr2n2odecompdownregulated}, Fig. \ref{fig:caxn2o}). At the
+\ref{eq:nitr2n2odecomp}, Fig. \ref{fig:caxn2o}). At the
 beginning of each CLM 0.5 h time step, we reset [\chem{N_2Od}] to
 10$^{-10}$ in PFLOTRAN so that it can be used to calculate the reaction rate
 for CLM (instead of saving concentration in previous time step)
 As we do not have any
 consumption reaction for \chem{N_2Od}, the decreases are purely numerical. The
 contribution of the derivatives of the rate (Eq.
-\ref{eq:nitr2n2odecompdownregulated}) results in a large enough positive update
+\ref{eq:nitr2n2odecomp}) results in a large enough positive update
 to \chem{N_2Od}, which results in a small scaling factor, and the solution is
 considered converged due to less than STOL update. This small scaling factor
 and false convergence result in the ``inhibition'' of \chem{NH_4^+} and
 \chem{NO_3^-} production, and manifest as much less nitrogen accumulation in
-Fig. (\ref{fig:cax300y}). If we remove the contribution of the derivatives
-for Eq. (\ref{eq:nitr2n2odecompdownregulated}) for the entries with respect to
-\chem{N_2Od} from the Jacobian,  the ``inhibition'' disappears and SU results
-become close to LT (Fig. \ref{fig:caxn2o}). If we decrease STOL from
-10$^{-8}$ to 10$^{-50}$, and $\lambda_\text{min}$ from 10$^{-10}$ to
-10$^{-50}$, the false convergence occurs less often and the difference from LT
-decreases. However, the mass balance error remains (Fig. \ref{fig:mbe}). This
-can also be mitigated by increasing the value from 10$^{-10}$
-to 10$^{-6}$ that we reset these diagnostic species concentrations.
-Resetting the concentrations of these diagnostic species to low values in each
-time step does magnify the issue. When these optional species are optioned out
-by excluding them from the species list in the input file, the chance for the
-issue to occur is very much decreased. Nevertheless, as long as low concentrations
-are produced, which is expected as competition for substrates or nutrients there
-is common, there is a possibility for the issue to emerge even with
-realistic half saturation values.  
+Fig. (\ref{fig:cax300y}). Decreasing STOL and/or $\lambda_{min}$ does not
+resolve the issue (Fig. (\ref{fig:cax1y})), nor does removing these diagnostic
+species, and/or decreasing $\alpha$ (say from 0.99 to 0.5). As long as there are 
+low concentrations, e.g., \chem{NH_4^+}, \chem{NO_3^-}, it is possible to have
+a sufficiently large update to result in a small scaling factor to "inhibit"
+production.   
+
+%This can be confirmed by removing the
+%contribution of the derivatives
+%for Eq. (\ref{eq:nitr2n2odecomp}) for the entries with respect to
+%\chem{N_2Od} from the Jacobian,  the ``inhibition'' decreases and SU results
+%become close to LT (Fig. \ref{fig:caxn2o}). Decreasing STOL from 10$^{-8}$ to
+%10$^{-50}$, $\lambda_\text{min}$ from 10$^{-10}$ to
+%10$^{-50}$, and/or $\alpha$ from 0.99 to 0.5 do not resolve the issue.
+%Increasing the value from 10$^{-10}$
+%to 10$^{-6}$ that we reset these diagnostic species concentrations does mitigate the issue.
+%When these species are optioned out
+%by excluding them from the species list in the input file, the chance for the
+%issue to occur is decreased. Nevertheless, as long as low concentrations
+%are produced, which is expected as competition for substrates or nutrients 
+%is common, there is a possibility for the issue to emerge even with
+%realistic half saturation values.  
+
 %With smaller STOL and $\lambda_\text{min}$, the low concentration is driven
 %lower, and the false convergence occurs less often but still exists. %, but If
 %we do the same thing for other diagnostic species (\chem{PlantN},
@@ -1559,18 +1436,19 @@ realistic half saturation values.
 %Therefore, we do not attempt to extend this hack for addressing the
 %nonnegativity challenge further for SU.
 
-An alternative to mitigate the issue is to use DR rather than DC. The rate
-formulae for DR can be very simple (no need for substrate limiting function).
-Because we use $k_\text{m}$ to distribute nitrogen demand between \chem{NH_4^+}
-and \chem{NO_3^-} (Eqs. \ref{eq:plantarate} and \ref{eq:plantnrate}) for plant
-nitrogen uptake and immobilization, our implementation ends up with the
-difference between DC and DR as that DR does not have \chem{NO_3^-} substrate
-limiting terms and uses Eq. (\ref{eq:dr}) for downregulation of both
-\chem{NH_4^+} and \chem{NO_3^-}. With DR, the numerical error is much reduced
-(not shown). However, it increases
-slightly with decreasing $k_\text{m}$ when comparing with LT (not shown). These
-results show that decreasing the complexity of the rate limiting representation
-helps reducing the nonphysical solution negativity for SU.
+%An alternative to mitigate the issue is to use DR rather than DC. The rate
+%formulae for DR can be very simple (no need for substrate limiting function).
+%Because we use $k_\text{m}$ to distribute nitrogen demand between \chem{NH_4^+}
+%and \chem{NO_3^-} (Eqs. \ref{eq:plantarate} and \ref{eq:plantnrate}) for plant
+%nitrogen uptake and immobilization, our implementation ends up with the
+%difference between DC and DR as that DR does not have \chem{NO_3^-} substrate
+%limiting terms and uses Eq. (\ref{eq:dr}) for downregulation of both
+%\chem{NH_4^+} and \chem{NO_3^-}. With DR, the numerical error is much reduced
+%(not shown). However, it increases
+%slightly with decreasing $k_\text{m}$ when comparing with LT (not shown). These
+%results show that decreasing the complexity of the rate limiting representation
+%helps reducing the nonphysical solution negativity for SU.
+
 
 %The reason for the small difference between LT and SU for $k_\text{m} =
 %10^{-3}$ \unit{mol\,m^{-3}} is because that \chem{N} is much less limiting. As
@@ -1594,7 +1472,11 @@ helps reducing the nonphysical solution negativity for SU.
 %run1s12 stol = 1e-12 fail at 7.80828 y 236 NGASmin
 %run2s12 stol = 1e-12 fail at 2.38362 y 240 TIN
 %run3s12 stol = 1e-12 fail at 2.43836 y 240 TIN
-SU limits the update to prevent negative concentration (Eq. \ref{eq:lambda}), and LT  
+%SU limits the update to prevent negative concentration (Eq. \ref{eq:lambda}), and LT  
+%We do not find report of numerical error in using SU from the literature. 
+%Resetting these diagnostic
+%concentrations to very low concentration in each time step, and using an $\alpha = 0.99$ (Eq. \ref{eq:alpha}). , 
+%As greater than $10^{-8}$ \unit{gNm^{-1}} mass balance error is recorded in every simulation with SU in CLM-PFLOTRAN, we caution against using SU. In contrast, no greater than $10^{-8}$ \unit{gNm^{-1}} mass balance error is recorded for LT.  
    
 \subsubsection{Stability and robustness}
 PFLOTRAN may stop CLM-PFLOTRAN run due to  1) too small a scaling factor for SU
@@ -1609,14 +1491,14 @@ time step cuts for either SU or LT, and 3) singular Jacobian matrix for LT.
 
 With SU and DC, the simulations run to conclusion for $k_\text{m}$ = 10$^{-3}$,
 10$^{-6}$, and 10$^{-9}$ \unit{mol\,m^{-3}} but abort for $k_\text{m}$ =
-10$^{-12}$ for all of the three sites (Table \ref{tab:stability}). The reasons
-for the unfinished runs are too small a scaling factor for \chem{NO_3^-} (Table
-\ref{tab:stability}). As indicated in Test 3, it is not surprising
+10$^{-12}$ for all of the three sites. The reasons
+for the unfinished runs are too small a scaling factor for \chem{NO_3^-}.
+As indicated in Test 3, it is not surprising
 to see positive updates to \chem{NO_3^-} as they depend on source and
 sink terms not only for \chem{NO_3^-} but also for \chem{NH_4^+} because of the
 nitrogen demand distribution scheme (Eq. \ref{eq:plantnrate}) for plant uptake
 and immobilization. With smaller $k_\text{m}$, the derivative of the substrate
-limiting function (Eq. \ref{eq:monodderiv}) becomes bigger when
+limiting function becomes bigger when
 the concentration is lower, and the off-diagonal entries in the Jacobian matrix
 become more dominant, increasing the probability of producing positive update.
 When a greater than [\chem{NO_3^-}] update is produced, [\chem{NO_3^-}] is
@@ -1624,7 +1506,7 @@ expected to decrease by 1-$\alpha$ times (0.01 by default) for each subsequent
 iterations, making it lower than the residual concentration (10$^{-15}$). If
 the $\lambda$ is not greater than $10^{-10}$, and the solution may be
 considered converged because STOL is satisfied, [\chem{NO_3^-}] can be very low,
-much below residual concentration (10$^{-26}$) in Table \ref{tab:stability}.
+much below residual concentration (10$^{-26}$).
 With such low concentrations, a positive update can  make the scaling factor to
 be less than 10$^{-10}$. The arctic site simulation aborts at a much later time than the
 temperate and tropical site because the uptake and immobilization rate is much smaller
@@ -1633,17 +1515,16 @@ temperate and tropical site because the uptake and immobilization rate is much s
 A lower STOL can be used to avoid or mitigate the false convergence. With STOL
 = 10$^{-12}$, the simulations abort for $k_\text{m}$ = 10$^{-3}$, 10$^{-6}$,
 and 10$^{-9}$ \unit{mol\,m^{-3}} for the three sites due to too big an update
-for the diagnostic variables (\chem{PlantN}, \chem{DeniN}, or \chem{N_2Od},
-Table \ref{tab:stability}). For each time step, these concentrations start with
-10$^{-10}$; with an update as big as 10$^{-6}$, the concentration can be
-lowered in several iterations using Eq. (\ref{eq:lambda}) to be below
-$10^{-10}$ times the update, resulting too small a scaling factor. Removing the
-contribution of the derivatives to entries for these diagnostic species in the
-Jacobian can mitigate this stability and accuracy issue but may slow down the
-convergence or cause numerical errors. Increasing the reset value from
-$10^{-10}$ can mitigate the issue. However, as long as there is a very low
-concentration for any species, there is a possibility for this issue to occur.  
-
+for the diagnostic variables (\chem{PlantN}, \chem{DeniN}, or \chem{N_2Od}).
+%For each time step, these concentrations start with
+%10$^{-10}$; with an update as big as 10$^{-6}$, the concentration can be
+%lowered in several iterations using Eq. (\ref{eq:lambda}) to be below
+%$10^{-10}$ times the update, resulting too small a scaling factor. Removing the
+%contribution of the derivatives to entries for these diagnostic species in the
+%Jacobian can mitigate this stability and accuracy issue but may slow down the
+%convergence or cause numerical errors. Increasing the reset value from
+%$10^{-10}$ can mitigate the issue. However, as long as there is a very low
+%concentration for any species, there is a possibility for this issue to occur.  
 Instead of aborting the run when the scaling factor is less than the minimum
 allowable value $\lambda_{min}$, an alternative is to consider the iteration
 diverges and return to the time stepping subroutine to cut time step size to
@@ -1656,7 +1537,7 @@ reason, we caution against use of SU.
 
 Similar to SU, the simulations using LT run to conclusion for $k_\text{m}$ =
 10$^{-3}$, 10$^{-6}$, and 10$^{-9}$ \unit{mol\,m^{-3}} but abort for
-$k_\text{m}$ =10$^{-12}$ for all of the three sites. The runs abort at 21.6,
+$k_\text{m}$ =10$^{-12}$ for the three sites. The runs abort at 21.6,
 2.46, and 1.1 year for the arctic, temperate, and tropical site because the
 number of time step cuts for one time step exceeds MAX\_CUT = 16 (default).
 Increasing MAX\_CUT to 50, the simulations run to conclusion with longer
@@ -1664,7 +1545,7 @@ computing time (Table \ref{tab:computingtime}). Looking into the reason for
 time step cuts, it usually involves iteration with \chem{NO_3^-} concentration
 oscillation between the first order and zero order (Fig. \ref{fig:monod}b,
 for example, between $1.69\times10^{-11}$ and $1.14\times10^{-13}$ in the sixth
-layer in 0.5 year for BR-Cax site). While requiring an excessively large
+layer in 0.5 year for BR-Cax site). While requiring a large
 MAX\_CUT, all of the simulations conclude with less than a 20\% increase of
 computing time for $k_\text{m}$ of $10^{-12}$ over $10^{-9}$. These results
 suggest that log transformation together with downregulation with reasonable
@@ -1678,11 +1559,11 @@ feasibly efficient solutions for CLM-PFLOTRAN biogeochemistry simulations.
 
 %\input{conc}
 
-We implement CLM biogeochemistry, specifically, CLM-CN decomposition,
-nitrification, denitrification, and plant nitrogen uptake reactions in CLM-PFLOTRAN. As
-CLM uses explicit time stepping (forward difference) and demand-based
+We implement CLM biogeochemistry (as an example, CLM-CN decomposition,
+nitrification, denitrification, and plant nitrogen uptake reactions) in CLM-PFLOTRAN. As
+CLM uses explicit time stepping and demand-based
 competition, the concentration is always nonnegative. PFLOTRAN uses implicit
-time stepping (backward Euler method) and Newton-Raphson method; the
+time stepping and Newton-Raphson method; the
 concentration can become negative, which is not physical, may cause numerical
 instability, and introduce numerical error. 
 
@@ -1704,7 +1585,7 @@ mathematical representation does not introduce negative or 0 concentrations.
 The first-order rate accounts for
 limitation of the reactant availability on the reaction rate, and the solution
 is nonnegative. Adding a residual concentration makes it positive. For the
-zero-order rate (or when the rate is not a function of a reactant), the Monod
+zero-order rate (the rate is not a function of a reactant), the Monod
 substrate limiting function provides a smooth transition from a zero order when
 the reactant is abundant to a first order when the reactant becomes
 limiting. The downregulation relaxes with decreasing half saturation and
@@ -1814,7 +1695,7 @@ contract DE-AC05-00OR22725.
 
 \begin{figure}[t]
 \includegraphics[width=12cm]{../figs/fig05/uptakef.pdf}
-\caption{The ratio of uptake and demand ($f_{pi}$ in Eq. \ref{eq:fpi}) as a
+\caption{The ratio of uptake and demand ($f_{pi}$) as a
 function of concentrations with CLM and representation by Eqs.
 (\ref{eq:plantarate}) and (\ref{eq:plantnrate}) in a 0.5 h time step with an
 uptake rate of 10$^{-9}$ \unit{M\,s^{-1}}. $f_{pi}$ for the new representation
@@ -1919,7 +1800,7 @@ CLM-PFLOTRAN.}
 year using SU (scaling update) vs. LT (log transformation) in the spin-up
 simulation for BR-Cax site with $k_\text{m} = 10^{-6}$ \unit{mol\,m^{-3}}.
 ``skip derivative'' refers to not including the derivatives for the reaction
-(\ref{rxn:nitr2n2o}) with rate (Eq. \ref{eq:nitr2n2odecompdownregulated}) in
+(\ref{rxn:nitr2n2o}) with rate (Eq. \ref{eq:nitr2n2odecomp}) in
 the entries for \chem{N_2Od} in the Jacobian matrix.}
 \label{fig:cax1y}
 \end{figure}
@@ -1955,108 +1836,6 @@ update in each iteration is used to enforce nonnegativity.}
 
 
 \clearpage
-%\begin{table}[t]
-%\label{tablekm}
-%\caption{Reported half saturation ($k_m$, $\mu$M) for \chem{NH_4^+}, \chem{NO_3^+} for plants and microbes (from \citep{Kuzyakov2013})}
-%\begin{tabular}{lrrrr}
-%\tophline
-%\chem{N} species& Mean & Standard deviation & Median & No of studies \\
-%\middlehline
-%Plants \\
-%\chem{NH_4^+} & 289 & 114 & 64 & 68 \\
-%\chem{NO_3^-} &  79 &  11 & 48 & 60 \\
-%Amino acids   & 265 & 105 & 96 & 82 \\
-%Microorganisms \\
-%\chem{NH_4^+} &  48 &  20 & 13 & 59 \\ 
-%\chem{NO_3^-} & 377 & 227 & 29 & 20 \\
-%Amino acids   & 530 & 111 & 86 & 52 \\ 
-%\bottomhline
-%\end{tabular}
-%%\belowtable{} % Table Footnotes
-%\end{table}
-
-\begin{table}[t]
-\caption{Iterations in solving $dc/dt=-R_ac/(c+k_m)$ using backward Euler method
-and Newton-Raphson method for one time step $R_a\Delta$t = 0.001 with
-initial $c=10^{-3}$ and $k_m=10^{-6}$}
-\label{table1}
-\begin{tabular}{rrrrrrr}
-\tophline
-Iteration& c &	c/($k_m$+c)& s/(c+$k_m$)$^2$ & Residual	& Jacobian & $\delta$ \\
-\middlehline
-1 & 0.001	& 9.99E-01 & 9.98E-01 &	9.99E-01 &	1.00E+03 &  0.000998005 \\
-2 & 1.99501E-06	& 6.66E-01 & 1.11E+05 &	-3.32E-01& 1.12E+05 &	-2.95065E-06 \\
-3 & 4.94566E-06	& 8.32E-01 & 2.83E+04 &	-1.63E-01& 2.93E+04 &	-5.57379E-06 \\
-4 & 1.05195E-05	& 9.13E-01 & 7.54E+03 &	-7.63E-02& 8.54E+03 &	-8.93755E-06 \\
-5 & 1.9457E-05	& 9.51E-01 & 2.39E+03 &	-2.94E-02& 3.39E+03 &	-8.68139E-06 \\
-6 & 2.81384E-05	& 9.66E-01 & 1.18E+03 &	-6.18E-03& 2.18E+03 &	-2.838E-06 \\
-7 & 3.09764E-05	& 9.69E-01 & 9.78E+02 &	-2.97E-04& 1.98E+03 &	-1.49981E-07 \\
-8 & 3.11264E-05	& 9.69E-01 & 9.69E+02 &	-6.85E-07& 1.97E+03 &	-3.47801E-10 \\
-9 & 3.11267E-05	& 9.69E-01 & 9.69E+02 &	-3.65E-12& 1.97E+03 &	-1.85288E-15 \\
-10 & 3.11267E-05 & 9.69E-01 & 9.69E+02 & 0 &	1.97E+03 &  0 \\
-\bottomhline
-\end{tabular}
-%\belowtable{} % Table Footnotes
-\end{table}
-
-\begin{table}[t]
-\caption{Iterations in solving $dc/dt=-R_ac/(c+k_m)$ using backward Euler method
-and Newton-Raphson method for one time step $R_a\Delta$t = 0.002 with
-initial $c=10^{-3}$ and $k_m=10^{-6}$ (without scaling back $\delta$)}
-\label{table2}
-\begin{tabular}{rrrrrrr}
-\tophline
-Iteration& c &	c/($k_m$+c)& s/(c+$k_m$)$^2$ & Residual	& Jacobian & $\delta$ \\
-\middlehline
-1 & 0.001 & 9.99E-01 & 9.98E-01 & 9.99E-01 & 5.01E+02 & 0.001994022  \\
-2 & -0.000994022 & 1.00E+00 & 1.01E+00 & 4.00E-03 & 5.01E+02 & 7.97596E-06  \\
-3 & -0.001001998 & 1.00E+00 & 9.98E-01 & 6.44E-08 & 5.01E+02 & 1.28641E-10  \\
-4 & -0.001001998 & 1.00E+00 & 9.98E-01 & 0.00E+00 & 5.01E+02 & 0  \\
-\bottomhline
-\end{tabular}
-%\belowtable{} % Table Footnotes
-\end{table}
-
-\begin{table}[t]
-\caption{Iterations in solving $dc/dt=-R_ac/(c+k_m)$ using backward Euler method
-and Newton-Raphson method for one time step $R_a\Delta$t = 0.002 with
-initial $c=10^{-3}$, $k_m=10^{-6}$, and $\alpha$ = 0.9999 for scaling back $\delta$}
-\label{table3}
-\begin{tabular}{rrrrrrrr}
-\tophline
-Iteration& c &	c/($k_m$+c)& s/(c+$k_m$)$^2$ & Residual	& Jacobian & $\delta$ & $\lambda$ \\
-\middlehline
-1 & 0.001 & 9.99E-01 & 9.98E-01 & 9.99E-01 & 5.01E+02 &	0.001994022 & 0.5 \\
-2 & 1E-07 & 9.09E-02 & 8.26E+05 & -4.09E-01 & 8.27E+05 	& -4.9464E-07 &	1 \\
-3 & 5.9464E-07 & 3.73E-01 & 3.93E+05 &	-1.27E-01 & 3.94E+05 & -3.22036E-07 & 1 \\
-4 & 9.16676E-07 & 4.78E-01 & 2.72E+05 &	-2.13E-02 & 2.73E+05 & -7.80252E-08 & 1 \\
-5 & 9.94701E-07	& 4.99E-01 & 2.51E+05 &	-8.31E-04 & 2.52E+05 & -3.29904E-09 & 1 \\
-6 & 9.98001E-07	& 4.99E-01 & 2.51E+05 &	-1.37E-06 & 2.51E+05 & -5.45442E-12 & 1 \\
-7 & 9.98006E-07	& 5.00E-01 & 2.50E+05 &	-3.73E-12 & 2.51E+05 & -1.48611E-17 & 1 \\
-8 & 9.98006E-07	& 5.00E-01 & 2.50E+05 &	0 & 2.51E+05 & 0 & 1\\
-\bottomhline
-\end{tabular}
-%\belowtable{} % Table Footnotes
-\end{table}
-
-\begin{table}[t]
-\caption{Iterations in solving $dc/dt=-R_ac/(c+k_m)$ using backward Euler method
-and Newton-Raphson method for one time step $R_a\Delta$t = 0.002 with
-initial $c=10^{-3}$ and $k_m=10^{-6}$ and with log transformation}
-\label{table4}
-\begin{tabular}{rrrrrrrr}
-\tophline
-Iteration& c &	c/($k_m$+c)& s/(c+$k_m$)$^2$ & Residual	& Jacobian & $\delta$ \\
-\middlehline
-1 & 0.001 & 9.99E-01 & 9.98E-01 & 9.99E-01 & 5.01E-01 & 1.994021918 & 0.000136147 \\
-2 & 0.000136147 & 9.93E-01 & 5.32E+01 & 5.61E-01 & 7.53E-02 & 7.446148992 & 7.94668E-08 \\
-3 & 7.94668E-08 & 7.36E-02 & 8.58E+05 & -4.26E-01 & 6.82E-02 & -6.247977459 & 4.10817E-05 \\
-4 & 4.10817E-05 & 9.76E-01 & 5.65E+02 &	4.97E-01 & 4.37E-02 & 11.35765187 & 4.79825E-10 \\
-5 & 4.79825E-10 & 4.80E-04 & 9.99E+05 & -5.00E-01 & 4.80E-04 & -1041.52556 &  \\
-\bottomhline
-\end{tabular}
-%\belowtable{} % Table Footnotes
-\end{table}
 
 \begin{table}[t]
 \caption{Wall time (hour) for spin-up simulation at the arctic, temperate, and tropical sites on OIC}
@@ -2078,30 +1857,30 @@ BR-Cax & 10.9 & 16.4 & 16.4 &      & 42.2 & 41.6 & \\
 \belowtable{SU = scaling update, LT = log transformation, $10^{-3}$, $10^{-6}$, and $10^{-9}$ are $k_\text{m}$, DC and DR = downregulating consumption as a function of concentration and rate, OIC = ORNL Institutional Cluster (Phase5), US-Brw simulation duration = 500 year and US-Pit and BR-Cax simulation duration = 300 year. For the last column LT ($10^{-12}$), MAX\_CUT is increased from default 16 to 50.} % Table Footnotes
 \end{table}
 
-\begin{table}[t]
-\caption{CLM-PFLOTRAN simulation termination before conclusion using scaling back update in iteration}
-\label{tab:stability}
-\begin{tabular}{rrrrrrr}
-\tophline
-Site & $k_\text{m}$ & year & species & concentration & update & layer\\
-\middlehline
-STOL = $10^{-8}$\\
-US-Brw & 10$^{-12}$ & 346.66 & \chem{NO_3^-} & $1.26\times 10^{-26}$ & $8.20\times10^{-15}$ & 4 \\
-US-Pit & 10$^{-12}$ & 3.56 & \chem{NO_3^-} & $2.67\times 10^{-26}$ & $2.49\times10^{-14}$ & 8 \\
-BR-Cax & 10$^{-12}$ & 3.18 & \chem{NO_3^-} & $2.54\times 10^{-26}$ & $5.72\times10^{-14}$ & 8 \\
-\middlehline
-STOL = $10^{-12}$\\
-US-Brw & 10$^{-6}$ & 41.78 & DeniN & 10$^{-20}$ & $2.31\times10^{-10}$ & 2 \\
-US-Brw & 10$^{-9}$ & 5.56 & PlantN  & $6.68\times 10^{-18}$ & $8.12\times10^{-8}$ & 2 \\
-US-PIT & 10$^{-3}$ & 7.81 & N$_2$Od & 10$^{-20}$ & $1.74\times10^{-9}$ & 1 \\
-US-PIT & 10$^{-6}$ & 2.40 & PlantN  & 10$^{-18}$ & $2.30\times10^{-6}$ & 1 \\
-BR-Cax & 10$^{-3}$ & 1.59 & N$_2$Od & 10$^{-20}$ & $1.66\times10^{-10}$ & 1 \\
-BR-Cax & 10$^{-6}$ & 0.64 & N$_2$Od & 10$^{-20}$ & $1.91\times10^{-10}$ & 2 \\
-BR-Cax & 10$^{-9}$ & 0.59 & PlantN  & 10$^{-18}$ & $4.92\times10^{-8}$ & 2 \\
-\bottomhline
-\end{tabular}
+%\begin{table}[t]
+%\caption{CLM-PFLOTRAN simulation termination before conclusion using scaling back update in iteration}
+%\label{tab:stability}
+%\begin{tabular}{rrrrrrr}
+%\tophline
+%Site & $k_\text{m}$ & year & species & concentration & update & layer\\
+%\middlehline
+%STOL = $10^{-8}$\\
+%US-Brw & 10$^{-12}$ & 346.66 & \chem{NO_3^-} & $1.26\times 10^{-26}$ & $8.20\times10^{-15}$ & 4 \\
+%US-Pit & 10$^{-12}$ & 3.56 & \chem{NO_3^-} & $2.67\times 10^{-26}$ & $2.49\times10^{-14}$ & 8 \\
+%BR-Cax & 10$^{-12}$ & 3.18 & \chem{NO_3^-} & $2.54\times 10^{-26}$ & $5.72\times10^{-14}$ & 8 \\
+%\middlehline
+%STOL = $10^{-12}$\\
+%US-Brw & 10$^{-6}$ & 41.78 & DeniN & 10$^{-20}$ & $2.31\times10^{-10}$ & 2 \\
+%US-Brw & 10$^{-9}$ & 5.56 & PlantN  & $6.68\times 10^{-18}$ & $8.12\times10^{-8}$ & 2 \\
+%US-PIT & 10$^{-3}$ & 7.81 & N$_2$Od & 10$^{-20}$ & $1.74\times10^{-9}$ & 1 \\
+%US-PIT & 10$^{-6}$ & 2.40 & PlantN  & 10$^{-18}$ & $2.30\times10^{-6}$ & 1 \\
+%BR-Cax & 10$^{-3}$ & 1.59 & N$_2$Od & 10$^{-20}$ & $1.66\times10^{-10}$ & 1 \\
+%BR-Cax & 10$^{-6}$ & 0.64 & N$_2$Od & 10$^{-20}$ & $1.91\times10^{-10}$ & 2 \\
+%BR-Cax & 10$^{-9}$ & 0.59 & PlantN  & 10$^{-18}$ & $4.92\times10^{-8}$ & 2 \\
+%\bottomhline
+%\end{tabular}
 %\belowtable{} % Table Footnotes
-\end{table}
+%\end{table}
 
 \clearpage
 
@@ -2451,6 +2230,52 @@ demand $R_{n,tot}$ is met with available \chem{NO_3^-}. Otherwise, available
 \chem{NO_3^-} is split to meet the remaining plant, immobilization, and
 denitrification demands in proportion to their rates. 
 
+\section{Downregulation with cutoff}
+\label{sec:cutoff}
+An alternative to using a residual concentration (Eq. \ref{eq:decomprateresidual}) is to
+introduce a cutoff, e.g., Eq. (\ref{eq:decomprate}) becomes
+\begin{equation}
+\frac{d [\chem{CN_u}]}{d t} = -k_\text{d} f_\text{T} f_\text{w}
+[\chem{CN_u}] f([\chem{CN_u}]),
+\end{equation}
+with $f([\chem{CN_u}]) = 1$ when [\chem{CN_u}]$\geq$[\chem{CN_u}]$_\text{r}$,
+and 0 otherwise. It is simple but does not prevent [\chem{CN_u}] from getting
+below [\chem{CN_u}]$_\text{r}$ or 0 in theory. In addition, it introduces a
+discontinuity. A polynomial function can be used to smooth the cutoff 
+\begin{equation}
+f([\chem{CN_u} ])=1-\left[1-\left(\frac{[\chem{CN_u}]-[\chem{CN_u}
+]_\text{r}}{\chem{CN_u} ]_1-[\chem{CN_u} ]_\text{r}}\right)^2 \right]^2.
+\label{eq:polycutoff}
+\end{equation}
+This function varies from 0 at [\chem{CN_u}]$_\text{r}$ to 1 at
+[\chem{CN_u}]$_1$, with zero derivatives at both points. While not implying a
+nonphysical reverse reaction as Eq. (\ref{eq:decomprateresidual}), 
+\begin{equation}
+\frac{d f([\chem{CN_u} ])}{d[\chem{CN_u}]}=4 \frac{[\chem{CN_u}] -
+[\chem{CN_u}]_\text{r}}{\left([\chem{CN_u}]_1 - [\chem{CN_u}]_\text{r} \right)^2}
+\left[1-\left(\frac{[\chem{CN_u}]-[\chem{CN_u} ]_\text{r}}{\chem{CN_u}
+]_1-[\chem{CN_u} ]_\text{r}}\right)^2 \right].
+\label{eq:polycutoffderiv}
+\end{equation}
+Depending on $[\chem{CN_u}]_1-[\chem{CN_u}]_\text{r}$, this cutoff does
+introduce a large derivative change during the transition:
+$df([\chem{CN_u}])/d[\chem{CN_u}]$ varies from 0 to ~10$^8$ for
+[\chem{CN_u}]$_\text{r}$=10$^{-10}$  and [\chem{CN_u}]$_1$=10$^{-8}$ (Fig.
+\ref{fig:cutoff}). The maximum increases at about the same order of magnitude
+as the decrease of [\chem{CN_u}]$_r$ and [\chem{CN_u}]$_1$. Even though
+smoothed, the cutoff is still a sharp change. The smaller the cutoff
+concentrations, the sharper the transitions. Marching through a steep
+transition in time usually involves small time steps.
+\begin{figure}[h]
+\includegraphics[width=1.0\textwidth]{../figs/fig02/fig02cutoff.pdf}
+\caption{Smoothed cutoff function (Eq. \ref{eq:polycutoff}) and derivative (Eq.
+\ref{eq:polycutoffderiv}). The y axis is in log in (c) and (d), while the x
+axis is in log in (b) and (d). Even though smoothed, the cutoff is a steep
+transition. The derivative varies by orders of magnitude in a small
+concentration range and requires small time step size to march through.}
+\label{fig:cutoff}
+\end{figure}
+
 \section{Downregulation of consumption as a function of rates}    %% Appendix A
 \label{sec:drimpl}
 The contribution of $n$ reactions to the rate component in the residual and
@@ -2475,7 +2300,6 @@ Depending on whether a species a (e.g., \chem{NH_4^+}) is a reactant
 ($\nu_{aj}$ > 0) or a product ($\nu_{aj}$ < 0), we divide the $n$ reactions into a
 demand (subscript $da$ for demand $a$) and a supply (subscript $sa$ for supply
 $a$) group:
-
 \begin{equation}
 R_{da}=\sum_{j=1}^{n_{da}} \nu_{da,aj} R_{da,j},
 \end{equation}
@@ -2490,7 +2314,6 @@ $\nu_{sa,ij}$ as the stoichiometric coefficient of species $i$ in a producing
 reaction $j$, $R_{da}$ as $a$ consumption (demand) rate (mol s$^{-1}$,
 negative), and $R_{sa}$ as $a$ production (supply) rate (mol s$^{-1}$,
 positive). Therefore, 
-
 \begin{equation}
 \mathbf{R}(i) = \sum_{j=1}^{n_{sa}} \nu_{sa,aj} R_{sa,j} + \sum_{j=1}^{n_{da}}
 \nu_{da,aj} R_{da,j}=\mathbf{R}_{sa} (i)+\mathbf{R}_{da} (i),
@@ -2504,13 +2327,11 @@ and
 (\nu_{da,ij}R_{da,j})}{\partial \mathbf{C}(k)} =
 \mathbf{J}_{sa}+\mathbf{J}_{da}.
 \end{equation}
-
 %\begin{equation}
 %\mathbf{J}=\mathbf{J}_{sa}+\mathbf{J}_{da}
 %\end{equation}
 
 Define a downregulation factor  
-
 \begin{equation}
 d_a=\min\left(1, -\frac{R_{sa} \Delta t + \left[\mathbf{C}(a)-\epsilon\right]
 V} {R_{da} \Delta t}\right)=\min\left(1, -\frac{s_a}{D_a}\right),
@@ -2518,38 +2339,31 @@ V} {R_{da} \Delta t}\right)=\min\left(1, -\frac{s_a}{D_a}\right),
 with $V$ as the bulk volume or volume of liquid water of the grid cell for
 species with concentration unit \chem{mol\,m^{-3}} or \chem{M}. After
 downregulation,
-
 \begin{equation}
 \mathbf{R}_a=\mathbf{R}_{sa}+d_a \mathbf{R}_{da},
 \end{equation}
-
 \begin{equation}
 \mathbf{J}_a (i,k)=\frac{\partial \mathbf{R}_a(i)}{\partial \mathbf{C}(k)}
 =\mathbf{J}_{sa} (i,k)+d_a \mathbf{J}_{da} (i,k)+\mathbf{R}_{da} (i)
 \frac{\partial d_a}{\partial \mathbf{C}(k)}, 
 \end{equation}
-
 \begin{equation}
 \frac{\partial d_a}{\partial \mathbf{C}(k)} =-\left(\frac{\partial
 s_a}{\partial \mathbf{C}(k)} D_a - s_a \frac{\partial D_a}{\partial
 \mathbf{C}(k)}\right)D_a^{-2}, 
 \end{equation}
-
 \begin{equation}
 \frac{\partial s_a}{\partial \mathbf{C}(a)} =\sum_{j=1}^{n_{sa}}
 \frac{\partial (\nu_{sa,aj}R_{sa,j})}{\partial \mathbf{C}(a)} \Delta t + V, 
 \end{equation}
-
 \begin{equation}
 \frac{\partial s_a}{\partial \mathbf{C}(k)} =\sum_{j=1}^{n_{sa}}
 \frac{\partial (\nu_{sa,kj}R_{sa,j})}{\partial \mathbf{C}(k)} \Delta t, 
 \end{equation}
-
 \begin{equation}
 \frac{\partial D_a}{\partial \mathbf{C}(k)} =\sum_{j=1}^{n_{da}}
 \frac{\partial (\nu_{da,kj}R_{da,j})}{\partial \mathbf{C}(k)} \Delta t, 
 \end{equation}
-
 Implementation in PFLOTRAN involves 1) adding variables $\mathbf{R}_{sa}$,
 $\mathbf{R}_{da}$, and $\mathbf{J}_a$, 2) accumulating the values in each
 reaction rate formula, and 3) conducting downregulation and adding the
@@ -2565,35 +2379,29 @@ added in demand rate and derivative for \chem{NH_4^+} ($\mathbf{R}_{sa}$,
 $\mathbf{R}_{da}$, $\mathbf{J}_{sa}$, $\mathbf{J}_{da}$), not in the sink rate
 and derivative for \chem{NO_3^-} ($\mathbf{R}_{sl}$,$\mathbf{R}_{dl}$,
 $\mathbf{J}_{sl}$, $\mathbf{J}_{dl}$). Define a downregulation factor 
-
 \begin{equation}
 d_l=\min\left(1, -\frac{R_{sl} \Delta t + (\mathbf{C}(l)-\epsilon) V_w +
 \underline{R_{al}d_a\Delta t}} {R_{dl} \Delta t}\right)=\min(1,
 -\frac{s_l}{D_l}),
 \end{equation}
-
 \begin{equation}
 \mathbf{R}_l=\mathbf{R}_{sl}+d_l \mathbf{R}_{dl},
 \end{equation}
-
 \begin{equation}
 \mathbf{J}_l (i,k)=\frac{\partial \mathbf{R}_l(i)}{\partial \mathbf{C}(k)}
 =\mathbf{J}_{sl} (i,k)+d_l \mathbf{J}_{dl} (i,k)+\mathbf{R}_{dl} (i)
 \frac{\partial d_l}{\partial \mathbf{C}(k)}, 
 \end{equation}
-
 \begin{equation}
 \frac{\partial d_l}{\partial \mathbf{C}(k)} =-\left(\frac{\partial
 s_l}{\partial \mathbf{C}(k)} D_l - s_l \frac{\partial D_l}{\partial
 \mathbf{C}(k)}\right)D_l^{-2}, 
 \end{equation}
-
 \begin{equation}
 \frac{\partial s_l}{\partial \mathbf{C}(l)} =\sum_{j=1}^{n_{sl}}
 \frac{\partial (\nu_{sl,lj}R_{sl,j})}{\partial \mathbf{C}(l)} \Delta t + V_w +
 \underline{\frac{\partial (R_{al}d_a)}{\partial \mathbf{C}(l)}}, 
 \end{equation}
-
 \begin{equation}
 \frac{\partial s_l}{\partial \mathbf{C}(k)} =\sum_{j=1}^{n_{sl}} \frac{\partial
 (\nu_{sl,kj}R_{sl,j})}{\partial \mathbf{C}(k)} \Delta t +
@@ -2604,7 +2412,6 @@ and
 \frac{\partial D_a}{\partial \mathbf{C}(k)} =\sum_{j=1}^{n_{da}}
 \frac{\partial (\nu_{da,kj}R_{da,j})}{\partial \mathbf{C}(k)} \Delta t. 
 \end{equation}
-
 In addition to variables $\mathbf{R}_{sl}$, $\mathbf{R}_{dl}$, and $\mathbf{J}_l$,
 downregulating the second species requires two additional variables,
 $R_{al}$, and $R_{al}'$. When accumulating the values in each reaction rate
@@ -2623,23 +2430,90 @@ consumption and production rates and their derivatives. The consumption and
 production relationship among many species can be complicated, making
 generalization of this approach challenging if not infeasible. 
 
-\clearpage
+\section{A semi-analytical solution for Monod equation}
+\label{sec:monodsemi}
+As an analytical solution is not available, discretizing Eq. (\ref{eq:ex1})
+using the backward Euler method, it becomes
+\begin{equation}
+{[\chem{NH_4^+}]^{k+1}}^2+(k_\text{m} + R_a \Delta t - [\chem{NH_4^+}]^k)
+[\chem{NH_4^+}]^{k+1} - k_\text{m} [\chem{NH_4^+}]^k = 0.
+\end{equation}
+The two roots are
+\begin{equation}
+[\chem{NH_4^+}]^{k+1}=0.5 \left[[\chem{NH_4^+}]^k - k_\text{m} - R_a \Delta t
+\pm \sqrt{([\chem{NH_4^+}]^k - k_\text{m} - R_a\Delta t)^2 + 4
+k_\text{m}[\chem{NH_4^+}]^k}\right].
+\label{eq:monodsemi}
+\end{equation}
+
+\section{Matrix equation for example Test 2}
+\begin{equation}
+\left[
+\begin{matrix}
+\frac{1}{\Delta t} + J_{at} + J_{nitr} & 0 & 0 \\
+-J_{at} & \frac{1}{\Delta t} & 0 \\
+-J_{nitr} & 0 & \frac{1}{\Delta t} \\
+\end{matrix}
+\right]
+\left(
+\begin{matrix}
+\delta [\chem{NH_4^+}]^{k+1,1} \\
+\delta [\chem{PlantA}]^{k+1,1} \\
+\delta [\chem{NO_3^-}]^{k+1,1} 
+\end{matrix}
+\right)
+=
+\left(
+\begin{matrix}
+R_{at} + R_{nitr} \\
+-R_{at} \\
+-R_{nitr} 
+\end{matrix}
+\right).
+\label{eq:test2}
+\end{equation}
+
+\section{Matrix equation for example Test 3}
+\label{sec:eqtest3}
+\begin{equation}
+\label{eq:complexjacobian}
+\left[
+\begin{matrix}
+\frac{1}{\Delta t} + J_{at} + J_{nitr} & 0                  & 0                                   &0 & 0\\
+-J_{at}                              & \frac{1}{\Delta t} & 0 &0 &0\\
+-J_{nitr} + J_{nt,a}                 & 0                  & \frac{1}{\Delta t} + J_{nt} + J_{deni}&0 &0 \\
+-J_{nt,a}                            & 0                  & -J_{nt,n}                             &1/\Delta t & 0 \\
+ 0                                   & 0                  & -0.5J_{deni}                             & 0 &1/\Delta t
+\end{matrix}
+\right]
+\left(
+\begin{matrix}
+\delta [\chem{NH_4^+}]^{k+1,1} \\
+\delta [\chem{PlantA}]^{k+1,1} \\
+\delta [\chem{NO_3^-}]^{k+1,1} \\ 
+\delta [\chem{PlantN}]^{k+1,1} \\
+\delta [\chem{N_2}]^{k+1,1} 
+\end{matrix}
+\right)
+=
+\left(
+\begin{matrix}
+R_{at} + R_{nitr} \\
+-R_{at} \\
+-R_{nitr} + R_{nt} + R_{deni} \\
+-R_{nt} \\
+-0.5R_{deni}
+\end{matrix}
+\right).
+\end{equation}
+
+%\clearpage
 \section{Supplemental figures}    %% Appendix A
+
 \begin{figure}[h]
-\includegraphics[width=15cm]{../figs/fig02/fig02cutoff.pdf}
-\caption{Smoothed cutoff function (Eq. \ref{eq:polycutoff}) and derivative (Eq.
-\ref{eq:polycutoffderiv}). The y axis is in log in (c) and (d), while the x
-axis is in log in (b) and (d). Even though smoothed, the cutoff is a steep
-transition. The derivative varies by orders of magnitude in a small
-concentration range and requires small time step size to march through.}
-\label{fig:cutoff}
-\end{figure}
-
-
-\begin{figure}[t]
-\includegraphics[width=15cm]{../figs/fig03/fig03monod.pdf}
-\caption{Monod substrate limiting function (Eq. \ref{eq:monod}) and derivative
-(Eq. \ref{eq:monodderiv}). The y axis is in log in (c) and (d), while the x
+\includegraphics[width=1.0\textwidth]{../figs/fig03/fig03monod.pdf}
+\caption{Monod substrate limiting function (Eq. \ref{eq:monod}) and derivative.
+The y axis is in log in (c) and (d), while the x
 axis is in log in (b) and (d). As the function switches from zero-order to
 first-order, the derivative jumps six ($k_\text{m}^{-1}$) orders of magnitudes,
 requiring small time step size to step through.}
@@ -2647,11 +2521,11 @@ requiring small time step size to step through.}
 \end{figure}
 
 
-\begin{figure}[t]
-\includegraphics[width=15cm]{../figs/fig04/fig04monodcutoff.pdf}
-\caption{A combination of the Monod substrate limiting function (Eqs.
-\ref{eq:monod} and \ref{eq:monodderiv}, Fig. \ref{fig:monod}) and the smoothed
-cutoff function (Eqs. \ref{eq:polycutoff} and \ref{eq:polycutoffderiv}, Fig.
+\begin{figure}[h]
+\includegraphics[width=1.0\textwidth]{../figs/fig04/fig04monodcutoff.pdf}
+\caption{A combination of the Monod substrate limiting function (Eq.
+\ref{eq:monod}, Fig. \ref{fig:monod}) and the smoothed
+cutoff function (Eq. \ref{eq:polycutoff}, Fig.
 \ref{fig:cutoff}) introduces steep transitions that require small time step
 sizes to march through.}
 \label{fig:monodcutoff}

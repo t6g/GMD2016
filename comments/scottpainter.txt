@@ -1,0 +1,31 @@
+I think it reads well and will be a useful contribution. 
+
+My only concern is that it’s long and very detailed for a journal article. This
+level of detail is great for internal use, but I’m not sure that many readers
+of the journal would have the patience to follow at this level of detail. Also,
+we’ll probably exceed the page limit for the journal. 
+
+I notice an extraneous line at line 721. 
+
+A couple of suggestions for reducing the length: 
+
+I think Tables 1-4 can be eliminated.  I think this model system is useful, but
+perhaps you could just describe the results in the text? In addition to
+eliminating a full page of tables with numbers, that would allow you to
+compress the text on page 16. 
+
+I’m not sure that Appendix B is needed. 
+
+I wonder if the discussion around the diagnostic variables is needed? It would
+save a little space from multiple locations.
+
+I’m not sure that Table 6 is needed, and the entire discussion around it can be
+compressed. The year at which the code fails doesn’t really matter. What’s more
+important is the conditions when SU gives a small update. Also, I would argue
+that best practices here is to cut the time step anyway, so I’m not sure that
+this is all that relevant. 
+
+Also, I’m not a fan of putting equations in the Introduction. A large fraction
+of your readers will move on the next article at that point. I’d try to
+eliminate Eq 1 if possible. 
+
