@@ -69,7 +69,7 @@
 \linenumbers
 
 \title{Addressing the Challenge of Nonphysical Solution Negativity in Coupling a Reactive
-Transport Code with a Global Land Surface Model for Mechanistic Biogeochemistry
+Transport Model with a Global Land Surface Model for Mechanistic Biogeochemistry
 Representation}
 
 
@@ -144,7 +144,7 @@ Reactive transport codes (e.g., PFLOTRAN) are increasingly used to improve the
 representation of biogeochemical processes in terrestrial ecosystem models
 (e.g., the Community Land Model, CLM). 
 As CLM and PFLOTRAN use explicit and
-implicit time stepping, implementation of CLM biogeochemical reactions in
+implicit time stepping, respectively, implementation of CLM biogeochemical reactions in
 PFLOTRAN can result in negative primary species concentrations, which is not
 physically meaningful. The objective of this work is to
 address the nonphysical solution negativity to obtain accurate, efficient, and
@@ -154,8 +154,8 @@ denitrification, and plant nitrogen uptake reactions and test the
 implementation at arctic, temperate, and tropical sites. We examine use of
 scaling back the update during each iteration (SU), log transformation (LT),
 and downregulating the reaction rate to account for reactant availability
-limitation to enforce nonnegativity. Both SU and LT guarantee nonnegativity but
-with implications. When a very small scaling factor occurs due to either
+limitation to enforce nonnegativity. Both SU and LT guarantee nonnegativity.
+When a very small scaling factor occurs due to either
 consumption or numerical overshoot, and the iterations are deemed converged
 because of too small an update, SU can introduce excessive numerical error. LT
 involves multiplication of the Jacobian matrix by the concentration vector,
@@ -188,14 +188,14 @@ concentration.
 \introduction  %% \introduction[modified heading if necessary]
 Land surface models calculate the fluxes of energy, water, and green house
 gases across the land-atmosphere interface for the atmospheric general
-circulation models for climate simulation and weather forecasting. Evolving
+circulation models for climate simulation and weather forecasting \citep{Sellers1997}. Evolving
 from the first generation ``bucket'', second generation ``biophysical'', and
 third generation ``physiological'' models \citep{Sellers1997,Seneviratne2010},
 current land surface models, e.g., the Community Land Model (CLM), implement
 comprehensive thermal, hydrological, and biogeochemical processes
 \citep{Oleson2013}. The important role of soil biogeochemistry is suggested by
-the confirmation that the increase of \chem{CO_2}, \chem{CH_4}, and \chem{N_2O}
-in the atmosphere since the preindustrial times is the main driving cause of
+the confirmation that the increase of carbon dioxide, methane, and nitrous oxide
+in the atmosphere since the preindustrial time is the main driving cause of
 climate change, and interdependent water, carbon and nitrogen cycles in
 terrestrial ecosystems are very sensitive to climate changes \citep{IPCC2013}.
 CLM4.5 incorporates CLM-CN and CENTURY, and adds methane models for carbon and
@@ -260,7 +260,7 @@ can cause numerical instability and errors \citep{Shampine2005}. With
 instability, the simulation may abort before reaching target
 simulation duration. Excess numerical error may jeopardize the improvements in
 process representation. Avoiding numerical instability and error may result in
-small time step sizes or high computational cost. Therefore, it is necessary to
+small time step sizes and high computational cost. Therefore, it is necessary to
 address the nonphysical solution negativity for accurate, robust, and efficient numerical
 simulation.  
 
@@ -271,7 +271,7 @@ and geochemical modeling
 The challenge increases in geochemical modeling because the concentration can
 be very low. For example, the threshold concentration for \chem{H_2} is 1.5
 \unit{nM} (10$^{-9}$\unit{M}) for dechlorinators and 5$\sim$20 \unit{nM} for
-methanogens \citep{Fennell1998}.  The EPA maximum contaminant level for
+methanogens \citep{Fennell1998}.  US Environmental Protection Agency maximum contaminant level for
 drinking water for dioxin is 30 \unit{ppq} ($3.5\times 10^{-13}$ \unit{M}). The
 redox potential Eh needs to be decreased to $-0.35$ \unit{V} (corresponding to an
 \chem{O_2} concentration < $10^{-22}$ \unit{M} \citeauthor{Hungate1975},
@@ -293,15 +293,15 @@ some other geochemical codes (e.g., Geochemist's Workbench,
 implications of these approaches have not been thoroughly examined,
 particularly for application to CLM. 
 
-Competition for  nutrients (for instance, labile carbon, phosphate, \chem{O_2},
+Competition for  substrates (for instance, labile carbon, phosphate, \chem{O_2},
 and \chem{H_2}) is common in terrestrial ecosystems, and is increasingly
 incorporated in process-rich models. As the terrestrial ecosystem models are
 often run under a variety of conditions around the globe for hundreds of years
 with a time step as small as half an hour, proper treatment of the
 nonphysical solution negativity is necessary for accurate, efficient, and robust simulation
-of biogeochemical processes using reactive transport codes for earth system
-models. The objective of this work is to implement CLM subsurface
-biogeochemical reactions in CLM-PFLOTRAN with the focus on addressing the
+of biogeochemical processes using reactive transport codes.
+The objective of this work is to implement CLM subsurface
+biogeochemical reactions in CLM-PFLOTRAN with a focus of addressing the
 nonphysical solution negativity to obtain accurate, efficient, and robust solutions. We
 implement the CLM-CN decomposition \citep{Bonan2012,Oleson2013,Thornton2005};
 nitrification; denitrification \citep{Dickinson2002,Parton2001,Parton1996}; and
@@ -317,7 +317,7 @@ focuses on addressing the nonphysical solution negativity for biogeochemistry, %
 (including freeze and thaw), hydrology,  and biogeochemistry will be presented
 in future publications.  While we use CLM-PFLOTRAN to implement and test simple
 carbon and nitrogen reactions at a few sites, we hope that what we develop here
-will be relevant for a wide range of applications.
+will be applicable for a wide range of applications.
 
 
 %\section{HEADING}
@@ -357,7 +357,7 @@ solution negativity for the geochemical reactions, with CLM solving the energy a
 flow equations and handling the solute transport (mixing, advection, diffusion,
 and leaching).
 
-In each time step, CLM provides production rates for \chem{Lit1C},
+In each CLM time step, CLM provides production rates for \chem{Lit1C},
 \chem{Lit1N}, \chem{Lit2C}, \chem{Lit2N}, \chem{Lit3C}, \chem{Lit3N} for litter
 fall; \chem{CWDC}, and \chem{CWDN} for coarse woody debris production,
 \chem{NH_4^+} and \chem{NO_3^-} for nitrogen deposition and fixation; and
@@ -781,7 +781,7 @@ CLM demand-based competition.
 
 CLM splits the
 available nitrogen to meet the demands by microbes and plants in
-proportion to the potential rates \citep{Thornton2005} (Appendix \ref{sec:demandbasedcompetition}). Suppose that the
+proportion to the potential rates \citep{Thornton2005,Oleson2013} (Appendix \ref{sec:demandbasedcompetition}). Suppose that the
 demand (consumption, sink, including immobilization, plant uptake,
 nitrification, etc.) rate is $R_{dp}$; the supply (source, production,
 including deposition, mineralization, etc.) rate is $R_s$, and the
@@ -1228,7 +1228,7 @@ because the simulations start far away from equilibrium. In these site
 simulations, PFLOTRAN uses the same 10 layer grid for the 3.8 m one-dimensional
 column as CLM. The simulation duration is 500, 300, and 300 year for the
 arctic, temperate, and tropical sites as the system roughly reaches steady state
-within these simulation durations. 
+within these simulation durations, and we do not experience different nonnegativity issues when simulation duration is longer. 
 
 %Our discussion in subsection \ref{subsection:su} and the simple test problems
 %show that SU (scale update in Newton-Raphson iteration) has the potential to
@@ -1253,7 +1253,7 @@ snow free-period is variable in length but generally begins in early June and
 lasts until early September \citep{Hinkel2003}. The area is composed of several
 different representative wet-moist coastal sedge tundra types, including wet
 sedges, grasses, moss, and assorted lichens. The leaf area index (LAI) is
-$\sim$ 1.1.
+$\sim$ 1.1 (AmeriFlux data).
 
 The US-WBW site (35.96N, 84.29W) is located in the Walker Branch Watershed in
 Oak Ridge, Tennessee \citep{Hanson2003}. The climate is typical of the humid
@@ -1280,8 +1280,8 @@ broadleaf forest. The LAI is 4 $\sim$ 6 \citep{Powell2013}.
 For base case simulations, we use DC  and LT because DC is the
 general geochemical modeling approach and is rigorous, and LT is less likely to
 cause numerical error than SU. The site climate data from 1998 to 2006, 2002 to
-2010, and 2001 to 2006  are used to drive the spin-up simulation for the arctic,
-temperate, and tropical sites, respectively. This introduces a multi-year cycle
+2010, and 2001 to 2006  are used to drive the spin-up simulation for the arctic (US-Brw),
+temperate (US-WBW), and tropical (BR-Cax) sites, respectively. This introduces a multi-year cycle
 in addition to the annual cycle (Figs. \ref{fig:brw500yl}, \ref{fig:pit300yl},
 \ref{fig:cax300yl}). Overall, CLM-PFLOTRAN is close to CLM4.5 in
 predicting LAI and nitrogen distribution among vegetation, litter, SOM,
@@ -1297,9 +1297,8 @@ temperate (Fig. \ref{fig:pit300yl}), and tropical site (Fig. \ref{fig:cax300yl})
 CLM4.5 does reach equilibrium earlier than CLM-PFLOTRAN as the latter represents 
 slightly more inhibition on plant nitrogen uptake, depending on the half
 saturation. The impact is most obvious for \chem{LitN}, \chem{NH_4^+}, and
-\chem{NO_3^-} in the tropical site (Fig. \ref{fig:cax300yl}). Because the
-nitrogen demand competition scheme implemented in CLM-PFLOTRAN is different
-from that in CLM4.5, we do not expect identical results as \citet{Fang2013}. 
+\chem{NO_3^-} in the tropical site (Fig. \ref{fig:cax300yl}). This is expected as the nitrogen demand competition scheme implemented in CLM-PFLOTRAN is different
+from that in CLM4.5. 
 
 The arctic site shows a distinct summer growing season (Fig.
 \ref{fig:brw500yl}): LAI and VEGN jump up at the beginning, then level off, and
@@ -1559,8 +1558,8 @@ feasibly efficient solutions for CLM-PFLOTRAN biogeochemistry simulations.
 
 %\input{conc}
 
-We implement CLM biogeochemistry (as an example, CLM-CN decomposition,
-nitrification, denitrification, and plant nitrogen uptake reactions) in CLM-PFLOTRAN. As
+We implement CLM-CN decomposition casecade,
+nitrification, denitrification, and plant nitrogen uptake reactions in CLM-PFLOTRAN. As
 CLM uses explicit time stepping and demand-based
 competition, the concentration is always nonnegative. PFLOTRAN uses implicit
 time stepping and Newton-Raphson method; the
@@ -1646,6 +1645,8 @@ GNU Lesser General Public License as published by the Free Software Foundation
 either version 2.1 of the License, or any later version. It is available at
 https://bitbucket.org/pflotran. 
 
+CLM-PFLOTRAN is currently under development and will be available subject to guidelines of NGEE-Arctic and ACME projects.
+
 \section{Author contribution}
 G. B., B. A., R. M., J. K., and F. H. developed the CLM-PFLOTRAN framework that this
 work built upon. F.Y., G.T., G. B., and X.X. added biogeochemistry to the CLM-PFLOTRAN
@@ -1689,7 +1690,7 @@ contract DE-AC05-00OR22725.
 \clearpage
 \begin{figure}[t]
 \includegraphics[width=15cm]{../figs/fig01/fig01conceptualmodel.pdf}
-\caption{The reaction network for the carbon (A) and nitrogen (B) cycles implemented in this work. The carbon cycle is modified from \citet{Thornton2005} and \citet{Bonan2012}}.
+\caption{The reaction network for the carbon (A) and nitrogen (B) cycles implemented in this work. The carbon cycle is modified from \citet{Thornton2005} and \citet{Bonan2012}. $\tau$ is the turnover time, and CN is the CN ratio in gC over gN.}
 \label{fig:conceptualmodel}
 \end{figure}
 
