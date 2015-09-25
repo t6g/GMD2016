@@ -118,24 +118,24 @@ plt.ylim([0, 35])
 plt.yticks([0, 10, 20])
 plt.xticks([0, 100, 200])
 
-"""
-xmina = 9
-xmaxa = 10
+xmina = 0
+xmaxa = 1
 
-ax5a = plt.axes([0.18, 0.24, 0.20, 0.09]) 
+ax5a = plt.axes([0.71, 0.24, 0.18, 0.07]) 
 plt.semilogy(t, data1['nh4a'], 'b-', t, data2['nh4a'], 'r-', t, data3['nh4a'], 'g-', t, data4['nh4a'], 'm-')
 plt.xlim([xmina, xmaxa])
-plt.ylim([1e-9, 10])
-plt.yticks([1e-9, 1e-6, 1e-3, 1])
-plt.setp(ax5a.get_xticklabels(), visible=False)
+plt.ylim([1e-6, 1])
+plt.yticks([1e-6, 1e-3, 1])
+#plt.setp(ax5a.get_xticklabels(), visible=False)
 
-ax6a = plt.axes([0.18, 0.11, 0.20, 0.09]) 
+ax6a = plt.axes([0.71, 0.11, 0.18, 0.07]) 
 plt.semilogy(t, data1['no3a'], 'b-', t, data2['no3a'], 'r-', t, data3['no3a'], 'g-', t, data4['no3a'], 'm-')
 plt.xlim([xmina, xmaxa])
-plt.ylim([1e-10, 10])
-plt.yticks([1e-9, 1e-6, 1e-3, 1])
+plt.ylim([1e-6, 1])
+plt.yticks([1e-6, 1e-3, 1])
 plt.setp(ax6a.get_xticklabels(), visible=False)
 
+"""
 xminb = 79
 xmaxb = 80
 
