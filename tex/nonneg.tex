@@ -130,7 +130,7 @@ R_\text{p} \frac{k_\text{m}}{[\chem{NH_4^+}]+k_\text{m}}
 \frac{[\chem{NO_3^-}]}{[\chem{NO_3^-}]+k_\text{m}}.  
 \label{eq:plantnrate}
 \end{equation}
-Where $R_p$, $R_a$, and $R_n$ are the plant uptake rate for nitrogen, ammonium, and nitrate. This essentially assumes an inhibition of ammonium on nitrate uptake, which is consistent with
+Where $R_p$, $R_a$, and $R_n$ are the plant uptake rate for nitrogen, ammonium (Appendix \ref{rxn:plantatake}), and nitrate (Appendix \ref{rxn:plantntake}). This essentially assumes an inhibition of ammonium on nitrate uptake, which is consistent with
 the observation that plant nitrate uptake rate remained low until ammonium concentrations dropped below a threshold \citep{eltrop1996}.  However, the preference differs for different plants \citep{Pfautsch2009,Warren2007,Nordin2001,Falkengren1995,Gherardi2013}, which require different representations in future developments.
 
 CLM uses a demand based competition approach (Appendix \ref{sec:demandbasedcompetition}) to represent the limitation of available nitrogen on plant uptake and immobilization. It is similar to the Monod function except that it introduces a discontinuity during the transition between the zero and first order rate. Implementation of the demand based competition in a RTM involves separating the supply and consumption rates for each species in each reaction, and conducting downregulation when necessary after contributions from all of the reactions are accumulated. It involves not only the rate terms for the residual but also the derivative terms for the Jacobian. The complexity increases quickly when more species need to be downregulated (e.g., ammonium,
@@ -196,7 +196,7 @@ numerical issues.
 \label{sec:test1}
 It was observed that plants can decrease nitrogen concentration to below
 detection limit in hours \citep{Kamer2001}. 
-In CLM, the total plant nitrogen demand is
+In CLM, the total plant nitrogen demand ($R_p$) is
 calculated based on photosynthesized carbon allocated for new growth and the
 C:N stoichiometry for new growth allocation, and the plant nitrogen demand from
 the soil is equal to the total nitrogen demand minus retranslocated nitrogen
