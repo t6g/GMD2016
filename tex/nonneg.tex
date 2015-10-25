@@ -754,13 +754,15 @@ temperate (Fig. \ref{fig:pit300yl}), and tropical (Fig. \ref{fig:cax300yl})
 sites. CLM4.5 does reach equilibrium earlier than CLM-PFLOTRAN. The maximum
 differences occur during the transient (200-400 year for the arctic, and 50-70
 year for the temperate and tropical sites) for \chem{SOMN}, ammonium, and
-nitrate. This is not surprising expected as the nitrogen demand competition
+nitrate. This is not surprising as the nitrogen demand competition
 scheme implemented in CLM-PFLOTRAN is different from that in CLM4.5 (Fig.
 \ref{fig:demanddistribution}), the former solves the reaction network
 simultaneously while latter sequentially (resolve the plant uptake and
 decomposition at first, and then nitrification, and denitrification), and the
 carbon nitrogen cycle is very sensitive to the nitrogen competition
-representation. 
+representation. Close to steady state, the model overpredicts the LAI at the
+arctic and temperate sites, and underpredicts soil organic matter, which will
+be resolved in future publications. 
 
 The arctic site shows a distinct summer growing season (Fig.
 \ref{fig:brw500yl}): LAI and VEGN jump up at the beginning, then level off, and
@@ -1031,11 +1033,13 @@ is the CN ratio in gC over gN.}
 
 \begin{figure}[t]
 \includegraphics[width=12cm]{../figs/fig05/uptakef.pdf}
-\caption{The ratio of uptake and demand ($f_{pi}$) as a
-function of concentrations with CLM and representation by Eqs.
-(\ref{eq:plantarate}) and (\ref{eq:plantnrate}) in a 0.5 h time step with an
-uptake rate of 10$^{-9}$ \unit{M\,s^{-1}}. $f_{pi}$ for the new representation
-is less than or equal to that for CLM. The difference decreases with decreasing
+\caption{
+$f_{pi}=\frac{\chem{N}_\text{take}}{\chem{N}_\text{demand}}=\max\left(1,\frac{[\chem{NH_4^+}]+[\chem{NO_3^-}]}{\chem{N}_\text{demand}}\right)$
+(a) vs.
+$=\frac{[\chem{NH_4^+}]}{k_\text{m}+[\chem{NH_4^+}]}+\left(1-\frac{[\chem{NH_4^+}]}{k_\text{m}+[\chem{NH_4^+}]}\right)\frac{[\chem{NO_3^-}]}{k_\text{m}+[\chem{NO_3^-}]}$
+(b, c, d) in a 0.5 h time step with an uptake rate of 10$^{-9}$
+\unit{M\,s^{-1}}. $f_{pi}$ for the latter representation
+is less than or equal to that for the first one. The difference decreases with decreasing
 half saturation $k_\text{m}$.}
 \label{fig:demanddistribution}
 \end{figure}
