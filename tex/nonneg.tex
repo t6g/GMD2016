@@ -12,24 +12,24 @@ Representations in Global Land Surface Models}
 \Author[1]{Fengming}{Yuan}
 \Author[1,2]{Gautam}{Bisht}
 \Author[3,4]{Glenn E.}{Hammond}
-\Author[4]{Peter C.}{Lichtner}
+\Author[5]{Peter C.}{Lichtner}
 \Author[1]{Jitendra}{ Kumar}
-\Author[1,5]{Richard T.}{Mills}
-\Author[1,6]{Xiaofeng}{Xu}
-\Author[2,7]{Ben}{Andre}
+\Author[1,6]{Richard T.}{Mills}
+\Author[1,7]{Xiaofeng}{Xu}
+\Author[2,8]{Ben}{Andre}
 \Author[1]{Forrest M.}{Hoffman}
-\Author[5,1]{Scott L.}{Painter}
+\Author[9,1]{Scott L.}{Painter}
 \Author[1]{Peter E.}{Thornton}
 
 \affil[1]{Oak Ridge National Laboratory, Oak Ridge, Tennessee, United States}
 \affil[2]{Lawrence Berkeley National Laboratory, Berkeley, California, United States}
 \affil[3]{Pacific Northwest National Laboratory, Richland, Washington, United States}
 \affil[4]{Sandia National Laboratories, Albuquerque, New Mexico, United States}
-\affil[5]{Los Alamos National Laboratory, Los Alamos, New Mexico, United States}
-\affil[6]{OFM Research--Southwest, Santa Fe, New Mexico, United States}
-\affil[7]{Intel Incorporation, Portland, Oregon, United States }
-\affil[8]{University of Texas at El Paso, El Paso, Texas, United States}
-\affil[9]{National Center for Atmospheric Research, Boulder, Colorado, United States}
+\affil[5]{OFM Research--Southwest, Santa Fe, New Mexico, United States}
+\affil[6]{Intel Incorporation, Portland, Oregon, United States }
+\affil[7]{San Diego State University, San Diego, California, United States}
+\affil[8]{National Center for Atmospheric Research, Boulder, Colorado, United States}
+\affil[9]{Los Alamos National Laboratory, Los Alamos, New Mexico, United States}
 
 \runningtitle{CLM-PFLOTRAN Biogeochemistry}
 
@@ -78,7 +78,7 @@ scaling, clipping, or log transformation to avoid negative concentrations
 during the Newton iterations. With a tight relative update tolerance to avoid
 false convergence, accurate solution can be achieved with about 50\% more
 computing time than CLM in point mode site simulations using either the scaling
-or clipping methods. Log transformation takes 60\% to 100\% more computing time
+or clipping methods. The log transformation method takes 60\% to 100\% more computing time
 than CLM. The computing time increases slightly for clipping and scaling,
 substantially for log transformation for half saturation decrease from
 $10^{-3}$ to $10^{-9}$ \unit{mol\,m^{-3}}, which normally results in decreasing
@@ -88,8 +88,8 @@ about 20\%, and double for log transformation. Caution needs to be taken in
 choosing the appropriate scaling factor  
 as a small value caused by a negative update to a
 small concentration may diminish the update and result in false convergence
-even with very tight relative update tolerance. As methane and nitrous oxide
-production and consumption involve very low half saturation and threshold
+even with very tight relative update tolerance. As some biogeochemical processes (e.g., methane and nitrous oxide
+production and consumption) involve very low half saturation and threshold
 concentrations, this work provides insights for addressing nonphysical negativity issues
 and facilitates the representation of a mechanistic biogeochemical description in earth system
 models to reduce climate prediction uncertainty.
@@ -171,18 +171,19 @@ develop an alternative implementation of an existing CLM biogeochemical
 reaction network using PFLOTRAN \citep{Lichtner2015}, couple that model to CLM, test the
 implementation at arctic, temperate, and tropical sites, and examine the
 implication of using scaling, clipping, and log transformation for avoiding
-negative concentrations.  Although we focus on a carbon nitrogen reactions
+negative concentrations.  Although we focus on a number of carbon nitrogen reactions
 implemented in PFLOTRAN and CLM, the critical numerical issue of avoiding
 negative concentrations has broader relevance as biogeochemical representations
 in LSMs become more mechanistic. 
 
 \section{Methods}
-LSMs generally include biogeochemical reactions for carbon and nitrogen cycles,
+Among the many reactions in LSMs are the soil biogeochemical reactions for
+carbon and nitrogen cycles,
 in particular, the organic matter decomposition, nitrification,
-denitrification, plant nitrogen uptake,  and methane production and oxidation.
+denitrification, plant nitrogen uptake, and methane production and oxidation.
 The kinetics are usually described by a first-order rate modified by response
 functions for environmental variables (temperature, moisture, pH, etc.)
-\citep{Bonan2012,Boyer2006,Schmidt2011}.  In this work, we use the CLM-CN
+\citep{Bonan2012,Boyer2006,Schmidt2011}.  In this work, we use a network of the CLM-CN
 decomposition \citep{Bonan2012,Oleson2013,Thornton2005}, nitrification,
 denitrification \citep{Dickinson2002,Parton2001,Parton1996}, and plant nitrogen
 uptake reactions (Fig. \ref{fig:conceptualmodel}) as an example. The reactions
@@ -418,8 +419,8 @@ examine $k_m$ from 10$^{-3}$ to $10^{-9}$ in our test problems. The
 $k_\text{m}$ is expected to be different for different plants, microbes, and
 for ammonium and nitrate. We do not differentiate them in this work as we focus
 on numerical issues. 
-
-\subsection{Plant nitrogen uptake, nitrification, and denitrification}
+\subsection{Simple tests}
+\subsubsection{Plant nitrogen uptake, nitrification, and denitrification}
 \label{sec:test1}
 It was observed that plants can decrease nitrogen concentration to below
 detection limit in hours \citep{Kamer2001}. 
@@ -434,7 +435,8 @@ We examine the numerical solutions for the Monod equation. Incrementally, we
 add first order reactions (e.g., nitrification, denitrification, and plant
 nitrate uptake) to look into the numerical issues in increasingly complex reaction networks. 
 
-\subsubsection{Plant ammonium uptake (Test 1)}
+\noindent \emph{Plant ammonium uptake (Test 1)}
+
 We consider the plant ammonium uptake reaction (\ref{rxn:plantatake}) with a
 rate $R_a$
 \begin{equation}
@@ -521,7 +523,7 @@ when scaling is applied, which is unintended;
 7) loose update tolerance convergence criteria may cause false convergence and
 results in mass balance errors for clipping and scaling.
 
-\subsubsection{Plant ammonium uptake and nitrification (Test 2)}
+\noindent \emph{Plant ammonium uptake and nitrification (Test 2)}
 
 Adding a nitrification reaction (\ref{rxn:nitr2no3}) with a first-order rate to
 the plant ammonium uptake reaction (\ref{rxn:plantatake}),
@@ -622,7 +624,8 @@ produced even for products during Newton-Raphson iteration; 2) when a negative
 update is produced for a very low concentration, a very small scaling factor
 may numerically inhibits all of the reactions even with very tight STOL.
 
-\subsubsection{Plant uptake, nitrification, and denitrification (Test 3)}
+\noindent \emph{Plant uptake, nitrification, and denitrification (Test 3)}
+
 The matrix and update equations with added plant nitrate uptake and
 denitrification to Test 2 are available in Appendix \ref{sec:eqtest3}. In addition
 to nitrate and PlantA, PlantN and the denitrification product nitrogen gas may
@@ -646,7 +649,7 @@ step size needs to be decreased from 1800 to 15 \unit{s} to resolve the false
 convergence (spreadsheet scale2). In contrast, the added reactions have less
 impact on clipping and log transformation. 
 
-\subsection{Nitrogen immobilization and mineralization during decomposition (Test 4)}
+\subsubsection{Nitrogen immobilization and mineralization during decomposition (Test 4)}
 We examine another part of the reaction network: decomposition, nitrogen
 immobilization, and mineralization (Fig.  \ref{fig:conceptualmodel}). We
 consider a case of decomposing 0.2 \unit{M} \chem{Lit1C} + 0.005 \unit{M}
@@ -670,7 +673,7 @@ $k_\text{m}$ results in lower ammonium concentration, which has implications
 for the clipping, scaling and log transformation methods as discussed in Test
 1-3. 
 
-\subsection{Nitrogen demand partitioning between ammonium and nitrate}
+\subsubsection{Nitrogen demand partitioning between ammonium and nitrate}
 For comparison with CLM, we examine the uptake rate as a function of demands
 and available concentrations 
 $f_{pi} = ({R_a + R_n})/{R_p}$ as implemented in Eqs. (\ref{eq:plantarate},\ref{eq:plantnrate}).
