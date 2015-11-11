@@ -61,13 +61,13 @@ def openh5data(nm):
 ny0 = 0
 ny1 = 1
 
-nc1 = openncyear('../run1y0a/BR-Cax_I1850CLM45CN_ad_spinup.clm2', ny0, ny1)
-nc2 = openncyear('../run1y0e/BR-Cax_I1850CLM45CN_ad_spinup.clm2', ny0, ny1)
-nc3 = openncyear('../run1y0d/BR-Cax_I1850CLM45CN_ad_spinup.clm2', ny0, ny1)
+nc1 = openncyear('run1y0a/BR-Cax_I1850CLM45CN_ad_spinup.clm2', ny0, ny1)
+nc2 = openncyear('run1y0e/BR-Cax_I1850CLM45CN_ad_spinup.clm2', ny0, ny1)
+nc3 = openncyear('run1y0d/BR-Cax_I1850CLM45CN_ad_spinup.clm2', ny0, ny1)
 
-h51 = openh5data('../run1y0a/BR-Cax_I1850CLM45CN_ad_spinup-000.h5')
-h52 = openh5data('../run1y0e/BR-Cax_I1850CLM45CN_ad_spinup-000.h5')
-h53 = openh5data('../run1y0d/BR-Cax_I1850CLM45CN_ad_spinup-000.h5')
+h51 = openh5data('run1y0a/BR-Cax_I1850CLM45CN_ad_spinup-000.h5')
+h52 = openh5data('run1y0e/BR-Cax_I1850CLM45CN_ad_spinup-000.h5')
+h53 = openh5data('run1y0d/BR-Cax_I1850CLM45CN_ad_spinup-000.h5')
 
 t = ny0 + np.arange((ny1-ny0)*365*48)/48.0
 
@@ -105,7 +105,7 @@ lgd = plt.legend(('STOL = 10$^{-10}$', 'STOL = 10$^{-30}$', 'STOL = 10$^{-50}$')
 lgd.draw_frame(False)
 #txt = lgd.get_texts();
 #plt.setp(txt, fontsize='small');
-plt.xlabel('Elapsed time (d)')
+plt.xlabel('Day in the first year')
 
 xticklabels = ax1.get_xticklabels()
 plt.setp(xticklabels, visible=False)
