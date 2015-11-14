@@ -18,7 +18,7 @@ Representations in Global Land Surface Models}
 \Author[1,7]{Xiaofeng}{Xu}
 \Author[2,8]{Ben}{Andre}
 \Author[1]{Forrest M.}{Hoffman}
-\Author[9,1]{Scott L.}{Painter}
+\Author[1]{Scott L.}{Painter}
 \Author[1]{Peter E.}{Thornton}
 
 \affil[1]{Oak Ridge National Laboratory, Oak Ridge, Tennessee, United States}
@@ -26,10 +26,9 @@ Representations in Global Land Surface Models}
 \affil[3]{Pacific Northwest National Laboratory, Richland, Washington, United States}
 \affil[4]{Sandia National Laboratories, Albuquerque, New Mexico, United States}
 \affil[5]{OFM Research--Southwest, Santa Fe, New Mexico, United States}
-\affil[6]{Intel Corporation, Hillsboro, Oregon, United States }
+\affil[6]{Intel Corporation, Hillsboro, Oregon, United States}
 \affil[7]{San Diego State University, San Diego, California, United States}
 \affil[8]{National Center for Atmospheric Research, Boulder, Colorado, United States}
-\affil[9]{Los Alamos National Laboratory, Los Alamos, New Mexico, United States}
 
 \runningtitle{CLM-PFLOTRAN Biogeochemistry}
 
@@ -227,8 +226,8 @@ variables (see reaction\_sandbox\_example.F90 in pflotran-dev source code for
 details). PFLOTRAN accumulates these rates and derivatives into a residual
 vector and a Jacobian matrix, and the global equation is discretized in time
 using the backward Euler method; the resulting system of algebraic 
-equations is solved using the Newton-Raphson method (Appendix \ref{sec:newton}),with an inner, Krylov subspace method usually employed to solve the Jacobian 
-systems if the problem is large.
+equations is solved using the Newton-Raphson method (Appendix \ref{sec:newton}), with an inner, Krylov subspace method usually employed to solve the Jacobian 
+systems if the problem is large. As the problems are relatively small in this work, we use the direct (PCLU) solver \citep{Lichtner2015}. 
 % rmills: How are we solving the Jacobian system in this case?  Are we doing a 
 % direct solve?  We should say how we are doing this.
 
@@ -525,7 +524,7 @@ the Jacobian matrix is singular because zero is multiplied to the column
 corresponding to \chem{PlantA} (Eq. \ref{eq:jacobianlt}). An initial
 \chem{PlantA} concentration of $10^{-9}$ can result in underflow of the
 exponential function (spreadsheet casea, as a 64-bit real number (``double precision''), is precise to 15 significant digits and has a range of
-$e^{-709}$ to $e^{709}$ in IEEE 754 floating-point representation \citep{Lemmon2005}.
+$e^{-709}$ to $e^{709}$ in IEEE 754 floating-point representation \citep{Lemmon2005}).
 Clipping the update (say to be between -5 and 5) is needed to prevent numerical
 overflow or underflow. Like the cases with clipping without log transformation,
 clipping violates reaction stoichiometry in the clipping iteration, and this
@@ -632,9 +631,9 @@ below STOL to reach false convergence. If we tighten STOL to $10^{-30}$, the
 iterations continues, with decreasing nitrate concentration, $\lambda$, and
 $snorm_{rel}$ by two orders of magnitude (1-$\alpha$ as default $\alpha=0.99$) in each
 iteration, until $snorm_{rel}$  reaches $10^{-30}$ (spreadsheet scale2). Unless the STOL is
-sufficiently small, or the maximum number of iterations before stopping the
-current iterations and cutting time steps (MAXIT) is small (Appendix
-\ref{sec:newton}), false convergence occurs for the scaling method. The impact of
+sufficiently small, or the maximum number of iterations (before stopping the
+current iterations and cutting time steps, MAXIT) is small (Appendix
+\ref{sec:newton}), false convergence is likely to occur for the scaling method. The impact of
 ``numerical consumption'' on clipping and log transformation is much less
 dramatic than the scaling method as the latter applies the same scaling factor
 to the whole update vector following stoichiometric relationships of the
@@ -827,8 +826,7 @@ sites with $k_\text{m}$ values
 10$^{-3}$, 10$^{-6}$, and 10$^{-9}$ \unit{mol\,m^{-3}}. The computing time for
 CLM-PFLOTRAN is about 60\% to 100\% more than that of CLM (Table
 \ref{tab:computingtime}). This is not unreasonably high as the implicit
-method involves solving a Jacobian system for each Newton-Raphson step (Eq. \ref{eq:axb}, which in practice is
-usually done using Krylov subspace methods, and log transformation converts
+method involves solving a Jacobian system for each Newton-Raphson step (Eq. \ref{eq:axb}, which is done using LU decomposition in this work, and log transformation converts
 the linear
 problem into a nonlinear one. 
 % rmills: How are we solving the Jacobian systems in this paper?  Direct solve?
