@@ -226,10 +226,13 @@ variables (see reaction\_sandbox\_example.F90 in pflotran-dev source code for
 details). PFLOTRAN accumulates these rates and derivatives into a residual
 vector and a Jacobian matrix, and the global equation is discretized in time
 using the backward Euler method; the resulting system of algebraic 
-equations is solved using the Newton-Raphson method (Appendix \ref{sec:newton}), with an inner, Krylov subspace method usually employed to solve the Jacobian 
-systems if the problem is large. As the problems are relatively small in this work, we use the direct (PCLU) solver \citep{Lichtner2015}. 
-% rmills: How are we solving the Jacobian system in this case?  Are we doing a 
-% direct solve?  We should say how we are doing this.
+equations is solved using the Newton-Raphson method (Appendix \ref{sec:newton}).
+A Krylov subspace method is usually employed to solve the Jacobian 
+systems arising during the Newton-Raphson solve, but, as the problems are 
+relatively small in this study, we solve them directly via LU factorization.
+% rmills: Since we haven't mentioned PETSc at all, I took out the reference to 
+% the PETSc "PCLU" solver and just say "LU factorization", which is a very 
+% common mathematical procedure and probably doesn't need a reference.
 
 Unlike the explicit time stepping in CLM, in which only reaction rates need to be
 calculated, implicit time stepping requires evaluating derivatives.  While PFLOTRAN
@@ -630,9 +633,11 @@ high concentration of a nonreactive species decreases the update to
 below STOL to reach false convergence. If we tighten STOL to $10^{-30}$, the
 iterations continues, with decreasing nitrate concentration, $\lambda$, and
 $snorm_{rel}$ by two orders of magnitude (1-$\alpha$ as default $\alpha=0.99$) in each
-iteration, until $snorm_{rel}$  reaches $10^{-30}$ (spreadsheet scale2). Unless the STOL is
-sufficiently small, or the maximum number of iterations (before stopping the
-current iterations and cutting time steps, MAXIT) is small (Appendix
+iteration, until $snorm_{rel}$  reaches $10^{-30}$ (spreadsheet scale2). Unless STOL is
+sufficiently small, or MAXIT (the maximum number of iterations before stopping
+the current iterations and cutting the time step) is small (Appendix
+% rmills: Above, I think it the parenthetical phrase placement was still 
+% confusing regarding what MAXIT is, so I reworked it.
 \ref{sec:newton}), false convergence is likely to occur for the scaling method. The impact of
 ``numerical consumption'' on clipping and log transformation is much less
 dramatic than the scaling method as the latter applies the same scaling factor
@@ -827,10 +832,11 @@ sites with $k_\text{m}$ values
 10$^{-3}$, 10$^{-6}$, and 10$^{-9}$ \unit{mol\,m^{-3}}. The computing time for
 CLM-PFLOTRAN is about 60\% to 100\% more than that of CLM (Table
 \ref{tab:computingtime}). This is not unreasonably high as the implicit
-method involves solving a Jacobian system for each Newton-Raphson step (Eq. \ref{eq:axb}, which is done using LU decomposition in this work, and log transformation converts
+method involves solving a Jacobian system for each Newton-Raphson step (Eq. \ref{eq:axb}, and log transformation converts
+% rmills: I removed the part about using an LU decomposition here, as we've 
+% already addressed this earlier in the paper.
 the linear
 problem into a nonlinear one. 
-% rmills: How are we solving the Jacobian systems in this paper?  Direct solve?
 The computational cost increases substantially with
 decreasing half saturation, which is expected as a smaller half saturation
 requires smaller time step sizes to march through steeper transition between
