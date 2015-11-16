@@ -744,6 +744,13 @@ of various preference levels for ammonium and nitrate uptake, and
 downregulation levels, we examine  $k_\text{m}=10^{-3}$ to $10^{-9}$
 \unit{mol\,m^{-3}}. We evaluate how scaling, clipping, and log transformation for
 avoiding negative concentrations influence accuracy and efficiency.
+The simulations are conducted using the ORNL Institutional Cluster (OIC Phase5).
+% rmills: I moved the sentence about the OIC to here, where I think it fits 
+% better with the flow the of the paper.  I would like to say something about 
+% what the OIC Phase 5 *is* (e.g., "a cluster of Intel Xeon (whatever the SKU 
+% is for the processors") and what compiler and choice of optimization flags 
+% was used (since the choices made by the compiler's optimizer can affect 
+% numerical results)
 
 \subsubsection{Site descriptions}
 The US-Brw site (71.35N,156.62W) is located near Barrow, Alaska. The mean annual
@@ -825,7 +832,7 @@ and efficiency of the numerical solutions.
 Numerical errors introduced due to false convergence in clipping, scaling or
 log transformation are captured in CLM when it checks carbon and nitrogen mass
 balance for every time step for each column, and reports  $\geq 10^{-8}$
-\unit{g\,m^{-2}} errors.  We use ORNL Institutional Cluster (OIC Phase5) to run the simulations for computing time comparison. 
+\unit{g\,m^{-2}} errors.  
 When log transformation is used, 
 mass balance errors are not recorded for the Arctic, temperate, and tropical
 sites with $k_\text{m}$ values 
