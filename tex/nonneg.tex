@@ -745,8 +745,9 @@ downregulation levels, we examine  $k_\text{m}=10^{-3}$ to $10^{-9}$
 \unit{mol\,m^{-3}}. We evaluate how scaling, clipping, and log transformation for
 avoiding negative concentrations influence accuracy and efficiency.
 The simulations are conducted using the ORNL Institutional Cluster (OIC Phase5,
-an SGI Altix with dual 16-core AMD Opterons per compute node) with CLM-PFLOTRAN
+an SGI Altix with dual 8-core AMD Opterons per compute node) with CLM-PFLOTRAN
 (as well as third-party libraries MPICH, PETSc, NetCDF, HDF5, etc.) compiled with gfortran 4.8.1 with the ``-O1'' optimization level.  
+Due to the small size of the simulations, our tests use only a single CPU core.
 % rmills: Two things: 1) Did you build MPICH, or use a system-provided MPI?
 % Most systems will provide an MPI, but the OIC might not.  2) If the Phase5 
 % Altix was acquired in 2012, then it probably has Intel Xeons instead of 
