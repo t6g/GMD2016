@@ -745,15 +745,14 @@ downregulation levels, we examine  $k_\text{m}=10^{-3}$ to $10^{-9}$
 \unit{mol\,m^{-3}}. We evaluate how scaling, clipping, and log transformation for
 avoiding negative concentrations influence accuracy and efficiency.
 The simulations are conducted using the ORNL Institutional Cluster (OIC Phase5,
-SGI Altix with dual 16-core AMD Opterons per compute node) with CLM-PFLOTRAN
-(including MPICH, NetCDF, PETSc, HDF5, etc. ) compiled with gfortran 4.8.1
-with -O1.  
-% rmills: I moved the sentence about the OIC to here, where I think it fits 
-% better with the flow the of the paper.  I would like to say something about 
-% what the OIC Phase 5 *is* (e.g., "a cluster of Intel Xeon (whatever the SKU 
-% is for the processors") and what compiler and choice of optimization flags 
-% was used (since the choices made by the compiler's optimizer can affect 
-% numerical results)
+an SGI Altix with dual 16-core AMD Opterons per compute node) with CLM-PFLOTRAN
+(as well as third-party libraries MPICH, PETSc, NetCDF, HDF5, etc.) compiled with gfortran 4.8.1 with the ``-O1'' optimization level.  
+% rmills: Two things: 1) Did you build MPICH, or use a system-provided MPI?
+% Most systems will provide an MPI, but the OIC might not.  2) If the Phase5 
+% Altix was acquired in 2012, then it probably has Intel Xeons instead of 
+% Opterons.  We should check.  Try running the 'lscpu' command when logged in 
+% to a compute node of the Phase 5 system, and also try sending me the output 
+% of 'cat /proc/cpuinfo'.  That should tell us something.
 % t6g: asked oicadmin about what the machine is, C2108 or what.
 
 \subsubsection{Site descriptions}
