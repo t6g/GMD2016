@@ -988,7 +988,7 @@ saturation values from 10$^{-3}$ to 10$^{-9}$ and a residual concentration of
 10$^{-15}$ for nitrogen. As physical half saturation ranges from 10$^{-5}$ to
 10$^{-6}$ \chem{M} for nitrogen, and the detection limits are often above
 10$^{-9}$ \chem{M}, our results indicate that accurate, efficient, and robust
-solution  for current CLM biogeochemistry can be achieved using CLM-PFLOTRAN.
+solution  for current CLM soil biogeochemistry can be achieved using CLM-PFLOTRAN.
 We thus demonstrate the feasibility of using an open-source, general-purpose
 reactive transport code with CLM, enabling significantly more complicated and
 more mechanistic biogeochemical reaction systems. 
@@ -1028,7 +1028,7 @@ G. B., B. A., R. M., J. K., and F. H. developed the CLM-PFLOTRAN framework that 
 work built upon. F.Y., G.T., G. B., and X.X. added biogeochemistry to the CLM-PFLOTRAN
 interface. F. Y. proposed the nitrification and denitrification reactions and
 rate formulae. G. T., F. Y., and X. X. implemented the CLM
-biogeochemistry in PFLOTRAN under guidance of G. H., P. L., S. P., and P.T.
+soil biogeochemistry in PFLOTRAN under guidance of G. H., P. L., S. P., and P.T.
 G.T. prepared the manuscript with contributions from all co-authors. 
 G. T., F. Y., G. B., and G.H. contributed equally to the work.  
 
@@ -1585,7 +1585,7 @@ time step size for MAX\_CUT times. The default values in PFLOTRAN are ATOL =
 %ITOL\_UPDATE = 10$^{-50}$, 
 MAXIT = 50, MAXF = 10$^4$, and MAX\_CUT = 16.
 
-\section{Matrix equation for example Test 3}
+\section{Matrix equation for Test 3}
 \label{sec:eqtest3}
 Adding to Test 2 a plant \chem{NO_3^-} uptake reaction (\ref{rxn:plantntake}) with rate
 $R_{nt}=R_p\frac{[\chem{NH_4^+}]}{[\chem{NH_4^+}] +
