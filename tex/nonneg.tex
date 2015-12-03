@@ -5,7 +5,7 @@
 \linenumbers
 
 \title{Using Reactive Transport Codes to Provide Mechanistic Biogeochemistry
-Representations in Global Land Surface Models}
+Representations in Global Land Surface Models: CLM-PFLOTRAN 1.0}
 
 
 \Author[1]{Guoping}{Tang}
@@ -63,10 +63,10 @@ Plan(http://energy.gov/downloads/doe-public-access-plan).
 \begin{abstract}
 We explore coupling to a configurable subsurface reactive transport
 code as a flexible and extensible approach to biogeochemistry in land
-surface models, to facilitate testing of alternative models and incorporation of
+surface models; our goal is to facilitate testing of alternative models and incorporation of
 new understanding. A reaction network with the CLM-CN decomposition, nitrification,
 denitrification, and plant uptake is used as an example. We implement the
-reactions in the open-source PFLOTRAN code, coupled to the Community Land Model
+reactions in the open-source PFLOTRAN code, coupled with the Community Land Model
 (CLM), and test at Arctic, temperate, and tropical sites. To make the reaction
 network designed for use in explicit time stepping in CLM compatible with
 the implicit time stepping used in PFLOTRAN, the Monod substrate rate-limiting function with a
@@ -75,17 +75,17 @@ availability on plant uptake and immobilization. To achieve accurate,
 efficient, and robust numerical solutions, care needs to be taken to use
 scaling, clipping, or log transformation to avoid negative concentrations
 during the Newton iterations. With a tight relative update tolerance to avoid
-false convergence, accurate solution can be achieved with about 50\% more
+false convergence, an accurate solution can be achieved with about 50\% more
 computing time than CLM in point mode site simulations using either the scaling
-or clipping methods. The log transformation method takes 60\% to 100\% more computing time
-than CLM. The computing time increases slightly for clipping and scaling,
+or clipping methods. The log transformation method takes 60 $\sim$ 100\% more computing time
+than CLM. The computing time increases slightly for clipping and scaling; it increases
 substantially for log transformation for half saturation decrease from
 $10^{-3}$ to $10^{-9}$ \unit{mol\,m^{-3}}, which normally results in decreasing
-nitrogen concentrations. Frequent occurrence of very low concentrations (e.g.
-below \unit{nM}) can increase the computing time for clipping or scaling by
-about 20\%, and double for log transformation. Caution needs to be taken in
+nitrogen concentrations. The frequent occurrence of very low concentrations (e.g.
+below nanomolar) can increase the computing time for clipping or scaling by
+about 20\%; computing time can be doubled for log transformation. Caution needs to be taken in
 choosing the appropriate scaling factor  
-as a small value caused by a negative update to a
+because a small value caused by a negative update to a
 small concentration may diminish the update and result in false convergence
 even with very tight relative update tolerance. As some biogeochemical processes (e.g., methane and nitrous oxide
 production and consumption) involve very low half saturation and threshold
@@ -102,8 +102,8 @@ energy, water, and greenhouse gases across the land-atmosphere interface for
 the atmospheric general circulation models for climate simulation and weather
 forecasting \citep{Sellers1997}. Evolving from the first generation ``bucket'',
 second generation ``biophysical'', and third generation ``physiological''
-models \citep{Seneviratne2010}, current LSMs, e.g., the Community Land Model
-(CLM), implement comprehensive thermal, hydrological, and biogeochemical
+models \citep{Seneviratne2010}, current LSMs such as the Community Land Model
+(CLM) implement comprehensive thermal, hydrological, and biogeochemical
 processes \citep{Oleson2013}. The importance of accurate representation of soil biogeochemistry in LSMs is
 suggested by the confirmation that the increase of carbon dioxide
 (\chem{CO_2}), methane (\chem{CH_4}), and nitrous oxide (\chem{N_2O}) in the
@@ -117,20 +117,20 @@ climate prediction \citep[e.g.,][]{Riley2014}.
 
 As LSMs usually hardcode the soil biogeochemistry reaction network (pools/species, reactions, rate
 formulae), substantial effort is often required to modify the source code for
-testing alternative models, and incorporating new process
+testing alternative models and incorporating new process
 understanding. \citet{Fang2013} demonstrated the use of a reaction-based approach
-to facilitate implementation of the CLM-CN and CENTURY models, and incorporation of
+to facilitate implementation of the CLM-CN and CENTURY models and incorporation of
 the phosphorus cycle.  \citet{Tang2013b} solved the advection diffusion equation in
 CLM using operator splitting. In contrast, TOUGH-REACT, a reactive transport
-modeling (RTM) code, was used to develop multi-phase mechanistic carbon and
+modeling (RTM) code, was used to develop multiphase mechanistic carbon and
 nitrogen models with many speciation and microbial reactions
-\citep{Maggi2008,Gu2010,Riley2014}, but has not been coupled to a LSM. PHREEQC
+\citep{Maggi2008,Gu2010,Riley2014}, but it has not been coupled to an LSM. PHREEQC
 was coupled with DayCent to describe  soil and stream water equilibrium
 chemistry  \citep{Hartman2007}. Coupling a RTM code with CLM will facilitate
 testing of increasingly mechanistic biogeochemical models in LSMs.
 
 An essential aspect of LSMs is to simulate competition for nutrients (e.g.,
-mineral nitrogen, phosphorus, etc.) among plants and microbes. In CLM,  plant
+mineral nitrogen, phosphorus) among plants and microbes. In CLM,  plant
 and immobilization nitrogen demands are calculated independent of soil mineral
 nitrogen. The limitation of nitrogen availability on plant uptake and
 immobilization is simulated by a demand-based competition: demands are
@@ -141,7 +141,7 @@ This avoids negative concentrations and does not introduce mass balance errors
 RTMs often account for limitation of reactant availability on reaction rates
 for each individual reaction to allow mechanistic representations and flexibility in
 adding reactions. 
-For maximum robustness, some RTM codes support the use of fully-implicit time stepping, usually employing a variant of the Newton-Raphson method. 
+For maximum robustness, some RTM codes support the use of fully implicit time stepping, usually employing a variant of the Newton-Raphson method. 
 % rmills: I don't think that RTMs generally use implicit time stepping; use 
 % of operator-split formulations is common (and also supported in PFLOTRAN).
 % I changed the wording above to reflect that only some use implicit time 
@@ -154,10 +154,10 @@ Newton-Raphson iterations, which is not physical and can cause numerical instabi
 errors \citep{Shampine2005}. 
 In our work with CLM, this is expected to worsen when we implement
 microbial reactions for methane and nitrous oxide consumption and production as
-the threshold and half saturation are at or below \chem{nM} ($10^{-9}$
+the threshold, and half saturation is at or below nanomolar ($10^{-9}$
 \chem{M}) level \citep{Conrad1996}. The redox potential Eh needs to be
-decreased to $-0.35$ \unit{V} (oxygen concentration < $10^{-22}$ \unit{M}
-\citeauthor{Hungate1975}, \citeyear{Hungate1975}) for methanogens to grow
+decreased to $-0.35$ \unit{V} [oxygen concentration < $10^{-22}$ \unit{M}
+\citep{Hungate1975}] for methanogens to grow
 \citep{Jarrell1985}. 
 
 Three methods are used to avoid negative concentration in RTM codes. One is to
@@ -169,17 +169,17 @@ iteration. Except that log transformation is more computationally demanding
 \citep{Hammond2003}, how these methods for enforcing nonnegativity affect
 computational accuracy and efficiency is rarely discussed. 
 
-As LSMs need to run under various conditions at the globe scale for simulation
+As LSMs need to run under various conditions at the global scale for simulation
 duration of centuries, it is necessary to resolve accuracy and efficiency
 issues to use RTM codes for LSMs. The objective of this work is to explore some
 of the implementation issues associated with using RTM codes in LSMs, with the
 ultimate goal being accurate, efficient, robust, and configurable
 representations of subsurface biogeochemical reactions in CLM. To this end, we
 develop an alternative implementation of an existing CLM biogeochemical
-reaction network using PFLOTRAN \citep{Lichtner2015,Hammond2014}, couple that model to CLM (we refer to the coupled model as CLM-PFLOTRAN), test the
+reaction network using PFLOTRAN \citep{Lichtner2015,Hammond2014}; couple that model to CLM (we refer to the coupled model as CLM-PFLOTRAN); test the
 % rmills: Added the 2014 WRR paper; this is the best peer-reviewed reference 
 % we have for PFLOTRAN.
-implementation at Arctic, temperate, and tropical sites, and examine the
+implementation at Arctic, temperate, and tropical sites; and examine the
 implication of using scaling, clipping, and log transformation for avoiding
 negative concentrations.  Although we focus on a number of carbon-nitrogen reactions
 implemented in PFLOTRAN and CLM, the critical numerical issue of avoiding
@@ -189,7 +189,7 @@ in LSMs become more mechanistic.
 \section{Methods}
 Among the many reactions in LSMs are the soil biogeochemical reactions for
 carbon and nitrogen cycles,
-in particular, the organic matter decomposition, nitrification,
+in particular the organic matter decomposition, nitrification,
 denitrification, plant nitrogen uptake, and methane production and oxidation.
 The kinetics are usually described by a first-order rate modified by response
 functions for environmental variables (temperature, moisture, pH, etc.)
@@ -211,11 +211,11 @@ PFLOTRAN biogeochemistry, with CLM solving the energy and water flow equations a
 the solute transport (mixing, advection, diffusion, and leaching). In each CLM
 time step, CLM provides production rates for \chem{Lit1C}, \chem{Lit1N},
 \chem{Lit2C}, \chem{Lit2N}, \chem{Lit3C}, \chem{Lit3N} for litter fall;
-\chem{CWDC}, and \chem{CWDN} for coarse woody debris production, nitrogen
-deposition and fixation; and plant nitrogen demand; and specifies liquid water
-content, matrix potential and temperature for PFLOTRAN; PFLOTRAN solves 
-ordinary differential equations for the kinetic reactions, mass action
-equations for equilibrium reactions, and provides the final concentrations
+\chem{CWDC} and \chem{CWDN} for coarse woody debris production, nitrogen
+deposition and fixation, and plant nitrogen demand; and specifies liquid water
+content, matrix potential and temperature for PFLOTRAN. PFLOTRAN solves 
+ordinary differential equations for the kinetic reactions and mass action
+equations for equilibrium reactions and provides the final concentrations
 back to CLM.   
 
 The reactions and rates are implemented using the ``reaction sandbox'' concept
@@ -229,26 +229,25 @@ using the backward Euler method; the resulting system of algebraic
 equations is solved using the Newton-Raphson method (Appendix \ref{sec:newton}).
 A Krylov subspace method is usually employed to solve the Jacobian 
 systems arising during the Newton-Raphson iterations, but, as the problems are 
-relatively small in this study, we solve them directly via LU factorization.
+relatively small in this study, we solve them directly via LU (lower upper) factorization.
 % rmills: Since we haven't mentioned PETSc at all, I took out the reference to 
 % the PETSc "PCLU" solver and just say "LU factorization", which is a very 
 % common mathematical procedure and probably doesn't need a reference.
 
 Unlike the explicit time stepping in CLM, in which only reaction rates need to be
 calculated, implicit time stepping requires evaluating derivatives.  While PFLOTRAN
-provides an option to calculate derivatives numerically via finite-differencing, we use analytical expressions in our 
-derivative calculation for efficiency and accuracy. 
+provides an option to calculate derivatives numerically via finite-differencing, we use analytical expressions for efficiency and accuracy. 
 
 Many reactions can be specified in an input file, providing flexibility in
 adding various reactions with user-defined rate formulae. As typical rate
 formulae consist of first order, Monod, and inhibition terms, a general rate
 formula with a flexible number of terms and typical moisture, temperature, and pH
-response functions are coded in PFLOTRAN. Most of the biogeochemical reactions
+response functions is coded in PFLOTRAN. Most of the biogeochemical reactions
 can be specified in an input file, with a flexible number of reactions, species,
 rate terms, and various response functions without source code modification.
-Code modification is necessary only when different rate formulae, or response
+Code modification is necessary only when different rate formulae or response
 functions are introduced. In contrast, the number of pools and reactions are
-traditionally hard-coded in CLM. Consequently, any change of the pools,
+traditionally hardcoded in CLM. Consequently, any change of the pools,
 reactions, or rate formula may require source code modification. Therefore,
 the more general approach used by PFLOTRAN facilitates implementation of increasingly mechanistic
 reactions and tests of various representations with less code modification.
@@ -267,30 +266,30 @@ decomposition rate (Eq. \ref{eq:decomprate}) as
 ([\chem{CN_u}] - [\chem{CN_u}]_\text{r}).
 \label{eq:decomprateresidual}
 \end{equation}
-Where \chem{CN_u} is the upstream pool with 1:u as the CN ratio in mole; []
-denotes concentration; $k_\text{d}$, $f_\text{T}$, and $f_\text{w}$ are the
-rate coefficient, temperature and moisture response functions, respectively. When \chem{CN_u}
+Here \chem{CN_u} is the upstream pool with 1:u as the CN ratio in mole; []
+denotes concentration; and $k_\text{d}$, $f_\text{T}$, and $f_\text{w}$ are the
+rate coefficient and temperature and moisture response functions, respectively. When \chem{CN_u}
 goes below $[\chem{CN_u}]_\text{r}$ in an iteration, Eq.
 (\ref{eq:decomprateresidual}) implies a hypothetical reverse reaction to bring
 it back to [\chem{CN_u}]$_\text{r}$. The residual concentration can be set to
 zero to nullify the effect.  
 
-For the litter decomposition reactions (Appendix \ref{rxn:lit1}, \ref{rxn:lit2},
-\ref{rxn:lit3}) that immobilize nitrogen (\chem{N}), the nitrification reaction
+For the litter decomposition reactions [Appendix (\ref{rxn:lit1}), (\ref{rxn:lit2}),
+(\ref{rxn:lit3})] that immobilize nitrogen (\chem{N}), the nitrification reaction
 (\ref{rxn:nitr2n2o}) associated with decomposition to produce nitrous oxide,
 and the plant nitrogen uptake reactions
-(\ref{rxn:plantatake},\ref{rxn:plantntake}), the rate formulae do not account
+(\ref{rxn:plantatake}, \ref{rxn:plantntake}), the rate formulae do not account
 for the limitation of the reaction rate by nitrogen availability.
 Mechanistically, a nitrogen limiting function needs to be added. For example,
 using the widely used Monod substrate limitation function \citep{Fennell1998},
-Eq. (\ref{eq:decomprateresidual}) becomes 
+Eq.(\ref{eq:decomprateresidual}) becomes 
 \begin{equation}
 \frac{d [\chem{CN_u}]}{d t} = -k_\text{d} f_\text{T} f_\text{w} ([\chem{CN_u}] -
 [\chem{CN_u}]_\text{r}) \frac{[\chem{N}]-[\chem{N}]_\text{r}}{[\chem{N}]-[\chem{N}]_r +k_\text{m}},
 \label{eq:decompresidualnlimit}
 \end{equation}
 with half saturation $k_\text{m}$ and a mineral nitrogen residual concentration
-[\chem{N}]$_r$. In the case of [\chem{N}]-[\chem{N}]$_r$= $k_\text{m}$, the
+[\chem{N}]$_r$. In the case of [\chem{N}]--[\chem{N}]$_r$= $k_\text{m}$, the
 rate-limiting function is equal to 0.5. For [\chem{N}] $\gg k_\text{m}$, Eq.
 (\ref{eq:decompresidualnlimit}) approximates zero order with respect to
 [\chem{N}]. For [\chem{N}]$\ll k_\text{m}$, Eq. (\ref{eq:decompresidualnlimit})
@@ -316,7 +315,7 @@ R_\text{p} \frac{k_\text{m}}{[\chem{NH_4^+}]+k_\text{m}}
 \frac{[\chem{NO_3^-}]}{[\chem{NO_3^-}]+k_\text{m}}.  
 \label{eq:plantnrate}
 \end{equation}
-In this equation $R_p$, $R_a$, and $R_n$ are the plant uptake rate for nitrogen, ammonium
+In this equation $R_p$, $R_a$, and $R_n$ are the plant uptake rates for nitrogen, ammonium
 (\ref{rxn:plantatake}), and nitrate (\ref{rxn:plantntake}).
 $R_p$ is calculated in CLM and input to PFLOTRAN as a constant during each CLM
 time step. Eq. (\ref{eq:plantnrate}) essentially assumes an inhibition of
@@ -326,13 +325,13 @@ threshold \citep{eltrop1996}.  However, the form of the rate expression will dif
 plants \citep{Pfautsch2009,Warren2007,Nordin2001,Falkengren1995,Gherardi2013},
 which will require different representations in future developments.
 
-CLM uses a demand-based competition approach (Appendix
+CLM uses a demand-based competition approach (Appendix A, Section
 \ref{sec:demandbasedcompetition}) to represent the limitation of available
 nitrogen on plant uptake and immobilization. It is similar to the Monod
 function except that it introduces a discontinuity during the transition
-between the zero and first order rate. Implementation of the demand-based
+between the zero and first-order rate. Implementation of the demand-based
 competition in a RTM involves separating the supply and consumption rates for
-each species in each reaction, and limiting the consumption rates if supply is less than demand
+each species in each reaction and limiting the consumption rates if supply is less than demand
 after contributions from all of the reactions are accumulated. It involves not
 only the rate terms for the residual but also the derivative terms for the
 Jacobian. The complexity increases quickly when more species need to be
@@ -341,14 +340,14 @@ transformation processes among these species. It becomes challenging to
 separate, track, and downregulate consumption and production rates for an
 indefinite number of species, and calculation of the Jacobian becomes
 convoluted. In contrast, use of the Monod function with a residual concentration
-for individual reactions is easier to implement, and allows more flexibility in
+for individual reactions is easier to implement and allows more flexibility in
 adding reactions.
 
-\subsection{Scaling, clipping and log transformation for avoiding negative concentration}
-Negative components of the concentration update ($\delta\mathbf{c}^{k+1,p+1}$, for iteration $p$ from time step $k$ to $k+1$ in a Newton-Raphson iteration) can result in negative
+\subsection{Scaling, clipping, and log transformation for avoiding negative concentration}
+Negative components of the concentration update ($\delta\mathbf{c}^{k+1,p+1}$ for iteration $p$ from time step $k$ to $k+1$ in a Newton-Raphson iteration) can result in negative
 concentration in some entries of $\mathbf{c}^{k+1,p}$ (Eq. \ref{eq:update}),
 which is nonphysical. One approach to avoid negative concentration is to scale
-back the update with a scaling factor $\lambda$ \citep{Bethke2007,Hammond2003}
+back the update with a scaling factor ($\lambda$) \citep{Bethke2007,Hammond2003}
 such that 
 \begin{equation}
 \mathbf{c}^{k+1,p+1}=\mathbf{c}^{k+1,p}+\lambda \delta \mathbf{c}^{k+1,p+1} > 0,
@@ -360,20 +359,20 @@ where
 \label{eq:alpha}
 \end{equation}
 for negative $\delta \mathbf{c}^{k+1,p+1} (i)$ with $m$ as the number of species
-times the number of numerical grid cells, and $\alpha$ as a factor with default value of 0.99. 
+times the number of numerical grid cells and $\alpha$ as a factor with default value of 0.99. 
 A second approach, used by RTM codes STOMP, HYDROGEOCHEM 5.0,
-and TOUGH-REACT, is clipping, i.e., for any $\delta \mathbf{c}^{k+1,p+1}(i)
+and TOUGH-REACT, is clipping [i.e., for any $\delta \mathbf{c}^{k+1,p+1}(i)
 \geq \mathbf{c}^{k+1,p}(i)$, $\delta \mathbf{c}^{k+1,p+1}(i) =
 \mathbf{c}^{k+1,p}(i) - \epsilon$  with $\epsilon$ as a small number (e.g.,
-$10^{-20}$). This limits the minimum concentration that can be modeled. 
+$10^{-20}$)]. This limits the minimum concentration that can be modeled. 
 
-A third approach, log transformation, also ensures positive solution
+A third approach, log transformation, also ensures a positive solution
 \citep{Bethke2007,Hammond2003,Parkhurst1999}. It is widely used in geochemical
 codes for describing highly variable concentrations for primary species such as
 \chem{H^+} or \chem{O_2} that can vary over many orders of magnitude as pH or
 redox state changes without the need to use variable switching. Instead of
 solving Eq. (\ref{eq:residual}) for $\mathbf{c}^{k+1}$ using Eqs.
-(\ref{eq:jacobian},\ref{eq:axb},\ref{eq:update}), this method solves for
+(\ref{eq:jacobian}, \ref{eq:axb}, \ref{eq:update}), this method solves for
 ($\ln\mathbf{c}^{k+1}$) \citep{Hammond2003} with 
 \begin{equation}
 \mathbf{J}_{\ln}(i,j)=\frac{\partial \mathbf{f}(i)}{\partial
@@ -404,8 +403,8 @@ surprising that the complex biogeochemical dynamics in a wide range of temporal
 and spatial scales in CLM poses numerical challenges for the RTM methods. Our
 simulations reveal some numerical issues (errors, divergence, and small time
 step sizes) that were not widely reported. We identify the issues from coupled
-CLM-PFLOTRAN simulations, and reproduce them in simple test problems. We
-examine remedies in the simple test problems, and test them in the coupled
+CLM-PFLOTRAN simulations and reproduce them in simple test problems. We
+examine remedies in the simple test problems and test them in the coupled
 simulations. 
 
 For Test 1, we start with plant ammonium uptake to examine the numerical solution
@@ -415,23 +414,23 @@ check the implementation of mineralization and immobilization in the
 decomposition reactions. Thirdly, we compare the nitrogen demand partition into
 ammonium and nitrate between CLM and PFLOTRAN. With coupled CLM-PFLOTRAN
 spin-up simulations for Arctic, temperate, and tropical sites, we assess the
-application of scaling, clipping and log transformation to achieve accurate,
+application of scaling, clipping, and log transformation to achieve accurate,
 efficient, and robust simulations. Spreadsheet and PFLOTRAN input files are
 provided as supplemental information (SI).
 
 Our implementation of CLM soil biogeochemistry introduces mainly two parameters:
-half saturation $k_\text{m}$ and residual concentration. A wide range of
-$k_\text{m}$ values were reported for ammonium, nitrate, and organic nitrogen
+half saturation ($k_\text{m}$) and residual concentration. A wide range of
+$k_\text{m}$ values was reported for ammonium, nitrate, and organic nitrogen
 for microbes and plants. The median, mean, and standard deviations range from
 10$\sim$100, 50$\sim$500, and 10$\sim$200 $\mu$M, respectively
 \citep{Kuzyakov2013}. Reported residual concentrations are limited---likely because of the detection
 limits of the analytical methods---and are
-considered to be zero \cite[e.g.,][]{Hogh1997}. The detection limits are usually at $\mu$M
-level, while up to \chem{nM} level was reported \citep{Nollet2013}. In Ecosys,
+considered to be zero \cite[e.g.,][]{Hogh1997}. The detection limits are usually at the micromolar
+level, while up to the nanomolar level was reported \citep{Nollet2013}. In Ecosys,
 the $k_\text{m}$ is 0.40 and 0.35 gN m$^{-3}$, and the residual concentration
 is 0.0125 and 0.03 gN m$^{-3}$ \citep{Grant2013} for ammonium and nitrate for
 microbes. We start with $k_m=10^{-6}$ \unit{M} or \unit{mol\,m^{-3}}, and
-residual concentration $10^{-15}$ \unit{M} or \unit{mol\, m^{-3}} for plants
+residual concentration = $10^{-15}$ \unit{M} or \unit{mol\, m^{-3}} for plants
 and microbes. To further investigate the nonphysical solution negativity for
 the current study and for future application for other reactants (e.g.,
 \chem{H_2} and \chem{O_2}) where the concentrations can be much lower, we
@@ -442,7 +441,7 @@ on numerical issues.
 \subsection{Simple tests}
 \subsubsection{Plant nitrogen uptake, nitrification, and denitrification}
 \label{sec:test1}
-It was observed that plants can decrease nitrogen concentration to below
+It was observed that plants can decrease nitrogen concentration to below the
 detection limit in hours \citep{Kamer2001}. 
 In CLM, the total plant nitrogen demand is
 calculated based on photosynthesized carbon allocated for new growth and the
@@ -452,7 +451,7 @@ stored in the plants  \citep{Oleson2013}. The demand is provided
 as an input to PFLOTRAN. We use the
 Monod function to represent the limitation of nitrogen availability on uptake.
 We examine the numerical solutions for the Monod equation at first. Incrementally, we
-add first order reactions (e.g., nitrification, denitrification, and plant
+add first-order reactions (e.g., nitrification, denitrification, and plant
 nitrate uptake) to look into the numerical issues in increasingly complex reaction networks. 
 
 \noindent \emph{Plant ammonium uptake (Test 1)}
@@ -481,17 +480,17 @@ We use a spreadsheet to examine the Newton-Raphson iteration process for solving
 Eq. (\ref{eq:ex1}) and the application of clipping, scaling, and log
 transformation (SI test1.xlsx). When an overshoot gets the concentration closer
 to the negative than the positive root (Eq. \ref{eq:monodsemi}), the iterations
-converge to the nonphysical negative semi-analytical solution (spreadsheet case3).
+converge to the nonphysical negative semianalytical solution (spreadsheet case3).
 This can be avoided by using clipping, scaling, or log transformation (spreadsheet
 case4, case6, case8). 
 
-While clipping avoids convergence to the negative solution, the ammonium
-consumption is clipped but the \chem{PlantA} production is not (spreadsheet case5),
+Even though clipping avoids convergence to the negative solution, the ammonium
+consumption is clipped, but the \chem{PlantA} production is not clipped (spreadsheet case5),
 violating the reaction stoichiometry. This results in mass balance errors for
 explicit time stepping \citep{Tang2015}. For  implicit time stepping,
 additional iterations can resolve this violation to avoid mass balance error.
 However, if a nonreactive species is added with a concentration of 1000
-\unit{mol\,m^{-3}} (e.g., SOM4 in organic layer), the relative update $snorm_{rel}$ =
+\unit{mol\,m^{-3}} (e.g., soil organic matter pool 4 SOM4 in organic layer), the relative update $snorm_{rel}$ =
 ${\|\delta \mathbf{c}^{k+1,p}\|_2}/{\|\mathbf{c}^{k+1,p} \|_2}$ decreases to
 $9.3\times 10^{-9}$ in the iteration (spreadsheet case5a). 
 % rmills: I've changed 'stol' to 'snorm_rel', as I believe that the use of 
@@ -500,7 +499,7 @@ $9.3\times 10^{-9}$ in the iteration (spreadsheet case5a).
 % I use 'snorm_rel' because it is the relative norm of the Newton step, and 
 % this is consistent with the usual notation of 'rnorm' for residual norm.
 With a relative update
-tolerance STOL (Eq. \ref{eq:stol}) of $10^{-8}$, the iteration would be deemed
+tolerance [STOL, Eq. (\ref{eq:stol})] of $10^{-8}$, the iteration would be deemed
 converged. This false convergence may produce mass balance error. Satisfying
 the relative update tolerance criteria does not guarantee that the residual
 equations are satisfied \citep{Lichtner2015}. For this reason, we need a tight
@@ -528,7 +527,7 @@ corresponding to \chem{PlantA} (Eq. \ref{eq:jacobianlt}). An initial
 \chem{PlantA} concentration of $10^{-9}$ can result in underflow of the
 exponential function (spreadsheet casea, as a 64-bit real number (``double precision''), is precise to 15 significant digits and has a range of
 $e^{-709}$ to $e^{709}$ in IEEE 754 floating-point representation \citep{Lemmon2005}).
-Clipping the update (say to be between -5 and 5) is needed to prevent numerical
+Clipping the update (say to be between --5 and 5) is needed to prevent numerical
 overflow or underflow. Like the cases with clipping without log transformation,
 clipping violates reaction stoichiometry in the clipping iteration, and this
 violation needs to be resolved in subsequent iterations (spreadsheet caseb).
@@ -546,7 +545,7 @@ violating reaction stoichiometry in the iteration;
 when scaling is applied, which is unintended; 
 6) additional iterations can resolve issues in 4) or 5); and
 7) loose update tolerance convergence criteria may cause false convergence and
-results in mass balance errors for clipping and scaling.
+result in mass balance errors for clipping and scaling.
 
 \noindent \emph{Plant ammonium uptake and nitrification (Test 2)}
 
@@ -559,7 +558,7 @@ Eq. (\ref{eq:ex1}) becomes
 - k_{nitr} [\chem{NH_4^+}] = -R_{at} - R_{nitr}.
 \label{eq:ex2}
 \end{equation}
-A semi-analytical solution similar to Eq. (\ref{eq:monodsemi}) can be derived for Eq. (\ref{eq:ex2}). With $J_{at} =
+A semianalytical solution similar to Eq. (\ref{eq:monodsemi}) can be derived for Eq. (\ref{eq:ex2}). With $J_{at} =
 dR_{at}/d[\chem{NH_4^+}] = R_ak_\text{m}([\chem{NH_4^+}] +
 k_\text{m})^{-2}$, and $J_{nitr} = dR_{nitr}/d[\chem{NH_4^+}]=k_{nitr}$,
 the matrix
@@ -590,7 +589,7 @@ R_{at} + R_{nitr} \\
 \label{eq:test2}
 \end{equation}
 for the first iteration. As $R_{at} + R_{nitr} \geq 0$, the ammonium update is
-negative even when ammonium concentration is not very low. 
+negative even when the ammonium concentration is not very low. 
 The off-diagonal terms for \chem{PlantA} and nitrate in the Jacobian matrix
 bring the negative ammonium update into the updates for \chem{PlantA} and
 nitrate even though there is no reaction that consumes them. Specifically, 
@@ -608,11 +607,11 @@ R_{nitr}.
 Depending on the rates
 (R$_{at}$, R$_{nitr}$), derivatives ($J_{at}$, $J_{nitr}$), and time step size
 $\Delta$t, the update can be negative for \chem{PlantA} and nitrate, producing
-a zero order ``numerical consumption'', in which
+a zero order ``numerical consumption,'' in which
 the limitation of availability is not explicitly
 represented. This has implications for the scaling method.
 
-The scaling factor ($\lambda$) is not only a function of the update, but also
+The scaling factor ($\lambda$) is not only a function of the update; it is a function
 of the  concentration (Eq. \ref{eq:alpha}). If a negative update is produced
 for a zero concentration, the scaling factor is zero, decreasing the scaled
 update to zero. The iteration converges without any change to the
@@ -623,15 +622,15 @@ demonstrate that a small enough initial concentration relative to the negative
 update may numerically inhibit all of the reactions as well.
 An update of $-6.6 \times 10^{-6}$ \unit{M} is produced for nitrate
 (spreadsheet scale1). When the initial nitrate concentration [\chem{NO_3^-}]$_0$
-is not too small, say $10^{-6}$ \unit{M}, the solution converges to the semi-analytical
-solution in six iterations. With decreasing [\chem{NO_3^-}]$_0$ to 10$^{-9}$
+is not too small, say $10^{-6}$ \unit{M}, the solution converges to the semianalytical
+solution in six iterations. When [\chem{NO_3^-}]$_0$ is decreased to 10$^{-9}$
 \unit{M}, the relative update $snorm_{rel}$ is $9.2\times 10^{-10}$. If STOL =
 $10^{-9}$, the solution is deemed converged as Eq. (\ref{eq:stol}) is met, but
-not to the positive semi-analytical solution. The ammonium uptake and nitrification
+not to the positive semianalytical solution. The ammonium uptake and nitrification
 reactions are numerically "inhibited" because the small scaling factor and a
 high concentration of a nonreactive species decreases the update to
 below STOL to reach false convergence. If we tighten STOL to $10^{-30}$, the
-iterations continues, with decreasing nitrate concentration, $\lambda$, and
+iterations continue, with decreasing nitrate concentration, $\lambda$, and
 $snorm_{rel}$ by two orders of magnitude (1-$\alpha$ as default $\alpha=0.99$) in each
 iteration, until $snorm_{rel}$  reaches $10^{-30}$ (spreadsheet scale2). Unless STOL is
 sufficiently small, or MAXIT (the maximum number of iterations before stopping
@@ -647,31 +646,31 @@ $(1-\alpha)$ times in each iteration, with the possibility of resulting in less
 than STOL relative update in MAXIT iterations.  
 
 In summary, this test problem demonstrates that 1) a negative update can be
-produced even for products during a Newton-Raphson iteration; 2) when a negative
+produced even for products during a Newton-Raphson iteration; and 2) when a negative
 update is produced for a very low concentration, a very small scaling factor
 may numerically inhibit all of the reactions due to false convergence even with very tight STOL.
 
 \noindent \emph{Plant uptake, nitrification, and denitrification (Test 3)}
 
-The matrix and update equations with added plant nitrate uptake and
-denitrification to Test 2 are available in Appendix \ref{sec:eqtest3}. In addition
+The matrix and update equations with plant nitrate uptake and
+denitrification added to Test 2 are available in Appendix \ref{sec:eqtest3}. In addition
 to nitrate and PlantA, PlantN and the denitrification product nitrogen gas may
 have negative updates. In addition to the off-diagonal terms due to the
 derivative of plant uptake with respect to ammonium concentration, the
 derivative of plant uptake with respect to nitrate concentration is added in
 the Jacobian matrix for \chem{PlantN} (Eq. \ref{eq:complexjacobian}). As a
-result, negative update for both ammonium and nitrate contributes to
+result, a negative update for both ammonium and nitrate contributes to
 negative \chem{PlantN} update through the two nonzero off-diagonal terms.
 Therefore, the likelihood for a negative update to  \chem{PlantN} is greater
 than \chem{PlantA} as
-the former are influenced by more rates and derivatives. We add plant nitrate
-uptake, and denitrification into SI test2.xlsx and
+the former is influenced by more rates and derivatives. We add plant nitrate
+uptake and denitrification into SI test2.xlsx and
 assess the implications of increased reactions and complexity in SI
 test3.xlsx. In addition to nitrate, this introduces a negative update for
 nitrogen gas in the first iteration (spreadsheet scale1).
 As the iterations resolve the balance between nitrite production from
 nitrification, and consumption due to plant uptake and denitrification, update
-to PlantN becomes negative, and eventually leads to false convergence. The time
+to PlantN becomes negative and eventually leads to false convergence. The time
 step size needs to be decreased from 1800 to 15 \unit{s} to resolve the false
 convergence (spreadsheet scale2). In contrast, the added reactions have less
 impact on the clipping and log transformation methods. 
@@ -683,27 +682,27 @@ consider a case of decomposing 0.2 \unit{M} \chem{Lit1C} + 0.005 \unit{M}
 \chem{Lit1N} to produce \chem{SOM1} with initial 4 \unit{\mu\,M} ammonium using
 the reactions (\ref{rxn:som1} and \ref{rxn:lit1}) in the CLM-CN
 reaction network (Fig. \ref{fig:conceptualmodel}). We use PFLOTRAN with a
-water saturated grid cell with porosity of 0.25. 
+water-saturated grid cell with porosity of 0.25. 
 At the beginning, Lit1 decreases and SOM1 increases sharply because the rate
-coefficient for Lit1 is 16 times that for SOM1 ((Figs. \ref{fig:decomp}a,b). As
+coefficient for Lit1 is 16 times that for SOM1 [Figs. \ref{fig:decomp}(a), (b)]. As
 ammonium concentration decreases by orders of magnitude because of the faster
-immobilization than mineralization rate (Fig. \ref{fig:decomp}c,d), Lit1
+immobilization than mineralization rate [Fig. \ref{fig:decomp} (c), (d)], Lit1
 decomposition rate slows down to the level such  that the immobilization rate
 is less than the mineralization rate. Namely, SOM1 decomposition controls Lit1
 decomposition through limitation of mineralization on immobilization. As the
 immobilization rate decreases with decreasing Lit1, ammonium concentration
-rebounds after Lit1 is depleted. For $k_\text{m}$ of 10$^{-6}$, 10$^{-9}$, and
-10$^{-12}$ M, \chem{Lit1} and \chem{SOM1} dynamics are similar except slight
-difference in the early transit periods, but the ammonium values are decreased
+rebounds after Lit1 is depleted. For $k_\text{m}$ values of 10$^{-6}$, 10$^{-9}$, and
+10$^{-12}$ M, \chem{Lit1} and \chem{SOM1} dynamics are similar except for slight
+differences in the early transit periods, but the ammonium values are decreased
 to $\sim$1$0^{-8}$, 10$^{-11}$, and 10$^{-14}$ \chem{M}, respectively. Smaller
-$k_\text{m}$ results in lower ammonium concentration, which has implications
-for the clipping, scaling and log transformation methods as discussed in Test
-1-3. 
+$k_\text{m}$ values result in lower ammonium concentrations, which have implications
+for the clipping, scaling, and log transformation methods as discussed in Tests
+1--3. 
 
 \subsubsection{Nitrogen demand partitioning between ammonium and nitrate}
 For comparison with CLM, we examine the uptake rate as a function of demands
 and available concentrations 
-$f_{pi} = ({R_a + R_n})/{R_p}$ as implemented in Eqs. (\ref{eq:plantarate},\ref{eq:plantnrate}).
+$f_{pi} = ({R_a + R_n})/{R_p}$ as implemented in Eqs. (\ref{eq:plantarate}) and (\ref{eq:plantnrate}).
 As an example, we consider uptake $R_p$ = 10$^{-9}$ \unit{M\,s{^{-1}}} from a
 solution with various [\chem{NH_4^+}] and [\chem{NO_3^-}] for a 0.5 h time
 step. With CLM, f$_{pi}$ = 1 when $[\chem{NH_4^+}]+[\chem{NO_3^-}]\geq
@@ -715,13 +714,13 @@ or $\ll k_\text{m}$. For the intermediate concentrations, f$_{pi}$ in the new
 scheme is less than or equal to that in CLM because \chem{NH_4^+} ``inhibits''
 \chem{NO_3^-} uptake. The difference decreases with decreasing $k_\text{m}$,
 apparently disappearing at $k_\text{m}$ = 10$^{-10}$. 
-Various level of preferences of ammonium over nitrate uptake were observed for plants
+Various levels of preferences of ammonium over nitrate uptake were observed for plants
 \citep{Pfautsch2009,Warren2007,Nordin2001,Falkengren1995,Gherardi2013}, which is similar to 
 microbial uptake of inorganic and organic nitrogen species
 \citep{Fouilland2007,Kirchman1994,Kirchman1998,Middelburg2000,Veuger2004}. CLM
 implies a strong preference for ammonium over nitrate. For example, if
 ammonium is abundant, nitrate will not be taken by plants. The new scheme
-allows the level of preference to be adjusted by varying $k_\text{m}$, more
+allows the level of preference to be adjusted by varying $k_\text{m}$; more
 realistic representations can be implemented relatively easily. 
 
 \subsection{CLM-PFLOTRAN simulations}
@@ -790,11 +789,11 @@ used to drive the spin-up simulation for the Arctic (US-Brw), temperate
 multi-year cycle in addition to the annual cycle (Figs. \ref{fig:brw500yl},
 \ref{fig:pit300yl}, \ref{fig:cax300yl}). Overall, CLM-PFLOTRAN is close to
 CLM4.5 in predicting LAI and nitrogen distribution among vegetation, litter,
-SOM, ammonium and nitrate pools for the Arctic (Fig. \ref{fig:brw500yl}),
+SOM (soil organic matter), ammonium and nitrate pools for the Arctic (Fig. \ref{fig:brw500yl}),
 temperate (Fig. \ref{fig:pit300yl}), and tropical (Fig. \ref{fig:cax300yl})
 sites. CLM4.5 does reach equilibrium earlier than CLM-PFLOTRAN. The maximum
 differences occur during the transient period (200-400 years for the Arctic, and 50-70
-years for the temperate and tropical sites) for \chem{SOMN}, ammonium, and
+years for the temperate and tropical sites) for \chem{SOMN} (soil organic matter nitrogen), ammonium, and
 nitrate. This is not surprising as 1) the nitrogen demand competition
 scheme implemented in CLM-PFLOTRAN is different from that in CLM4.5 (Fig.
 \ref{fig:demanddistribution}); 2) the former solves the reaction network
@@ -806,8 +805,8 @@ Arctic and temperate sites, and underpredict soil organic matter accumulation, w
 be resolved in future work.
 
 The Arctic site shows a distinct summer growing season (Fig.
-\ref{fig:brw500yl}): LAI and VEGN jump up at the beginning, then level off, and
-drop down at the end of the growing season when LITN jumps up due to litter fall.
+\ref{fig:brw500yl}): LAI and VEGN (vegetation nitrogen) jump up at the beginning, then level off, and
+drop down at the end of the growing season when LITN (litter nitrogen) jumps up due to litter fall.
 Ammonium and nitrate concentrations drop to very low levels at the beginning of
 the growing season and accumulate at other times. In addition to a longer growing
 season than the Arctic site, the temperate site shows more litter fall by the
@@ -824,8 +823,8 @@ LITN, and higher ammonium and nitrate concentrations during the spin-up (Fig.
 \ref{fig:cax300yl}), the range of $k_\text{m}$ values (10$^{-6}$,
 and 10$^{-9}$ \unit{mol\,m^{-3}}) generally has limited impact on the overall
 calculations except that the nitrogen concentrations drop lower with lower
-$k_\text{m}$ values (e.g., inset in Figs. \ref{fig:brw500yl}e,f,
-\ref{fig:pit300yl}e). The lack of
+$k_\text{m}$ values [e.g., inset in Figs. \ref{fig:brw500yl} (e), (f),
+\ref{fig:pit300yl} (e)]. The lack of
 sensitivity is because these very low concentrations do not make up a mass of
 nitrogen that is significant enough to influence the carbon and nitrogen cycle.
 However, as a small $k_\text{m}$ means low concentrations (Test 4), and weak downregulation and steep transition
@@ -841,7 +840,7 @@ When log transformation is used,
 mass balance errors are not recorded for the Arctic, temperate, and tropical
 sites with $k_\text{m}$ values 
 10$^{-3}$, 10$^{-6}$, and 10$^{-9}$ \unit{mol\,m^{-3}}. The computing time for
-CLM-PFLOTRAN is about 60\% to 100\% more than that of CLM (Table
+CLM-PFLOTRAN is about 60$\sim$100\% more than that of CLM (Table
 \ref{tab:computingtime}). This is not unreasonably high as the implicit
 method involves solving a Jacobian system for each Newton-Raphson step (Eq. \ref{eq:axb}, and log transformation converts
 % rmills: I removed the part about using an LU decomposition here, as we've 
@@ -860,8 +859,8 @@ With $k_\text{m}$ = 10$^{-3}$ \unit{mol\,m^{-3}}, the plant uptake and
 immobilization are inhibited at relatively high concentration so that nitrogen
 concentrations are high. With $k_\text{m}$ decreasing from 10$^{-6}$ to
 10$^{-9}$ \unit{mol\,m^{-3}}, nitrogen concentrations are lowered to a much lower
-level (Figs. \ref{fig:brw500yl}, \ref{fig:pit300yl}, \ref{fig:cax300yl},
-similar to Fig. \ref{fig:decomp}c), increasing the likelihood of overshoot.
+level [Figs. \ref{fig:brw500yl}, \ref{fig:pit300yl}, \ref{fig:cax300yl},
+similar to Fig. \ref{fig:decomp}(c)], increasing the likelihood of overshoot.
 Mass balance errors are recorded when the relative update is below STOL,
 preventing further iterations from resolving the violation of reaction
 stoichiometry introduced by clipping. The frequency of mass balance errors
@@ -888,9 +887,9 @@ Eq. \ref{eq:nitr2n2odecomp}) to 10$^{-12}$, 10$^{-10}$, or 10$^{-8}$
 the first year. This can be used to calculate the nitrous oxide production rate
 from decomposition and feed back to CLM without saving the concentration for
 the previous time step. Overall, nitrogen is abundant in the first half year,
-and then becomes limiting in the last five months (Fig. \ref{fig:cax300yl}e,f,
-inset). We look into the daily ammonium cycles as an example during the
-nitrogen limiting period (day 250 to 260, Fig. \ref{fig:cax1yn2o}a). Every day
+and then becomes limiting in the last five months [Fig. \ref{fig:cax300yl}(e), (f),
+inset]. We look into the daily ammonium cycles as an example during the
+nitrogen limiting period [day 250 to 260, Fig. \ref{fig:cax1yn2o}(a)]. Every day
 the ammonium concentration increases with time due to deposition, but drops
 when the plant nitrogen demand shots up. With a reset concentration of $10^{-8}$
 \unit{mol\,m^{-3}}, the minimum nitrous oxide concentration for the ten layers
@@ -920,7 +919,7 @@ off-diagonal terms for nitrous oxide in the Jacobian matrix corresponding to
 \chem{Lit1C}, \chem{Lit1N}, \chem{Lit2C}, \chem{Lit2N}, \chem{Lit3C},
 \chem{Lit3N}, \chem{SOM1}, \chem{SOM2}, \chem{SOM3}, \chem{SOM4}, ammonium, and
 nitrate are nonzero. Negative updates to all of these species 
-contribute to negative updates to nitrous oxide. Similar to Test 2-3, a negative
+contribute to negative updates to nitrous oxide. Similar to Tests 2-3, a negative
 update to a low nitrous oxide concentration can decrease $snorm_{rel}$ to below STOL,
 resulting in false convergence and mass balance errors. While the empirical
 parameterization of nitrification rate as a function of net mineralization rate
@@ -1021,7 +1020,11 @@ PFLOTRAN is open-source software. It is distributed under the terms of the
 GNU Lesser General Public License as published by the Free Software Foundation
 either version 2.1 of the License, or any later version. It is available at
 https://bitbucket.org/pflotran. 
-CLM-PFLOTRAN is under development and will be made available subject to guidelines of NGEE-Arctic and ACME projects.
+CLM-PFLOTRAN is under development and will be made available according to the
+NGEE-Arctic Data Management Policies and Plans
+(http://ngee-arctic.ornl.gov/content/ngee-arctic-data-management-policies-and-plans).
+Before it becomes publicly available, please contact the corresponding authors
+to obtain access to the code. 
 
 \section{Author contribution}
 G. B., B. A., R. M., J. K., and F. H. developed the CLM-PFLOTRAN framework that this
@@ -1081,6 +1084,15 @@ is the CN ratio in gC over gN.}
 \end{figure}
 
 \begin{figure}[t]
+\includegraphics[width=15cm]{../figs/fig09/figdecomp.pdf}
+\caption{Influence of half saturation $k_\text{m}$ on decomposition that involves both
+nitrogen immobilization and mineralization. Smaller half saturation can result
+in lower nitrogen concentration (c) but does not substantially impact the
+calculated concentrations other than ammonium (a,b).}
+\label{fig:decomp}
+\end{figure}
+
+\begin{figure}[t]
 \includegraphics[width=12cm]{../figs/fig05/uptakef.pdf}
 \caption{
 $f_{pi}=\frac{\chem{N}_\text{take}}{\chem{N}_\text{demand}}=\max\left(1,\frac{[\chem{NH_4^+}]+[\chem{NO_3^-}]}{\chem{N}_\text{demand}}\right)$
@@ -1091,15 +1103,6 @@ $=\frac{[\chem{NH_4^+}]}{k_\text{m}+[\chem{NH_4^+}]}+\left(1-\frac{[\chem{NH_4^+
 is less than or equal to that for the first one. The difference decreases with decreasing
 half saturation $k_\text{m}$.}
 \label{fig:demanddistribution}
-\end{figure}
-
-\begin{figure}[t]
-\includegraphics[width=15cm]{../figs/fig09/figdecomp.pdf}
-\caption{Influence of half saturation $k_\text{m}$ on decomposition that involves both
-nitrogen immobilization and mineralization. Smaller half saturation can result
-in lower nitrogen concentration (c) but does not substantially impact the
-calculated concentrations other than ammonium (a,b).}
-\label{fig:decomp}
 \end{figure}
 
 \begin{figure}[t]
