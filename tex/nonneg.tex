@@ -727,19 +727,19 @@ realistic representations can be implemented relatively easily.
 We test the implementation by running CLM-PFLOTRAN simulations for Arctic
 (US-Brw), temperate (US-WBW), and tropical (BR-Cax) AmeriFlux sites. The
 CLM-PFLOTRAN simulations are run in the mode in which PFLOTRAN only handles
-subsurface chemistry (decomposition, nitrification, denitrification, plant
+subsurface chemistry (decomposition, nitrification, denitrification, and plant
 nitrogen uptake). For comparison with CLM, 1) depth and \chem{O_2} availability
 impact on decomposition, 2) cryoturbation, 3) SOM transport, and 4) nitrogen
-leaching are ignored by setting 1) decomp\_depth\_efolding to 10$^6$ m,
-o\_scalar to 1, 2) cryoturb\_diffusion, 3) som\_diffusion, and 4) sf\_no3 and
+leaching are ignored by setting 1) decomp\_depth\_efolding to 10$^6$ m, and
+o\_scalar to 1, and 2) cryoturb\_diffusion, 3) som\_diffusion, and 4) sf\_no3 and
 sf\_sminn to 0 \citep{Oleson2013}. Spin-up simulations are used because they are numerically more
 challenging  as the simulations start far away from equilibrium. In these
 site simulations, PFLOTRAN uses the same 10 layer grid for the 3.8 m
-one-dimensional column as CLM. The simulation duration is 1000, 600, and 600
-year for the Arctic, temperate, and tropical site, respectively.
-In the base case, $k_\text{m}=10^{-6}$ \unit{mol\,m^{-3}} and
+one-dimensional column as CLM. The simulation durations are 1000, 600, and 600
+years for the Arctic, temperate, and tropical sites, respectively.
+In the base case, $k_\text{m}=10^{-6}$ \unit{mol\,m^{-3}}, and
 residual concentration is 10$^{-15}$ \unit{mol\,m^{-3}}. To assess the sensitivity
-of various preference levels for ammonium and nitrate uptake, and
+of various preference levels for ammonium and nitrate uptake and
 downregulation levels, we examine  $k_\text{m}=10^{-3}$ to $10^{-9}$
 \unit{mol\,m^{-3}}. We evaluate how scaling, clipping, and log transformation for
 avoiding negative concentrations influence accuracy and efficiency.
@@ -760,7 +760,7 @@ The US-Brw site (71.35N,156.62W) is located near Barrow, Alaska. The mean annual
 temperature, precipitation, and snowfall are $-12$ \unit{\degree C}, 11 cm, and
 69 cm, respectively (1971$\sim$2000) \citep{Lara2012}. The landscape is poorly
 drained polygonized tundra. The maximum thaw depth ranges from 30 to 40 cm, and the
-snow free-period is variable in length but generally begins in early June and
+snow-free period is variable in length but generally begins in early June and
 lasts until early September \citep{Hinkel2003}. The area is composed of several
 different representative wet-moist coastal sedge tundra types, including wet
 sedges, grasses, moss, and assorted lichens. The leaf area index (LAI) is
@@ -786,19 +786,19 @@ broadleaf forest. The LAI is 4$\sim$6 \citep{Powell2013}.
 The site climate data from 1998 to 2006, 2002 to 2010, and 2001 to 2006  are
 used to drive the spin-up simulation for the Arctic (US-Brw), temperate
 (US-WBW), and tropical (BR-Cax) sites, respectively. This introduces a
-multi-year cycle in addition to the annual cycle (Figs. \ref{fig:brw500yl},
+multiyear cycle in addition to the annual cycle (Figs. \ref{fig:brw500yl},
 \ref{fig:pit300yl}, \ref{fig:cax300yl}). Overall, CLM-PFLOTRAN is close to
 CLM4.5 in predicting LAI and nitrogen distribution among vegetation, litter,
-SOM (soil organic matter), ammonium and nitrate pools for the Arctic (Fig. \ref{fig:brw500yl}),
+SOM (soil organic matter), ammonium, and nitrate pools for the Arctic (Fig. \ref{fig:brw500yl}),
 temperate (Fig. \ref{fig:pit300yl}), and tropical (Fig. \ref{fig:cax300yl})
 sites. CLM4.5 does reach equilibrium earlier than CLM-PFLOTRAN. The maximum
-differences occur during the transient period (200-400 years for the Arctic, and 50-70
+differences occur during the transient periods (200$\sim$400 years for the Arctic, and 50$\sim$70
 years for the temperate and tropical sites) for \chem{SOMN} (soil organic matter nitrogen), ammonium, and
 nitrate. This is not surprising as 1) the nitrogen demand competition
 scheme implemented in CLM-PFLOTRAN is different from that in CLM4.5 (Fig.
 \ref{fig:demanddistribution}); 2) the former solves the reaction network
-simultaneously while the latter does so sequentially (resolve the plant uptake and
-decomposition first, then nitrification, then denitrification), and 3) the
+simultaneously while the latter does so sequentially (it resolves the plant uptake and
+decomposition first, then nitrification, then denitrification); and 3) the
 carbon nitrogen cycle is very sensitive to the nitrogen competition
 representation. Close to steady state, both CLM4.5 and CLM-PFLOTRAN overpredict the LAI at the
 Arctic and temperate sites, and underpredict soil organic matter accumulation, which will
@@ -812,7 +812,7 @@ the growing season and accumulate at other times. In addition to a longer growin
 season than the Arctic site, the temperate site shows more litter fall by the
 end of the growing season, as it is a temperate deciduous forest, which introduces
 immobilization demand that further lowers ammonium and nitrate
-concentrations (Fig. \ref{fig:pit300yl}e inset). The seasonality is much less
+concentrations [Fig. \ref{fig:pit300yl}(e) inset]. The seasonality is much less
 apparent in the tropical site than in the Arctic and temperate sites. LAI,
 VEGN, LITN, and SOMN accumulate with less seasonal variation to reach 
 equilibrium. 
@@ -820,7 +820,7 @@ equilibrium.
 Except for the tropical site where the higher $k_\text{m}$ of 1$0^{-3}$
 \unit{mol\,m^{-3}} results in lower immobilization, higher accumulation of
 LITN, and higher ammonium and nitrate concentrations during the spin-up (Fig.
-\ref{fig:cax300yl}), the range of $k_\text{m}$ values (10$^{-6}$,
+\ref{fig:cax300yl}), the range of $k_\text{m}$ values (10$^{-6}$
 and 10$^{-9}$ \unit{mol\,m^{-3}}) generally has limited impact on the overall
 calculations except that the nitrogen concentrations drop lower with lower
 $k_\text{m}$ values [e.g., inset in Figs. \ref{fig:brw500yl} (e), (f),
@@ -832,9 +832,9 @@ between zero order and first order, it has implications on accuracy
 and efficiency of the numerical solutions.
 
 \subsubsection{Accuracy and efficiency}
-Numerical errors introduced due to false convergence in clipping, scaling or
+Numerical errors introduced due to false convergence in clipping, scaling, or
 log transformation are captured in CLM when it checks carbon and nitrogen mass
-balance for every time step for each column, and reports  $\geq 10^{-8}$
+balance for every time step for each column and reports  $\geq 10^{-8}$
 \unit{g\,m^{-2}} errors.  
 When log transformation is used, 
 mass balance errors are not recorded for the Arctic, temperate, and tropical
@@ -842,7 +842,7 @@ sites with $k_\text{m}$ values
 10$^{-3}$, 10$^{-6}$, and 10$^{-9}$ \unit{mol\,m^{-3}}. The computing time for
 CLM-PFLOTRAN is about 60$\sim$100\% more than that of CLM (Table
 \ref{tab:computingtime}). This is not unreasonably high as the implicit
-method involves solving a Jacobian system for each Newton-Raphson step (Eq. \ref{eq:axb}, and log transformation converts
+method involves solving a Jacobian system for each Newton-Raphson step (Eq. \ref{eq:axb}), and log transformation converts
 % rmills: I removed the part about using an LU decomposition here, as we've 
 % already addressed this earlier in the paper.
 the linear
@@ -850,13 +850,13 @@ problem into a nonlinear one.
 The computational cost increases substantially with
 decreasing half saturation, which is expected as a smaller half saturation
 requires smaller time step sizes to march through steeper transition between
-the zero and first order rate in Monod function. Overall, log transformation is
+the zero and first-order rate in Monod function. Overall, log transformation is
 accurate, robust, and reasonably efficient.  
 
-Mass balance errors are reported for $k_\text{m}$ values of 10$^{-6}$, and
+Mass balance errors are reported for $k_\text{m}$ values of 10$^{-6}$ and
 10$^{-9}$ but not for 10$^{-3}$ \unit{mol\,m^{-3}} when clipping is applied.
 With $k_\text{m}$ = 10$^{-3}$ \unit{mol\,m^{-3}}, the plant uptake and
-immobilization are inhibited at relatively high concentration so that nitrogen
+immobilization are inhibited at a relatively high concentration so that nitrogen
 concentrations are high. With $k_\text{m}$ decreasing from 10$^{-6}$ to
 10$^{-9}$ \unit{mol\,m^{-3}}, nitrogen concentrations are lowered to a much lower
 level [Figs. \ref{fig:brw500yl}, \ref{fig:pit300yl}, \ref{fig:cax300yl},
@@ -875,7 +875,7 @@ balance errors are usually small ($\sim$10$^{-8}$  \unit{gN\,m^{-2}} to
 $\sim$10$^{-7}$  \unit{gN\,m^{-2}}), and do not have substantial impact
 on the overall simulation results. 
 
-The results for scaling is similar to clipping: mass balance errors are
+The results for scaling are similar to clipping: mass balance errors are
 recorded for $k_\text{m}$ values of 10$^{-6}$ and 10$^{-9}$ but not for
 10$^{-3}$ \unit{mol\,m^{-3}};  tightening STOL to $10^{-12}$ eliminates these
 errors; it takes about 50\% more computing time than CLM. To examine the
@@ -886,11 +886,11 @@ Eq. \ref{eq:nitr2n2odecomp}) to 10$^{-12}$, 10$^{-10}$, or 10$^{-8}$
 \unit{mol\,m^{-3}} in each CLM half hour time step for the tropical site for
 the first year. This can be used to calculate the nitrous oxide production rate
 from decomposition and feed back to CLM without saving the concentration for
-the previous time step. Overall, nitrogen is abundant in the first half year,
+the previous time step. Overall, nitrogen is abundant in the first half year
 and then becomes limiting in the last five months [Fig. \ref{fig:cax300yl}(e), (f),
 inset]. We look into the daily ammonium cycles as an example during the
 nitrogen limiting period [day 250 to 260, Fig. \ref{fig:cax1yn2o}(a)]. Every day
-the ammonium concentration increases with time due to deposition, but drops
+the ammonium concentration increases with time due to deposition, but it drops
 when the plant nitrogen demand shots up. With a reset concentration of $10^{-8}$
 \unit{mol\,m^{-3}}, the minimum nitrous oxide concentration for the ten layers
 is $10^{-8}$ \unit{mol\,m^{-3}}, and ammonium concentrations show two peaks
@@ -899,27 +899,27 @@ the reset concentration to $10^{-10}$ \unit{mol\,m^{-3}}, the minimum
 concentration drops to $10^{-12}$,  $10^{-14}$, and  $10^{-16}$
 \unit{mol\,m^{-3}}, corresponding to 1, 2, and 3 scaling iterations with
 overshoot for nitrous oxide. These result in numerical ``inhibition'' of nitrogen rebound
-everyday. It worsens with further decrease of the reset concentration to
+every day. It worsens with further decrease of the reset concentration to
 $10^{-12}$ \unit{mol\,m^{-3}}. This introduces mass balance errors as reported
 in CLM because the false convergence numerically inhibits all of the reactions
 including nitrogen deposition and litter input from CLM to PFLOTRAN.  Unlike
 clipping, these false convergences introduce excessive mass balance errors
 because of the inhibition of productions specified from CLM. If all of the reactions are
-internally balanced, false convergence does not result in mass balance errors
+internally balanced, false convergence does not result in mass balance errors.
 
 The frequent negative update to nitrous oxide is produced because the rate for
 the nitrification reaction (\ref{rxn:nitr2n2o}) is parameterized as a fraction
-of net nitrogen mineralization rate to reflect the relationship between labile carbon
+of the net nitrogen mineralization rate to reflect the relationship between labile carbon
 content and nitrous oxide production \citep{Parton1996}. A Monod function is
 added to describe the limitation of ammonium concentration on nitrification.
 Calculation of the net mineralization rate involves all of the decomposition
 reactions, and the litter decomposition reactions bring in ammonium and nitrate
-limitation, and ammonium inhibition on nitrate immobilization. As a result, the
+limitation and ammonium inhibition on nitrate immobilization. As a result, the
 off-diagonal terms for nitrous oxide in the Jacobian matrix corresponding to
 \chem{Lit1C}, \chem{Lit1N}, \chem{Lit2C}, \chem{Lit2N}, \chem{Lit3C},
 \chem{Lit3N}, \chem{SOM1}, \chem{SOM2}, \chem{SOM3}, \chem{SOM4}, ammonium, and
 nitrate are nonzero. Negative updates to all of these species 
-contribute to negative updates to nitrous oxide. Similar to Tests 2-3, a negative
+contribute to negative updates to nitrous oxide. Similar to Tests 2$\sim$3, a negative
 update to a low nitrous oxide concentration can decrease $snorm_{rel}$ to below STOL,
 resulting in false convergence and mass balance errors. While the empirical
 parameterization of nitrification rate as a function of net mineralization rate
@@ -927,19 +927,19 @@ is conceptually convenient, it increases the complexity of the reaction network
 and computational cost due to the reduced sparsity of the Jacobian matrix. While we use
 nitrous oxide as an example here, similar results can be obtained for
 \chem{PlantN}, \chem{PlantA}, and nitrogen gas produced from denitrification,
-etc. Theoretically, the numerical "inhibition" of all reaction can be caused by
-negative update to very low concentrations for any species. 
+etc. Theoretically, the numerical "inhibition" of all reactions can be caused by
+negative updates to very low concentrations for any species. 
 
 The numerical errors can be decreased and eliminated by decreasing STOL.
-Similar to the Test 2 (SI test2.xlsx spreadsheet scale2), a small STOL can result in
+Similar to Test 2 (SI test2.xlsx spreadsheet scale2), a small STOL can result in
 small $snorm_{rel}$, then a very small STOL is needed. For the case of reset
 concentration 10$^{-10}$ for the one year tropical site simulation, the
 numerical ``inhibition'' decreases with decreasing STOL and varnishes for the
 observed time window when STOL = $10^{-50}$ (Fig. \ref{fig:cax1yn2osto0}),
-indicating the need for very small, zero or even negative STOL to avoid false
+indicating the need for very small, zero, or even negative STOL to avoid false
 convergence. The impact of resetting nitrous oxide concentration on clipping
 and log transformation is less dramatic. Nevertheless, the computing time
-increases about 10\% for clipping, and doubles for the log transformation.  
+increases about 10\% for clipping, and it doubles for the log transformation.  
 
 %\conclusions  %% \conclusions[modified heading if necessary]
 \conclusions[Summary and Conclusions]
@@ -960,11 +960,11 @@ need to be prevented by intervening in the Newton-Raphson iteration procedure.
 Simply stopping the iteration with negative concentration and returning to the
 time stepping subroutine to cut time step size can avoid negative
 concentration, but may result in small time step sizes and high computational
-cost. Clipping, scaling  and log transformation can all prevent negative
+cost. Clipping, scaling,  and log transformation can all prevent negative
 concentration and reduce computational cost. Our results reveal implications
 when the relative update tolerance (STOL) is used as one of the convergence criteria. 
 While use of STOL improves efficiency in many situations, satisfying STOL does
-not guarantee satisfying the residual equation, and therefore may introduce
+not guarantee satisfying the residual equation, and therefore it may introduce
 false convergence. Clipping reduces the consumption but not the production in
 some reactions, violating reaction stoichiometry. Subsequent iterations are
 required to resolve this violation. A tight STOL is needed to avoid false
@@ -980,14 +980,14 @@ computing time. The computational cost increases with decreasing
 concentrations, most substantially for log transformation.
 
 Our CLM-PFLOTRAN spin-up simulations at Arctic, temperate, and tropical sites
-produce results similar to CLM4.5, and indicate that accurate and robust
-solution can be achieved with clipping, scaling or log transformation. The
-computing time is 50\% to 100\% more than CLM4.5 for a range of half
+produce results similar to CLM4.5 and indicate that accurate and robust
+solution can be achieved with clipping, scaling, or log transformation. The
+computing time is 50$\sim$100\% more than CLM4.5 for a range of half
 saturation values from 10$^{-3}$ to 10$^{-9}$ and a residual concentration of
-10$^{-15}$ for nitrogen. As physical half saturation ranges from 10$^{-5}$ to
+10$^{-15}$ for nitrogen. Because physical half saturation ranges from 10$^{-5}$ to
 10$^{-6}$ \chem{M} for nitrogen, and the detection limits are often above
 10$^{-9}$ \chem{M}, our results indicate that accurate, efficient, and robust
-solution  for current CLM soil biogeochemistry can be achieved using CLM-PFLOTRAN.
+solutions  for current CLM soil biogeochemistry can be achieved using CLM-PFLOTRAN.
 We thus demonstrate the feasibility of using an open-source, general-purpose
 reactive transport code with CLM, enabling significantly more complicated and
 more mechanistic biogeochemical reaction systems. 
@@ -1028,7 +1028,7 @@ to obtain access to the code.
 
 \section{Author contribution}
 G. B., B. A., R. M., J. K., and F. H. developed the CLM-PFLOTRAN framework that this
-work built upon. F.Y., G.T., G. B., and X.X. added biogeochemistry to the CLM-PFLOTRAN
+work is built upon. F.Y., G.T., G. B., and X.X. added biogeochemistry to the CLM-PFLOTRAN
 interface. F. Y. proposed the nitrification and denitrification reactions and
 rate formulae. G. T., F. Y., and X. X. implemented the CLM
 soil biogeochemistry in PFLOTRAN under guidance of G. H., P. L., S. P., and P.T.
@@ -1038,7 +1038,7 @@ G. T., F. Y., G. B., and G.H. contributed equally to the work.
 \begin{acknowledgements}
 Thanks to Nathaniel O.\ Collier at ORNL for many discussions that contributed
 significantly to this work.
-Thanks to Kathie Tallant and Cathy Jones at ORNL for editing service. This
+Thanks to Kathie Tallant and Kathy Jones at ORNL for editing service. This
 research was funded by the U.S. Department of Energy, Office of Sciences,
 Biological and Environmental Research, Terrestrial Ecosystem Sciences and
 Subsurface Biogeochemical Research Program, and is a product of the
@@ -1088,7 +1088,7 @@ is the CN ratio in gC over gN.}
 \caption{Influence of half saturation $k_\text{m}$ on decomposition that involves both
 nitrogen immobilization and mineralization. Smaller half saturation can result
 in lower nitrogen concentration (c) but does not substantially impact the
-calculated concentrations other than ammonium (a,b).}
+calculated concentrations other than ammonium (a, b).}
 \label{fig:decomp}
 \end{figure}
 
@@ -1135,10 +1135,10 @@ site. }
 \caption{Resetting nitrous oxide concentration to $10^{-8}$, $10^{-10}$, and
 $12^{-10}$ \unit{mol\,m^{-3}} in every CLM 0.5 h time step results in no
 inhibition to increasing inhibition of reactions when the scaling method is
-used with STOL = $10^{-8}$. \chem{N_2O-N} concentration in y-axis in (b) is the
-minimum of the 10 soil layers. Numerical experiments are conducted for the
+used with STOL = $10^{-8}$. \chem{N_2O-N} concentration in the y-axis in (b) is the
+minimum of the ten soil layers. Numerical experiments are conducted for the
 tropical site for the first year with $k_\text{m}=10^{-6}$ \unit{mol\,m^{-3}}.
-See inset in Fig. (\ref{fig:cax300yl}e) for ammonium concentration in the first
+See inset in Fig. \ref{fig:cax300yl}(e) for ammonium concentration in the first
 year with daily data points.}
 \label{fig:cax1yn2o}
 \end{figure}
@@ -1146,8 +1146,8 @@ year with daily data points.}
 \begin{figure}[t]
 \includegraphics[width=0.8\textwidth]{../figs/fig19/cax1yn2ostol0.pdf}
 \caption{Decreasing STOL can decrease and eliminate the numerical inhibition in
-the case of $c_i = 10^{-10}$  \unit{mol\,m^{-3}}  in Fig. (\ref{fig:cax1yn2o}).
-\chem{N_2O-N} concentration in y-axis in (b) is the minimum of the 10 soil
+the case of $c_i = 10^{-10}$  \unit{mol\,m^{-3}}  in Fig. \ref{fig:cax1yn2o}.
+\chem{N_2O-N} concentration in the y-axis in (b) is the minimum of the ten soil
 layers.}
 \label{fig:cax1yn2osto0}
 \end{figure}
@@ -1164,11 +1164,11 @@ Site & \multicolumn{3}{c}{Clipping}  & \multicolumn{3}{c}{Scaling} & \multicolum
 $k_\text{m}$ & $10^{-3}$ & $10^{-6}$ & $10^{-9}$ &  $10^{-3}$ & $10^{-6}$ & $10^{-9}$ & $10^{-3}$ & $10^{-6}$ & $10^{-9}$\\
 \middlehline
 US-Brw & 1.28	& 1.30 &	1.30	& 1.29	& 1.29	& 1.32	& 1.45	& 1.49	& 1.72 \\
-US-Pit   & 1.45	& 1.47 &	1.47	& 1.45	& 1.45	& 1.47	& 1.64	& 1.68	& 1.89 \\
+US-WBW   & 1.45	& 1.47 &	1.47	& 1.45	& 1.45	& 1.47	& 1.64	& 1.68	& 1.89 \\
 BR-Cax & 1.43	& 1.49 &	1.55	& 1.44	& 1.48	& 1.52	& 1.62	& 1.66	& 1.99 \\
 \bottomhline
 \end{tabular}
-\belowtable{CLM wall time is 29.3, 17.7, and 17.1 hour for the Arctic,
+\belowtable{CLM wall time is 29.3, 17.7, and 17.1 hours for the Arctic,
 temperate, and tropical sites for a simulation duration of 1000, 600, and 600
 year.}
 % Table Footnotes
@@ -1354,16 +1354,16 @@ described by
 \chem{CN_u} \rightarrow (1 - f) \chem{CN_d} + f \chem{CO_2} + n \chem{N},
 \label{rxn:decomp}
 \end{reaction}
-with \chem{CN_u} and \chem{CN_d} as the upstream and downstream pool (molecular
-formula, for 1 mol upstream and downstream pool, there is u and d mol N),
-\chem{N} as either \chem{NH_4^+} or \chem{NO_3^-}, \textit{f} as the
-respiration fraction, and \textit{n} = u $-$ (1 $-$ \textit{f})d. The rate is
+where \chem{CN_u} and \chem{CN_d} are the upstream and downstream pools (molecular
+formula, for 1 mol upstream and downstream pool, there is u and d mol N);
+\chem{N} is either \chem{NH_4^+} or \chem{NO_3^-}; \textit{f} is the
+respiration fraction; and \textit{n} = u $-$ (1 $-$ \textit{f})d. The rate is
 \begin{equation}
 \frac{d [\chem{CN_u}]}{d t} = - k_\text{d} f_\text{T} f_\text{w} [\chem{CN_u}],
 \label{eq:decomprate}
 \end{equation}
-with $\textit{k}_\text{d}$ as the rate coefficient and $\textit{f}_\text{T}$
-and $\textit{f}_\text{w}$ as the temperature and moisture response functions.
+where $\textit{k}_\text{d}$ is the rate coefficient, and $\textit{f}_\text{T}$
+and $\textit{f}_\text{w}$ are the temperature and moisture response functions.
 %\begin{equation}
 %f_T = Q_{10}^{(T - 25)/10}, 
 %\end{equation}
@@ -1449,7 +1449,7 @@ with one component related to decomposition as %when
 f_\text{pH}\max(R_\text{nm},0)
 \label{eq:nitr2n2odecomp}
 \end{equation}
-with $f_\text{nm}$ as a fraction \citep{Parton1996} and $R_\text{nm}$ as the
+where $f_\text{nm}$ is a fraction \citep{Parton1996}, and $R_\text{nm}$ is the
 net \chem{N} mineralization rate,  
 \begin{equation}
 R_\text{nm}=\sum_{i} n_iR_i,
@@ -1530,7 +1530,7 @@ this work, PFLOTRAN solves the ordinary differential equation,
 \label{eq:cde}
 {d \mathbf{c}}/{d t} = \mathbf{R}(\mathbf{c}) + \mathbf{F},
 \end{equation}
-with $\mathbf{c}$ as the concentration vector, $\mathbf{R}$ as the kinetic reaction rate, and $\mathbf{F}$ as the fluxes (e.g., nitrogen deposition). 
+where $\mathbf{c}$ is the concentration vector, $\mathbf{R}$ is the kinetic reaction rate, and $\mathbf{F}$ is the fluxes (e.g., nitrogen deposition). 
 Discretizing Eq. (\ref{eq:cde}) in time using the backward Euler method, 
 \begin{equation}
 {(\mathbf{c}^{k+1} - \mathbf{c}^k)}/{\Delta t} = \mathbf{R}(\mathbf{c}^{k+1}) + \mathbf{F}^k.
@@ -1546,7 +1546,7 @@ and Jacobian as
 \mathbf{J} = \frac{\partial \mathbf{f}(\mathbf{c}^{k+1,p})}{\partial \mathbf{c}^{k+1,p}},
 \label{eq:jacobian}
 \end{equation}
-with $p$ as the iteration counter, the update is
+where $p$ is the iteration counter, the update is
 \begin{equation}
 \delta \mathbf{c}^{k+1,p+1}= -\mathbf{J}^{-1} \mathbf{f} (\mathbf{c}^{k+1,p}),
 \label{eq:axb}
@@ -1580,8 +1580,8 @@ or
 %\begin{equation}
 %\|\delta \mathbf{c}^{k+1,p} \|_\infty  <  \text{ITOL\_UPDATE}.
 %\end{equation}
-
-If none of these tolerances are met in MAXIT iterations or MAXF function
+Here ATOL, RTOL, and STOL are the absolute residual, relative residual, and relative update tolerances.
+If none of these tolerances are met in MAXIT (the maximum number of iterations before stopping the current iterations) iterations or MAXF (the maximum numb of forward function calls before stopping the current iterations) function
 evaluations, the iteration is considered to diverge, and PFLOTRAN decreases the
 time step size for MAX\_CUT times. The default values in PFLOTRAN are ATOL =
 10$^{-50}$, RTOL = 10$^{-8}$, STOL = 10$^{-8}$,  %ITOL\_RES = 10$^{-50}$,
